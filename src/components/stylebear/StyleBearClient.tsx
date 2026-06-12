@@ -175,18 +175,14 @@ export default function StyleBearClient() {
       {/* Header */}
       <div className="text-center space-y-2">
         <div className="flex justify-center">
-          <div
-            style={{ width: 120, height: 120 }}
-            className="rounded-full bg-muted flex items-center justify-center overflow-hidden shrink-0"
-            role="img"
-            aria-label="[PROMPT: cute white plush fluffy chibi-style teddy bear with meerkat-like eyes, sitting at a vintage drawing table surrounded by colorful art supplies, retro 1950s illustration style, warm pastel colors, adorable expression]"
-          >
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-muted-foreground opacity-40" aria-hidden="true">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-              <circle cx="8.5" cy="8.5" r="1.5" />
-              <polyline points="21 15 16 10 5 21" />
-            </svg>
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/stylebear-face.png"
+            alt="StyleBear, the StyleGuideAI mascot — a cute white plush teddy bear"
+            width={120}
+            height={120}
+            className="h-[120px] w-[120px] rounded-full object-cover shadow-md"
+          />
         </div>
         <h1 className="font-heading text-4xl text-primary">StyleBear</h1>
         <p className="text-muted-foreground text-sm max-w-md mx-auto">
