@@ -2,7 +2,12 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
-import type { ArtMovement, Artist, WorldEvent } from "@/types/museum";
+import type {
+  ArtMovement,
+  Artist,
+  WorldEvent,
+  ArtistConnection,
+} from "@/types/museum";
 import { prefersReducedMotion } from "@/lib/motion";
 import { formatYear } from "@/lib/timeline-scale";
 import { useWikiThumb } from "@/lib/wiki-thumb";
@@ -17,6 +22,7 @@ interface TimelineInfoCardProps {
   movements: Map<string, ArtMovement>;
   artists: Map<string, Artist>;
   events: Map<string, WorldEvent>;
+  connections: ArtistConnection[];
   onClose: () => void;
   onSelect: (selection: TimelineSelection) => void;
 }
@@ -105,6 +111,7 @@ export default function TimelineInfoCard({
   movements,
   artists,
   events,
+  connections,
   onClose,
   onSelect,
 }: TimelineInfoCardProps) {
@@ -156,6 +163,16 @@ export default function TimelineInfoCard({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [animateClose]);
+
+  const artistBonds = artist
+    ? connections
+        .filter((c) => c.a === artist.id || c.b === artist.id)
+        .map((c) => ({
+          other: artists.get(c.a === artist.id ? c.b : c.a),
+          label: c.label,
+        }))
+        .filter((b): b is { other: Artist; label: string } => b.other !== undefined)
+    : [];
 
   const heading = artist?.name ?? movement?.name ?? event?.name ?? "";
   const bandColor =
@@ -274,6 +291,28 @@ export default function TimelineInfoCard({
                   );
                 })}
               </div>
+            </div>
+          )}
+
+          {/* Artist → bonds with other artists */}
+          {artist && artistBonds.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Connections
+              </h3>
+              <ul className="space-y-2">
+                {artistBonds.map((bond) => (
+                  <li key={bond.other.id} className="flex items-center gap-3">
+                    <ArtistThumbChip
+                      artist={bond.other}
+                      onClick={() => onSelect({ type: "artist", id: bond.other.id })}
+                    />
+                    <span className="min-w-0 flex-1 text-xs italic leading-snug text-muted-foreground">
+                      {bond.label}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 

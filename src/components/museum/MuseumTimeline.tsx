@@ -293,8 +293,13 @@ export default function MuseumTimeline({
 
     const onWheel = (e: WheelEvent) => {
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-      e.preventDefault();
       const max = el.scrollWidth - el.clientWidth;
+      // Release the wheel to normal page scrolling when the timeline can't
+      // consume it: scrolling up at the far left, or down at the far right.
+      const atStart = scrollTarget.current <= 0 && e.deltaY < 0;
+      const atEnd = scrollTarget.current >= max && e.deltaY > 0;
+      if (atStart || atEnd) return;
+      e.preventDefault();
       scrollTarget.current = Math.max(
         0,
         Math.min(max, scrollTarget.current + e.deltaY * 1.6)
@@ -754,6 +759,7 @@ export default function MuseumTimeline({
           movements={movementMap}
           artists={artistMap}
           events={eventMap}
+          connections={connections}
           onClose={() => setSelection(null)}
           onSelect={setSelection}
         />
