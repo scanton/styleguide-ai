@@ -4,7 +4,9 @@ import { useState, useRef, useCallback } from "react";
 import { artMovements } from "@/data/stylebear/art-movements";
 import { mediaTypes } from "@/data/stylebear/media-types";
 import { promptData, cultureKeys, checkboxOptions } from "@/data/stylebear/prompt-data";
-import { promptTypes, llmModels, TRIPLE_COUNT } from "@/data/stylebear/config";
+import { promptTypes, TRIPLE_COUNT } from "@/data/stylebear/config";
+
+const STYLEBEAR_MODEL = "openrouter/auto";
 import { processWildcards } from "@/lib/wildcards";
 
 const sortedMovements = [...artMovements].sort((a, b) =>
@@ -84,7 +86,6 @@ export default function StyleBearClient() {
   );
   const [showCultures, setShowCultures] = useState(false);
   const [promptType, setPromptType] = useState<string>(promptTypes[0].value);
-  const [model, setModel] = useState<string>(llmModels[0].value);
   const [output, setOutput] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
@@ -110,7 +111,7 @@ export default function StyleBearClient() {
         body: JSON.stringify({
           messages: [{ role: "user", content: rawPrompt }],
           promptStyle: promptType,
-          model,
+          model: STYLEBEAR_MODEL,
           maxTokens: 2048,
         }),
       });
@@ -121,7 +122,7 @@ export default function StyleBearClient() {
     } finally {
       setLoading(false);
     }
-  }, [selectedMovements, selectedMedia, checkedOptions, promptType, model]);
+  }, [selectedMovements, selectedMedia, checkedOptions, promptType]);
 
   const handleRandomize = useCallback(() => {
     const randMovements = Array.from({ length: TRIPLE_COUNT }, (_, i) => {
@@ -201,7 +202,7 @@ export default function StyleBearClient() {
         body: JSON.stringify({
           messages: [{ role: "user", content: "Analyze this image and describe the subject, art style, mood, and notable visual elements." }],
           promptStyle: promptType,
-          model: "qwen/qwen-vl-plus:free",
+          model: STYLEBEAR_MODEL,
           imageData: imageDataUrl,
           maxTokens: 1024,
         }),
@@ -339,25 +340,7 @@ export default function StyleBearClient() {
           </select>
         </div>
 
-        <div className="flex-1 min-w-[140px] space-y-1">
-          <label htmlFor="llm-model" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            AI Model
-          </label>
-          <select
-            id="llm-model"
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
-            className="w-full h-11 rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-2 focus-visible:outline-ring"
-          >
-            {llmModels.map((m) => (
-              <option key={m.value} value={m.value}>
-                {m.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <button
+<button
           type="button"
           onClick={handleRandomize}
           className="h-11 px-4 rounded-md border border-border bg-secondary text-secondary-foreground hover:bg-muted transition-colors text-sm min-w-[100px]"
