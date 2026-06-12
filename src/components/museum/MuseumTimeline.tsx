@@ -150,7 +150,7 @@ export default function MuseumTimeline({
   const [centerYear, setCenterYear] = useState<number>(TIMELINE_START);
   const [visibleNodes, setVisibleNodes] = useState<Set<string>>(() => new Set());
   const [showFlows, setShowFlows] = useState(true);
-  const [showBonds, setShowBonds] = useState(false);
+  const [showBonds, setShowBonds] = useState(true);
 
   const lanes = useMemo(() => assignLanes(movements), [movements]);
   const laneCount = useMemo(
@@ -285,14 +285,31 @@ export default function MuseumTimeline({
     { scope: canvasRef }
   );
 
-  // ── Vertical wheel → horizontal scroll (GSAP-smoothed) ──
+  // ── Vertical wheel → horizontal scroll (GSAP-smoothed, mouse wheels only) ──
+  // Trackpads can swipe the timeline horizontally natively, so their vertical
+  // swipes are left alone for page scrolling. Mouse wheels have no horizontal
+  // gesture, so vertical wheeling drives the timeline. Classification: any
+  // horizontal delta marks the device as a trackpad (sticky, self-correcting);
+  // line/page delta modes or large discrete first ticks mark a mouse wheel.
+  const pointerKind = useRef<"unknown" | "wheel" | "trackpad">("unknown");
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
     scrollTarget.current = el.scrollLeft;
 
     const onWheel = (e: WheelEvent) => {
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      if (e.deltaX !== 0) {
+        pointerKind.current = "trackpad";
+        return; // native horizontal scrolling handles this
+      }
+      if (e.deltaMode === 1 || e.deltaMode === 2) {
+        pointerKind.current = "wheel";
+      } else if (pointerKind.current === "unknown" && Math.abs(e.deltaY) >= 100) {
+        pointerKind.current = "wheel";
+      }
+      // Trackpad (or still-ambiguous) vertical scrolling → page scrolls normally.
+      if (pointerKind.current !== "wheel") return;
+
       const max = el.scrollWidth - el.clientWidth;
       // Release the wheel to normal page scrolling when the timeline can't
       // consume it: scrolling up at the far left, or down at the far right.
