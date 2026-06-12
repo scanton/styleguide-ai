@@ -1,0 +1,13 @@
+{
+  "id": "the-art-of-painting-vermeer",
+  "artistId": "johannes-vermeer",
+  "movementId": null,
+  "title": "The Art of Painting",
+  "year": 1668,
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Jan_Vermeer_-_The_Art_of_Painting_-_Google_Art_Project.jpg/3840px-Jan_Vermeer_-_The_Art_of_Painting_-_Google_Art_Project.jpg",
+  "source": "wikimedia",
+  "licenseType": "Public domain",
+  "width": 6209,
+  "height": 7377,
+  "description": "The Art of Painting, also known as The Allegory of Painting, or Painter in his Studio, is a 17th-century oil on canvas painting by Dutch painter Johannes Vermeer. It is owned by the Austrian Republic and is on display in the Kunsthistorisches Museum in Vienna."
+}

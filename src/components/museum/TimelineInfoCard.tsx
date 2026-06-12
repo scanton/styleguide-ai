@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
 import gsap from "gsap";
 import type {
   ArtMovement,
@@ -23,6 +24,7 @@ interface TimelineInfoCardProps {
   artists: Map<string, Artist>;
   events: Map<string, WorldEvent>;
   connections: ArtistConnection[];
+  galleryKeys: Set<string>;
   onClose: () => void;
   onSelect: (selection: TimelineSelection) => void;
 }
@@ -93,12 +95,22 @@ function MovementChip({
   );
 }
 
-function EnterGalleryButton() {
+function EnterGalleryButton({ href }: { href: string | null }) {
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className="block w-full rounded-md bg-primary px-4 py-3 text-center text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 min-h-[44px]"
+      >
+        Enter Gallery →
+      </Link>
+    );
+  }
   return (
     <button
       type="button"
       disabled
-      title="The gallery experience arrives in the next phase"
+      title="Artworks for this gallery are still being collected"
       className="w-full rounded-md bg-primary/50 px-4 py-3 text-sm font-medium text-primary-foreground cursor-not-allowed min-h-[44px]"
     >
       Enter Gallery — coming soon
@@ -112,6 +124,7 @@ export default function TimelineInfoCard({
   artists,
   events,
   connections,
+  galleryKeys,
   onClose,
   onSelect,
 }: TimelineInfoCardProps) {
@@ -408,7 +421,15 @@ export default function TimelineInfoCard({
 
           {/* Actions */}
           <div className="space-y-3 pt-1">
-            {!event && <EnterGalleryButton />}
+            {!event && (
+              <EnterGalleryButton
+                href={
+                  galleryKeys.has(`${selection.type}:${selection.id}`)
+                    ? `/museum/gallery/${selection.type}/${selection.id}`
+                    : null
+                }
+              />
+            )}
             {(artist?.wikipediaUrl ?? movement?.wikipediaUrl) && (
               <a
                 href={artist?.wikipediaUrl ?? movement?.wikipediaUrl}

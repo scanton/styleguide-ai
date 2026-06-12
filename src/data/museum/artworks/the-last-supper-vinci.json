@@ -1,0 +1,13 @@
+{
+  "id": "the-last-supper-vinci",
+  "artistId": "leonardo-da-vinci",
+  "movementId": null,
+  "title": "The Last Supper",
+  "year": 1498,
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/The_Last_Supper_-_Leonardo_Da_Vinci_-_High_Resolution_32x16.jpg/3840px-The_Last_Supper_-_Leonardo_Da_Vinci_-_High_Resolution_32x16.jpg",
+  "source": "wikimedia",
+  "licenseType": "Public domain",
+  "width": 9600,
+  "height": 4800,
+  "description": "The Last Supper is a mural painting by the Italian High Renaissance artist Leonardo da Vinci, dated to c. 1495–1498, housed in the refectory of the Convent of Santa Maria delle Grazie in Milan, Italy."
+}

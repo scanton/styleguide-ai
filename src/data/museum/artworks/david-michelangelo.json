@@ -1,0 +1,13 @@
+{
+  "id": "david-michelangelo",
+  "artistId": "michelangelo",
+  "movementId": null,
+  "title": "David",
+  "year": 1504,
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/b/bb/%27David%27_by_Michelangelo_Fir_JBU004.jpg",
+  "source": "wikimedia",
+  "licenseType": "Public domain",
+  "width": 3260,
+  "height": 4890,
+  "description": "David is a masterpiece of Italian Renaissance sculpture in marble created from 1501 to 1504 by Michelangelo."
+}

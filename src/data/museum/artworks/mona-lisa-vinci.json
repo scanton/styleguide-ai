@@ -1,0 +1,13 @@
+{
+  "id": "mona-lisa-vinci",
+  "artistId": "leonardo-da-vinci",
+  "movementId": null,
+  "title": "Mona Lisa",
+  "year": 1503,
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/3840px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg",
+  "source": "wikimedia",
+  "licenseType": "Public domain",
+  "width": 7479,
+  "height": 11146,
+  "description": "The Mona Lisa is a half-length portrait painting by the Italian artist Leonardo da Vinci."
+}

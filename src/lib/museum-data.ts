@@ -40,6 +40,25 @@ export function getEvents(): WorldEvent[] {
   return readJsonDir<WorldEvent>("events").sort((a, b) => a.year - b.year);
 }
 
+/** Gallery keys ("artist:van-gogh" / "movement:impressionism") that have artworks. */
+export function getGalleryKeys(): string[] {
+  const artworks = getArtworks();
+  const movements = getMovements();
+  const artistsWithWorks = new Set(
+    artworks.map((w) => w.artistId).filter((a): a is string => a !== null)
+  );
+  const keys = [...artistsWithWorks].map((id) => `artist:${id}`);
+  for (const m of movements) {
+    if (
+      m.keyArtists.some((a) => artistsWithWorks.has(a)) ||
+      artworks.some((w) => w.movementId === m.id)
+    ) {
+      keys.push(`movement:${m.id}`);
+    }
+  }
+  return keys;
+}
+
 export function getConnections(): ArtistConnection[] {
   const file = path.join(MUSEUM_DIR, "artist-connections.json");
   if (!fs.existsSync(file)) return [];

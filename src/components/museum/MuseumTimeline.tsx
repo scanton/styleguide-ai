@@ -52,6 +52,7 @@ interface MuseumTimelineProps {
   artists: Artist[];
   events: WorldEvent[];
   connections: ArtistConnection[];
+  galleryKeys: string[];
 }
 
 type Highlight =
@@ -139,6 +140,7 @@ export default function MuseumTimeline({
   artists,
   events,
   connections,
+  galleryKeys,
 }: MuseumTimelineProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -169,6 +171,7 @@ export default function MuseumTimeline({
     [artists]
   );
   const eventMap = useMemo(() => new Map(events.map((e) => [e.id, e])), [events]);
+  const gallerySet = useMemo(() => new Set(galleryKeys), [galleryKeys]);
 
   const bandsBottom = BAND_TOP + laneCount * (LANE_H + LANE_GAP);
   const nodesTop = bandsBottom + 28;
@@ -777,6 +780,7 @@ export default function MuseumTimeline({
           artists={artistMap}
           events={eventMap}
           connections={connections}
+          galleryKeys={gallerySet}
           onClose={() => setSelection(null)}
           onSelect={setSelection}
         />

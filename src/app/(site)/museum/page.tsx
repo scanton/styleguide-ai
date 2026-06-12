@@ -4,6 +4,7 @@ import {
   getArtists,
   getEvents,
   getConnections,
+  getGalleryKeys,
 } from "@/lib/museum-data";
 import MuseumTimeline from "@/components/museum/MuseumTimeline";
 
@@ -20,6 +21,7 @@ export default function MuseumPage() {
   const artists = getArtists();
   const events = getEvents();
   const connections = getConnections();
+  const galleryKeys = getGalleryKeys();
 
   return (
     <div className="py-8 md:py-12">
@@ -44,6 +46,7 @@ export default function MuseumPage() {
         artists={artists}
         events={events}
         connections={connections}
+        galleryKeys={galleryKeys}
       />
     </div>
   );
