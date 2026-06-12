@@ -47,10 +47,13 @@ export interface Artwork {
   movementId: string | null;
   title: string;
   year: number | null;
+  /** Empty string = image not yet generated/sourced; the work is hidden from galleries. */
   imageUrl: string;
   source: "wikimedia" | "rijksmuseum" | "ai-generated" | "other";
   licenseType: string;
   width: number;
   height: number;
   description: string | null;
+  /** For source "ai-generated": the prompt used to render (or re-render) the image. */
+  generationPrompt?: string | null;
 }

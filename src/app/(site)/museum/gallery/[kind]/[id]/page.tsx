@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import {
   getMovements,
   getArtists,
-  getArtworks,
+  getDisplayableArtworks,
   getGalleryKeys,
 } from "@/lib/museum-data";
 import EditorialGallery, {
@@ -18,7 +18,7 @@ interface GalleryParams {
 }
 
 function buildGallery(kind: string, id: string) {
-  const artworks = getArtworks();
+  const artworks = getDisplayableArtworks();
   const artists = getArtists();
   const movements = getMovements();
   const artistById = new Map(artists.map((a) => [a.id, a]));

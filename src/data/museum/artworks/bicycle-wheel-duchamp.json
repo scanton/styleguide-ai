@@ -1,0 +1,13 @@
+{
+  "id": "bicycle-wheel-duchamp",
+  "artistId": "marcel-duchamp",
+  "movementId": null,
+  "title": "Bicycle Wheel",
+  "year": 1913,
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/en/2/2f/Marcel_Duchamp%2C_1916-17_studio_photograph.jpg",
+  "source": "wikimedia",
+  "licenseType": "Public domain (US)",
+  "width": 390,
+  "height": 255,
+  "description": "Bicycle Wheel is an early readymade created by French artist Marcel Duchamp in 1913. Consisting of a bicycle wheel mounted upside down on a wooden stool, it is often considered one of the earliest examples of kinetic sculpture."
+}

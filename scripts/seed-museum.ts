@@ -59,10 +59,16 @@ async function main() {
     }
   }
   for (const w of artworks) {
-    assert(w.id && w.title && w.imageUrl, `artwork ${w.id} missing required fields`);
+    // AI-generation stubs have an empty imageUrl until the image is rendered;
+    // they must carry the prompt instead and are excluded from the database.
+    assert(
+      w.id && w.title && (w.imageUrl || w.generationPrompt),
+      `artwork ${w.id} missing required fields (needs imageUrl or generationPrompt)`
+    );
     if (w.artistId) assert(artistIds.has(w.artistId), `artwork ${w.id} references unknown artist "${w.artistId}"`);
     if (w.movementId) assert(movementIds.has(w.movementId), `artwork ${w.id} references unknown movement "${w.movementId}"`);
   }
+  const displayableArtworks = artworks.filter((w) => w.imageUrl !== "");
 
   // ── Upsert movements ──
   for (const m of movements) {
@@ -109,11 +115,23 @@ async function main() {
       });
   }
 
-  // ── Upsert artworks ──
-  for (const w of artworks) {
+  // ── Upsert artworks (only those with an actual image) ──
+  for (const w of displayableArtworks) {
     await db
       .insert(schema.artworks)
-      .values(w)
+      .values({
+        id: w.id,
+        artistId: w.artistId,
+        movementId: w.movementId,
+        title: w.title,
+        year: w.year,
+        imageUrl: w.imageUrl,
+        source: w.source,
+        licenseType: w.licenseType,
+        width: w.width,
+        height: w.height,
+        description: w.description,
+      })
       .onConflictDoUpdate({
         target: schema.artworks.id,
         set: {
@@ -135,7 +153,7 @@ async function main() {
   // These tables are wholly file-managed, so the files are the source of truth.
   const movementIdList = movements.map((m) => m.id);
   const artistIdList = artists.map((a) => a.id);
-  const artworkIdList = artworks.map((w) => w.id);
+  const artworkIdList = displayableArtworks.map((w) => w.id);
 
   if (artworkIdList.length > 0) {
     await db.delete(schema.artworks).where(notInArray(schema.artworks.id, artworkIdList));

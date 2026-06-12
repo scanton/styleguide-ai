@@ -40,9 +40,14 @@ export function getEvents(): WorldEvent[] {
   return readJsonDir<WorldEvent>("events").sort((a, b) => a.year - b.year);
 }
 
+/** Artworks that actually have an image (AI-gen stubs awaiting render are excluded). */
+export function getDisplayableArtworks(): Artwork[] {
+  return getArtworks().filter((w) => w.imageUrl !== "");
+}
+
 /** Gallery keys ("artist:van-gogh" / "movement:impressionism") that have artworks. */
 export function getGalleryKeys(): string[] {
-  const artworks = getArtworks();
+  const artworks = getDisplayableArtworks();
   const movements = getMovements();
   const artistsWithWorks = new Set(
     artworks.map((w) => w.artistId).filter((a): a is string => a !== null)
