@@ -1,0 +1,32 @@
+{
+  "id": "dada",
+  "name": "Dada",
+  "startYear": 1916,
+  "endYear": 1924,
+  "color": "#C42E6E",
+  "description": "Anti-art born in wartime Zurich: nonsense poems, photomontage, and a urinal signed 'R. Mutt'. Dada mocked every value that had led to the trenches — and accidentally invented conceptual art.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Dada",
+  "influences": [
+    "surrealism",
+    "pop-art"
+  ],
+  "influencedBy": [
+    "cubism",
+    "futurism"
+  ],
+  "keyArtists": [
+    "marcel-duchamp",
+    "hannah-hoch"
+  ],
+  "region": [
+    "Switzerland",
+    "Germany",
+    "France",
+    "USA"
+  ],
+  "tags": [
+    "anti-art",
+    "absurd",
+    "readymade"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "johannes-vermeer",
+  "name": "Johannes Vermeer",
+  "birthYear": 1632,
+  "deathYear": 1675,
+  "nationality": [
+    "Dutch"
+  ],
+  "movements": [
+    "dutch-golden-age"
+  ],
+  "description": "Left barely three dozen paintings, almost all quiet rooms lit from a window at left. Girl with a Pearl Earring made silence itself a subject.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Johannes_Vermeer",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1660
+}

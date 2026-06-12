@@ -1,0 +1,25 @@
+{
+  "id": "mannerism",
+  "name": "Mannerism",
+  "startYear": 1520,
+  "endYear": 1600,
+  "color": "#A0522D",
+  "description": "The sophisticated, self-aware style that followed the High Renaissance. Elongated figures, impossible poses, acidic color, and crowded compositions traded balance for elegance and tension.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Mannerism",
+  "influences": [
+    "baroque"
+  ],
+  "influencedBy": [
+    "renaissance"
+  ],
+  "keyArtists": [],
+  "region": [
+    "Italy",
+    "Europe"
+  ],
+  "tags": [
+    "elongation",
+    "artifice",
+    "late renaissance"
+  ]
+}

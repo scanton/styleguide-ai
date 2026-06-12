@@ -1,0 +1,17 @@
+{
+  "id": "rene-magritte",
+  "name": "René Magritte",
+  "birthYear": 1898,
+  "deathYear": 1967,
+  "nationality": [
+    "Belgian"
+  ],
+  "movements": [
+    "surrealism"
+  ],
+  "description": "The quiet Belgian in a bowler hat who painted impossible things with deadpan precision — 'Ceci n'est pas une pipe' remains philosophy's favorite painting.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Ren%C3%A9_Magritte",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1929
+}

@@ -1,0 +1,32 @@
+{
+  "id": "post-impressionism",
+  "name": "Post-Impressionism",
+  "startYear": 1885,
+  "endYear": 1910,
+  "color": "#E08214",
+  "description": "Where Impressionism's children went their separate ways: Cézanne toward structure, Van Gogh toward feeling, Gauguin toward symbol, Seurat toward science. Together they laid every road to the twentieth century.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Post-Impressionism",
+  "influences": [
+    "fauvism",
+    "expressionism",
+    "cubism"
+  ],
+  "influencedBy": [
+    "impressionism",
+    "ukiyo-e"
+  ],
+  "keyArtists": [
+    "vincent-van-gogh",
+    "paul-cezanne",
+    "paul-gauguin",
+    "georges-seurat"
+  ],
+  "region": [
+    "France"
+  ],
+  "tags": [
+    "color",
+    "structure",
+    "expression"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "pablo-picasso",
+  "name": "Pablo Picasso",
+  "birthYear": 1881,
+  "deathYear": 1973,
+  "nationality": [
+    "Spanish"
+  ],
+  "movements": [
+    "cubism",
+    "surrealism"
+  ],
+  "description": "Co-inventor of Cubism, painter of Guernica, and the century's restless shape-shifter — blue, rose, analytic, classical, surreal, late — each period enough for another artist's lifetime.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Pablo_Picasso",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1910
+}

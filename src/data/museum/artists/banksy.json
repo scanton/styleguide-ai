@@ -1,0 +1,17 @@
+{
+  "id": "banksy",
+  "name": "Banksy",
+  "birthYear": 1974,
+  "deathYear": null,
+  "nationality": [
+    "British"
+  ],
+  "movements": [
+    "street-art"
+  ],
+  "description": "Anonymous Bristol stencilist whose satirical interventions — and a painting that shredded itself at auction — keep asking what art is worth and who owns the street.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Banksy",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 2005
+}

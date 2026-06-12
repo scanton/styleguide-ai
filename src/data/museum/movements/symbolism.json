@@ -1,0 +1,33 @@
+{
+  "id": "symbolism",
+  "name": "Symbolism",
+  "startYear": 1880,
+  "endYear": 1910,
+  "color": "#66498C",
+  "description": "Art turned inward — dreams, myths, anxiety, and desire rendered in suggestive imagery rather than literal description. Munch's scream and Klimt's gold both grew from this soil.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Symbolism_(movement)",
+  "influences": [
+    "expressionism",
+    "surrealism",
+    "art-nouveau"
+  ],
+  "influencedBy": [
+    "romanticism",
+    "pre-raphaelite"
+  ],
+  "keyArtists": [
+    "edvard-munch",
+    "gustav-klimt"
+  ],
+  "region": [
+    "France",
+    "Belgium",
+    "Norway",
+    "Austria"
+  ],
+  "tags": [
+    "dream",
+    "myth",
+    "psyche"
+  ]
+}

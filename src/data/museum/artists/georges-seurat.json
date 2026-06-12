@@ -1,0 +1,17 @@
+{
+  "id": "georges-seurat",
+  "name": "Georges Seurat",
+  "birthYear": 1859,
+  "deathYear": 1891,
+  "nationality": [
+    "French"
+  ],
+  "movements": [
+    "post-impressionism"
+  ],
+  "description": "Painted with optics — millions of dots of pure color fusing in the eye. La Grande Jatte made science and silence monumental; he died at 31.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Georges_Seurat",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1886
+}

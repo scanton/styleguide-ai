@@ -1,0 +1,28 @@
+{
+  "id": "art-deco",
+  "name": "Art Deco",
+  "startYear": 1920,
+  "endYear": 1940,
+  "color": "#B08D57",
+  "description": "Glamour geometry — sunbursts, chevrons, chrome, and lacquer across skyscrapers, ocean liners, and cinema palaces. The optimistic luxury style of the machine age between the wars.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Art_Deco",
+  "influences": [],
+  "influencedBy": [
+    "art-nouveau",
+    "cubism",
+    "futurism"
+  ],
+  "keyArtists": [
+    "tamara-de-lempicka"
+  ],
+  "region": [
+    "France",
+    "USA",
+    "Global"
+  ],
+  "tags": [
+    "glamour",
+    "geometry",
+    "design"
+  ]
+}

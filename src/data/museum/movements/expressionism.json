@@ -1,0 +1,30 @@
+{
+  "id": "expressionism",
+  "name": "Expressionism",
+  "startYear": 1905,
+  "endYear": 1930,
+  "color": "#2F4B7C",
+  "description": "Inner experience over outer appearance — jagged forms, clashing color, and raw psychological intensity, centered in Germany around Die Brücke and Der Blaue Reiter. Kandinsky pushed it all the way to abstraction.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Expressionism",
+  "influences": [
+    "abstract-expressionism"
+  ],
+  "influencedBy": [
+    "post-impressionism",
+    "fauvism",
+    "symbolism"
+  ],
+  "keyArtists": [
+    "ernst-ludwig-kirchner",
+    "wassily-kandinsky"
+  ],
+  "region": [
+    "Germany",
+    "Austria"
+  ],
+  "tags": [
+    "emotion",
+    "distortion",
+    "german"
+  ]
+}

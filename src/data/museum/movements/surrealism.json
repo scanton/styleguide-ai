@@ -1,0 +1,33 @@
+{
+  "id": "surrealism",
+  "name": "Surrealism",
+  "startYear": 1924,
+  "endYear": 1955,
+  "color": "#0F7B8A",
+  "description": "The dream made visible — melting clocks, bowler hats, and impossible juxtapositions mined from the unconscious. Breton wrote the manifesto; Dalí, Magritte, and Kahlo painted its strange weather.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Surrealism",
+  "influences": [
+    "abstract-expressionism",
+    "pop-art"
+  ],
+  "influencedBy": [
+    "dada",
+    "symbolism"
+  ],
+  "keyArtists": [
+    "salvador-dali",
+    "rene-magritte",
+    "frida-kahlo"
+  ],
+  "region": [
+    "France",
+    "Spain",
+    "Belgium",
+    "Mexico"
+  ],
+  "tags": [
+    "dream",
+    "unconscious",
+    "juxtaposition"
+  ]
+}

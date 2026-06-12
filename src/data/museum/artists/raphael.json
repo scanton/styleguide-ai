@@ -1,0 +1,17 @@
+{
+  "id": "raphael",
+  "name": "Raphael",
+  "birthYear": 1483,
+  "deathYear": 1520,
+  "nationality": [
+    "Italian"
+  ],
+  "movements": [
+    "renaissance"
+  ],
+  "description": "The painter of grace and perfect balance, dead at 37. The School of Athens distilled the entire Renaissance project into one fresco.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Raphael",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1510
+}

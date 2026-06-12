@@ -1,0 +1,28 @@
+{
+  "id": "futurism",
+  "name": "Futurism",
+  "startYear": 1909,
+  "endYear": 1920,
+  "color": "#B85042",
+  "description": "An Italian cult of speed, machines, and modernity that wanted to burn the museums. Dynamic lines and fractured motion capture bodies and cities hurtling forward in time.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Futurism",
+  "influences": [
+    "art-deco",
+    "dada"
+  ],
+  "influencedBy": [
+    "cubism",
+    "post-impressionism"
+  ],
+  "keyArtists": [
+    "umberto-boccioni"
+  ],
+  "region": [
+    "Italy"
+  ],
+  "tags": [
+    "speed",
+    "machine",
+    "manifesto"
+  ]
+}

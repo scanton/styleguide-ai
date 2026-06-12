@@ -1,0 +1,18 @@
+{
+  "id": "paul-gauguin",
+  "name": "Paul Gauguin",
+  "birthYear": 1848,
+  "deathYear": 1903,
+  "nationality": [
+    "French"
+  ],
+  "movements": [
+    "post-impressionism",
+    "symbolism"
+  ],
+  "description": "Stockbroker turned painter who fled to Brittany and Tahiti chasing the primitive and symbolic — flat planes of saturated color that pointed straight at Fauvism.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Paul_Gauguin",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1892
+}

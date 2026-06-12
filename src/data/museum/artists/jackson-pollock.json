@@ -1,0 +1,17 @@
+{
+  "id": "jackson-pollock",
+  "name": "Jackson Pollock",
+  "birthYear": 1912,
+  "deathYear": 1956,
+  "nationality": [
+    "American"
+  ],
+  "movements": [
+    "abstract-expressionism"
+  ],
+  "description": "Laid the canvas on the floor and entered it — the drip paintings of 1947–50 made the act of painting itself the subject and New York the new capital of art.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Jackson_Pollock",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1949
+}

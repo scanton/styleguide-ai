@@ -1,0 +1,18 @@
+{
+  "id": "gustav-klimt",
+  "name": "Gustav Klimt",
+  "birthYear": 1862,
+  "deathYear": 1918,
+  "nationality": [
+    "Austrian"
+  ],
+  "movements": [
+    "symbolism",
+    "art-nouveau"
+  ],
+  "description": "Leader of the Vienna Secession who wrapped eros and mortality in shimmering gold leaf — The Kiss is ornament and intimacy fused into icon.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Gustav_Klimt",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1907
+}

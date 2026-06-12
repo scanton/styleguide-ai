@@ -1,0 +1,17 @@
+{
+  "id": "leonardo-da-vinci",
+  "name": "Leonardo da Vinci",
+  "birthYear": 1452,
+  "deathYear": 1519,
+  "nationality": [
+    "Italian"
+  ],
+  "movements": [
+    "renaissance"
+  ],
+  "description": "Painter, engineer, anatomist, and the archetype of the Renaissance polymath. The Mona Lisa and The Last Supper are studies in sfumato and psychology as much as paint.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Leonardo_da_Vinci",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1500
+}

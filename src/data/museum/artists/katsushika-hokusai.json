@@ -1,0 +1,17 @@
+{
+  "id": "katsushika-hokusai",
+  "name": "Katsushika Hokusai",
+  "birthYear": 1760,
+  "deathYear": 1849,
+  "nationality": [
+    "Japanese"
+  ],
+  "movements": [
+    "ukiyo-e"
+  ],
+  "description": "Creator of The Great Wave off Kanagawa, the most reproduced image in art history, and thirty-six views of Mount Fuji that changed how the West saw pictures.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Hokusai",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1830
+}

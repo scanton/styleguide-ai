@@ -1,0 +1,17 @@
+{
+  "id": "frida-kahlo",
+  "name": "Frida Kahlo",
+  "birthYear": 1907,
+  "deathYear": 1954,
+  "nationality": [
+    "Mexican"
+  ],
+  "movements": [
+    "surrealism"
+  ],
+  "description": "Painted her own reality — pain, identity, and Mexico in unflinching self-portraits. 'I never painted dreams,' she said, refusing the Surrealist label they gave her anyway.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Frida_Kahlo",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1940
+}

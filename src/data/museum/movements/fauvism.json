@@ -1,0 +1,28 @@
+{
+  "id": "fauvism",
+  "name": "Fauvism",
+  "startYear": 1904,
+  "endYear": 1910,
+  "color": "#E2654B",
+  "description": "The 'wild beasts' who set color free — vermilion trees, green-striped faces, paint straight from the tube. Brief, blazing, and led by Matisse, it was the first avant-garde shock of the new century.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Fauvism",
+  "influences": [
+    "expressionism",
+    "cubism"
+  ],
+  "influencedBy": [
+    "post-impressionism",
+    "impressionism"
+  ],
+  "keyArtists": [
+    "henri-matisse"
+  ],
+  "region": [
+    "France"
+  ],
+  "tags": [
+    "color",
+    "wild",
+    "avant-garde"
+  ]
+}

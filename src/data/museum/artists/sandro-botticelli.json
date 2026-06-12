@@ -1,0 +1,17 @@
+{
+  "id": "sandro-botticelli",
+  "name": "Sandro Botticelli",
+  "birthYear": 1445,
+  "deathYear": 1510,
+  "nationality": [
+    "Italian"
+  ],
+  "movements": [
+    "renaissance"
+  ],
+  "description": "Florentine master of lyrical line whose Birth of Venus and Primavera gave classical myth a dreamlike, melancholy beauty unique in the early Renaissance.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Sandro_Botticelli",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1485
+}

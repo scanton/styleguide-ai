@@ -1,0 +1,28 @@
+{
+  "id": "dutch-golden-age",
+  "name": "Dutch Golden Age",
+  "startYear": 1588,
+  "endYear": 1672,
+  "color": "#996515",
+  "description": "A merchant republic's art boom: portraits, still lifes, landscapes, and quiet domestic scenes painted for ordinary homes rather than palaces. Rembrandt and Vermeer turned everyday light into something sacred.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Dutch_Golden_Age_painting",
+  "influences": [
+    "realism"
+  ],
+  "influencedBy": [
+    "northern-renaissance",
+    "baroque"
+  ],
+  "keyArtists": [
+    "rembrandt",
+    "johannes-vermeer"
+  ],
+  "region": [
+    "Netherlands"
+  ],
+  "tags": [
+    "genre painting",
+    "still life",
+    "portraiture"
+  ]
+}

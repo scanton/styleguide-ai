@@ -1,0 +1,29 @@
+{
+  "id": "bauhaus",
+  "name": "Bauhaus",
+  "startYear": 1919,
+  "endYear": 1933,
+  "color": "#3A7CA5",
+  "description": "The German school that fused art, craft, and industry — geometric clarity, primary colors, and the conviction that good design could rebuild society. Closed by the Nazis, its ideas conquered the world anyway.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Bauhaus",
+  "influences": [
+    "minimalism",
+    "digital-art"
+  ],
+  "influencedBy": [
+    "cubism",
+    "expressionism"
+  ],
+  "keyArtists": [
+    "paul-klee",
+    "wassily-kandinsky"
+  ],
+  "region": [
+    "Germany"
+  ],
+  "tags": [
+    "design",
+    "geometry",
+    "modernism"
+  ]
+}

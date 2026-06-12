@@ -1,0 +1,31 @@
+{
+  "id": "cubism",
+  "name": "Cubism",
+  "startYear": 1907,
+  "endYear": 1922,
+  "color": "#75705B",
+  "description": "Picasso and Braque shattered five hundred years of perspective, showing objects from many viewpoints at once in faceted planes of muted color. The single most influential formal invention of modern art.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Cubism",
+  "influences": [
+    "futurism",
+    "dada",
+    "bauhaus",
+    "art-deco"
+  ],
+  "influencedBy": [
+    "post-impressionism",
+    "fauvism"
+  ],
+  "keyArtists": [
+    "pablo-picasso",
+    "georges-braque"
+  ],
+  "region": [
+    "France"
+  ],
+  "tags": [
+    "geometry",
+    "multiple viewpoints",
+    "analytic"
+  ]
+}

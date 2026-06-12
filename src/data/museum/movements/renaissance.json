@@ -1,0 +1,31 @@
+{
+  "id": "renaissance",
+  "name": "Renaissance",
+  "startYear": 1400,
+  "endYear": 1600,
+  "color": "#B8860B",
+  "description": "A rebirth of classical learning and naturalism that began in Florence and spread across Europe. Artists mastered perspective, anatomy, and oil technique, elevating painting and sculpture to intellectual pursuits.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Renaissance_art",
+  "influences": [
+    "mannerism",
+    "baroque",
+    "neoclassicism"
+  ],
+  "influencedBy": [],
+  "keyArtists": [
+    "leonardo-da-vinci",
+    "michelangelo",
+    "raphael",
+    "sandro-botticelli",
+    "titian"
+  ],
+  "region": [
+    "Italy",
+    "Europe"
+  ],
+  "tags": [
+    "classical",
+    "perspective",
+    "humanism"
+  ]
+}

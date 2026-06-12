@@ -1,0 +1,29 @@
+{
+  "id": "realism",
+  "name": "Realism",
+  "startYear": 1840,
+  "endYear": 1880,
+  "color": "#5F7355",
+  "description": "Painting life as it actually looked — laborers, peasants, and unidealized modern existence. Courbet's manifesto in pigment rejected both academic mythology and Romantic drama.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Realism_(art_movement)",
+  "influences": [
+    "impressionism"
+  ],
+  "influencedBy": [
+    "romanticism",
+    "dutch-golden-age",
+    "neoclassicism"
+  ],
+  "keyArtists": [
+    "gustave-courbet",
+    "edouard-manet"
+  ],
+  "region": [
+    "France"
+  ],
+  "tags": [
+    "everyday life",
+    "social",
+    "anti-academic"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "impressionism",
+  "name": "Impressionism",
+  "startYear": 1860,
+  "endYear": 1890,
+  "color": "#7B9ACC",
+  "description": "Painting light itself — broken brushwork, open-air canvases, and fleeting modern moments, scorned by the Salon and named after an insult. The breakthrough that made modern art possible.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Impressionism",
+  "influences": [
+    "post-impressionism",
+    "fauvism"
+  ],
+  "influencedBy": [
+    "realism",
+    "ukiyo-e",
+    "romanticism"
+  ],
+  "keyArtists": [
+    "claude-monet",
+    "pierre-auguste-renoir",
+    "edgar-degas",
+    "mary-cassatt",
+    "berthe-morisot"
+  ],
+  "region": [
+    "France"
+  ],
+  "tags": [
+    "light",
+    "plein air",
+    "modern life"
+  ]
+}

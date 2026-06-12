@@ -1,0 +1,32 @@
+{
+  "id": "northern-renaissance",
+  "name": "Northern Renaissance",
+  "startYear": 1430,
+  "endYear": 1580,
+  "color": "#8B6914",
+  "description": "The Renaissance as it unfolded north of the Alps, marked by meticulous oil-painted detail, domestic realism, and printmaking. Less classical idealism, more observed truth — down to individual hairs and reflections.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Northern_Renaissance",
+  "influences": [
+    "baroque",
+    "dutch-golden-age"
+  ],
+  "influencedBy": [
+    "renaissance"
+  ],
+  "keyArtists": [
+    "jan-van-eyck",
+    "albrecht-durer",
+    "hieronymus-bosch",
+    "pieter-bruegel-the-elder"
+  ],
+  "region": [
+    "Netherlands",
+    "Germany",
+    "Flanders"
+  ],
+  "tags": [
+    "oil painting",
+    "detail",
+    "printmaking"
+  ]
+}

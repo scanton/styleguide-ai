@@ -1,0 +1,33 @@
+{
+  "id": "art-nouveau",
+  "name": "Art Nouveau",
+  "startYear": 1890,
+  "endYear": 1910,
+  "color": "#87986A",
+  "description": "The whiplash line — organic, botanical ornament flowing across posters, architecture, jewelry, and glass. A total style that wanted to make every object in modern life beautiful.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Art_Nouveau",
+  "influences": [
+    "art-deco",
+    "expressionism"
+  ],
+  "influencedBy": [
+    "ukiyo-e",
+    "symbolism",
+    "pre-raphaelite"
+  ],
+  "keyArtists": [
+    "alphonse-mucha",
+    "gustav-klimt"
+  ],
+  "region": [
+    "France",
+    "Belgium",
+    "Austria",
+    "Europe"
+  ],
+  "tags": [
+    "ornament",
+    "organic",
+    "design"
+  ]
+}

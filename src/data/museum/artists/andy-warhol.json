@@ -1,0 +1,17 @@
+{
+  "id": "andy-warhol",
+  "name": "Andy Warhol",
+  "birthYear": 1928,
+  "deathYear": 1987,
+  "nationality": [
+    "American"
+  ],
+  "movements": [
+    "pop-art"
+  ],
+  "description": "Silkscreened soup cans, Marilyns, and disasters with factory detachment — 'I want to be a machine.' No artist read celebrity culture more presciently.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Andy_Warhol",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1964
+}

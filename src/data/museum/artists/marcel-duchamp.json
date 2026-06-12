@@ -1,0 +1,18 @@
+{
+  "id": "marcel-duchamp",
+  "name": "Marcel Duchamp",
+  "birthYear": 1887,
+  "deathYear": 1968,
+  "nationality": [
+    "French",
+    "American"
+  ],
+  "movements": [
+    "dada"
+  ],
+  "description": "Signed a urinal 'R. Mutt' and asked whether art is made by hand or by choice — then spent decades playing chess while his question swallowed the art world.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Marcel_Duchamp",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1917
+}

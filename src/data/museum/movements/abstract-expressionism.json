@@ -1,0 +1,31 @@
+{
+  "id": "abstract-expressionism",
+  "name": "Abstract Expressionism",
+  "startYear": 1943,
+  "endYear": 1965,
+  "color": "#54426B",
+  "description": "New York seizes the avant-garde: huge canvases, dripped and flung paint, and fields of pure color as vehicles for raw feeling. Pollock's action and Rothko's silence are its two poles.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Abstract_expressionism",
+  "influences": [
+    "minimalism",
+    "pop-art"
+  ],
+  "influencedBy": [
+    "surrealism",
+    "expressionism"
+  ],
+  "keyArtists": [
+    "jackson-pollock",
+    "mark-rothko",
+    "willem-de-kooning",
+    "lee-krasner"
+  ],
+  "region": [
+    "USA"
+  ],
+  "tags": [
+    "action painting",
+    "color field",
+    "new york"
+  ]
+}

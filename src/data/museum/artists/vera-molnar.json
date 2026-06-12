@@ -1,0 +1,19 @@
+{
+  "id": "vera-molnar",
+  "name": "Vera Molnár",
+  "birthYear": 1924,
+  "deathYear": 2023,
+  "nationality": [
+    "Hungarian",
+    "French"
+  ],
+  "movements": [
+    "digital-art",
+    "minimalism"
+  ],
+  "description": "Began making algorithmic drawings by hand in 1959, then with one of the first artist-programmed computers — the acknowledged grandmother of generative art.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Vera_Moln%C3%A1r",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1975
+}

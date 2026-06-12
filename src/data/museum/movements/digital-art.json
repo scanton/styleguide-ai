@@ -1,0 +1,27 @@
+{
+  "id": "digital-art",
+  "name": "Digital Art",
+  "startYear": 1985,
+  "endYear": null,
+  "color": "#0FA3B1",
+  "description": "Art born in computation — from plotter drawings and pixel experiments to generative algorithms, immersive data sculptures, and AI imagery. The newest chapter, still being written.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Digital_art",
+  "influences": [],
+  "influencedBy": [
+    "minimalism",
+    "bauhaus",
+    "pop-art"
+  ],
+  "keyArtists": [
+    "vera-molnar",
+    "refik-anadol"
+  ],
+  "region": [
+    "Global"
+  ],
+  "tags": [
+    "generative",
+    "computation",
+    "ai"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "edgar-degas",
+  "name": "Edgar Degas",
+  "birthYear": 1834,
+  "deathYear": 1917,
+  "nationality": [
+    "French"
+  ],
+  "movements": [
+    "impressionism"
+  ],
+  "description": "The movement's classicist — ballet dancers, racehorses, and bathers caught from odd angles with a draftsman's line and a photographer's eye for the candid moment.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Edgar_Degas",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1875
+}

@@ -1,0 +1,17 @@
+{
+  "id": "mary-cassatt",
+  "name": "Mary Cassatt",
+  "birthYear": 1844,
+  "deathYear": 1926,
+  "nationality": [
+    "American"
+  ],
+  "movements": [
+    "impressionism"
+  ],
+  "description": "Pennsylvania-born painter who exhibited with the Impressionists in Paris, finding modern subject matter in the intimate world of mothers, children, and tea tables.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Mary_Cassatt",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1880
+}

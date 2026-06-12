@@ -1,0 +1,30 @@
+{
+  "id": "pop-art",
+  "name": "Pop Art",
+  "startYear": 1955,
+  "endYear": 1975,
+  "color": "#E84393",
+  "description": "Soup cans, comic strips, and movie stars — mass culture embraced as fine art with a silkscreened wink. Warhol made repetition iconic; Lichtenstein blew up the Ben-Day dot.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Pop_art",
+  "influences": [
+    "street-art"
+  ],
+  "influencedBy": [
+    "dada",
+    "abstract-expressionism"
+  ],
+  "keyArtists": [
+    "andy-warhol",
+    "roy-lichtenstein",
+    "yayoi-kusama"
+  ],
+  "region": [
+    "USA",
+    "England"
+  ],
+  "tags": [
+    "mass culture",
+    "silkscreen",
+    "consumerism"
+  ]
+}

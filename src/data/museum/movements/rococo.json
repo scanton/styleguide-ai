@@ -1,0 +1,28 @@
+{
+  "id": "rococo",
+  "name": "Rococo",
+  "startYear": 1720,
+  "endYear": 1780,
+  "color": "#C48793",
+  "description": "The Baroque gone pastel and playful — gilded interiors, garden flirtations, and powdered aristocrats at leisure. Ornament, asymmetry, and charm over gravity, born in the salons of Paris.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Rococo",
+  "influences": [
+    "neoclassicism"
+  ],
+  "influencedBy": [
+    "baroque"
+  ],
+  "keyArtists": [
+    "jean-honore-fragonard",
+    "francois-boucher"
+  ],
+  "region": [
+    "France",
+    "Europe"
+  ],
+  "tags": [
+    "ornament",
+    "aristocracy",
+    "pastel"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "titian",
+  "name": "Titian",
+  "birthYear": 1488,
+  "deathYear": 1576,
+  "nationality": [
+    "Italian"
+  ],
+  "movements": [
+    "renaissance",
+    "mannerism"
+  ],
+  "description": "The Venetian colorist who made oil paint sensuous, painting emperors, popes, and goddesses with a loose late style centuries ahead of its time.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Titian",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1540
+}

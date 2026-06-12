@@ -1,0 +1,29 @@
+{
+  "id": "street-art",
+  "name": "Street Art",
+  "startYear": 1975,
+  "endYear": null,
+  "color": "#7A28CB",
+  "description": "From subway graffiti to museum walls — stencils, tags, murals, and interventions claiming the city as canvas. Basquiat and Haring crossed over first; Banksy made anonymity a brand.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Street_art",
+  "influences": [
+    "digital-art"
+  ],
+  "influencedBy": [
+    "pop-art"
+  ],
+  "keyArtists": [
+    "jean-michel-basquiat",
+    "keith-haring",
+    "banksy"
+  ],
+  "region": [
+    "USA",
+    "Global"
+  ],
+  "tags": [
+    "graffiti",
+    "urban",
+    "public"
+  ]
+}

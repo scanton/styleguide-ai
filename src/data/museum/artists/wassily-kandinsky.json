@@ -1,0 +1,20 @@
+{
+  "id": "wassily-kandinsky",
+  "name": "Wassily Kandinsky",
+  "birthYear": 1866,
+  "deathYear": 1944,
+  "nationality": [
+    "Russian",
+    "German",
+    "French"
+  ],
+  "movements": [
+    "expressionism",
+    "bauhaus"
+  ],
+  "description": "Painted what music feels like and arrived at pure abstraction around 1911 — then systematized it all as a Bauhaus master. Color, he wrote, is the keyboard.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Wassily_Kandinsky",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1912
+}

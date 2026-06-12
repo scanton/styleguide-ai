@@ -1,0 +1,19 @@
+{
+  "id": "paul-klee",
+  "name": "Paul Klee",
+  "birthYear": 1879,
+  "deathYear": 1940,
+  "nationality": [
+    "Swiss",
+    "German"
+  ],
+  "movements": [
+    "bauhaus",
+    "expressionism"
+  ],
+  "description": "Took a line for a walk — witty, small-format paintings blending abstraction, color theory, and childlike invention, taught for a decade at the Bauhaus.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Paul_Klee",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1922
+}

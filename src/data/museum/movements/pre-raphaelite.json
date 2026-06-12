@@ -1,0 +1,29 @@
+{
+  "id": "pre-raphaelite",
+  "name": "Pre-Raphaelite Brotherhood",
+  "startYear": 1848,
+  "endYear": 1900,
+  "color": "#1F6F5C",
+  "description": "A secret brotherhood of young Victorians who rejected the academy in favor of the jewel-bright sincerity of art before Raphael. Literary subjects, flame-haired muses, and obsessive natural detail.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Pre-Raphaelite_Brotherhood",
+  "influences": [
+    "symbolism",
+    "art-nouveau"
+  ],
+  "influencedBy": [
+    "romanticism",
+    "renaissance"
+  ],
+  "keyArtists": [
+    "dante-gabriel-rossetti",
+    "john-everett-millais"
+  ],
+  "region": [
+    "England"
+  ],
+  "tags": [
+    "victorian",
+    "literary",
+    "detail"
+  ]
+}

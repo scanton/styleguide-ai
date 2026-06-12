@@ -1,0 +1,17 @@
+{
+  "id": "pierre-auguste-renoir",
+  "name": "Pierre-Auguste Renoir",
+  "birthYear": 1841,
+  "deathYear": 1919,
+  "nationality": [
+    "French"
+  ],
+  "movements": [
+    "impressionism"
+  ],
+  "description": "Painter of dappled sunlight on Sunday crowds — Bal du moulin de la Galette is Impressionism at its most joyous and sociable.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Pierre-Auguste_Renoir",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1876
+}

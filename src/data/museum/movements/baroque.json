@@ -1,0 +1,34 @@
+{
+  "id": "baroque",
+  "name": "Baroque",
+  "startYear": 1600,
+  "endYear": 1750,
+  "color": "#6B4226",
+  "description": "Drama as doctrine: sweeping diagonals, theatrical light, and emotional intensity in service of church and crown. Caravaggio's shadows and Rubens's swirling flesh defined a century of European art.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Baroque_painting",
+  "influences": [
+    "rococo",
+    "romanticism"
+  ],
+  "influencedBy": [
+    "renaissance",
+    "mannerism"
+  ],
+  "keyArtists": [
+    "caravaggio",
+    "artemisia-gentileschi",
+    "peter-paul-rubens",
+    "diego-velazquez"
+  ],
+  "region": [
+    "Italy",
+    "Spain",
+    "Flanders",
+    "Europe"
+  ],
+  "tags": [
+    "chiaroscuro",
+    "drama",
+    "counter-reformation"
+  ]
+}

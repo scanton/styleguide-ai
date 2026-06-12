@@ -1,0 +1,17 @@
+{
+  "id": "albrecht-durer",
+  "name": "Albrecht Dürer",
+  "birthYear": 1471,
+  "deathYear": 1528,
+  "nationality": [
+    "German"
+  ],
+  "movements": [
+    "northern-renaissance"
+  ],
+  "description": "Printmaker-genius of the German Renaissance whose engravings and woodcuts circulated across Europe like a new mass medium. Also painted the first true self-portraits as statements.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Albrecht_D%C3%BCrer",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1505
+}

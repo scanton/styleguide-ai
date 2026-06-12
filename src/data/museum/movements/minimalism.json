@@ -1,0 +1,28 @@
+{
+  "id": "minimalism",
+  "name": "Minimalism",
+  "startYear": 1960,
+  "endYear": 1980,
+  "color": "#9098A1",
+  "description": "What you see is what you see: industrial materials, serial repetition, and geometric forms stripped of gesture, symbol, and story. Art reduced to pure presence in space.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Minimalism_(visual_arts)",
+  "influences": [
+    "digital-art"
+  ],
+  "influencedBy": [
+    "bauhaus",
+    "abstract-expressionism"
+  ],
+  "keyArtists": [
+    "donald-judd",
+    "agnes-martin"
+  ],
+  "region": [
+    "USA"
+  ],
+  "tags": [
+    "reduction",
+    "geometry",
+    "industrial"
+  ]
+}

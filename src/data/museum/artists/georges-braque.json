@@ -1,0 +1,18 @@
+{
+  "id": "georges-braque",
+  "name": "Georges Braque",
+  "birthYear": 1882,
+  "deathYear": 1963,
+  "nationality": [
+    "French"
+  ],
+  "movements": [
+    "cubism",
+    "fauvism"
+  ],
+  "description": "Picasso's partner in the Cubist adventure — 'roped together like mountaineers' — and inventor of papier collé, the collage that let the real world into painting.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Georges_Braque",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1910
+}

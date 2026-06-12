@@ -1,0 +1,18 @@
+{
+  "id": "keith-haring",
+  "name": "Keith Haring",
+  "birthYear": 1958,
+  "deathYear": 1990,
+  "nationality": [
+    "American"
+  ],
+  "movements": [
+    "street-art",
+    "pop-art"
+  ],
+  "description": "Chalk drawings in the subway became a universal sign language — radiant babies, barking dogs, dancing figures — art for everybody, by design.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Keith_Haring",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1984
+}

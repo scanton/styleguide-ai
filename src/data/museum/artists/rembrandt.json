@@ -1,0 +1,18 @@
+{
+  "id": "rembrandt",
+  "name": "Rembrandt van Rijn",
+  "birthYear": 1606,
+  "deathYear": 1669,
+  "nationality": [
+    "Dutch"
+  ],
+  "movements": [
+    "dutch-golden-age",
+    "baroque"
+  ],
+  "description": "The supreme painter of inner life — through bankruptcies and bereavement his self-portraits and biblical scenes grew ever more honest, rough, and humane.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Rembrandt",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1642
+}

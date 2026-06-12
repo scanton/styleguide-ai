@@ -1,0 +1,18 @@
+{
+  "id": "michelangelo",
+  "name": "Michelangelo",
+  "birthYear": 1475,
+  "deathYear": 1564,
+  "nationality": [
+    "Italian"
+  ],
+  "movements": [
+    "renaissance",
+    "mannerism"
+  ],
+  "description": "Sculptor first, painter under protest — David, the Pietà, and the Sistine ceiling set the standard for the heroic human figure for four centuries.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Michelangelo",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1510
+}

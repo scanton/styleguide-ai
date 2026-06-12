@@ -1,0 +1,30 @@
+{
+  "id": "neoclassicism",
+  "name": "Neoclassicism",
+  "startYear": 1750,
+  "endYear": 1830,
+  "color": "#708272",
+  "description": "A stern return to Greco-Roman order sparked by the excavation of Pompeii and Enlightenment ideals. Crisp contours, moral subjects, and marble restraint — the official style of revolution and empire.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Neoclassicism",
+  "influences": [
+    "romanticism",
+    "realism"
+  ],
+  "influencedBy": [
+    "renaissance",
+    "rococo"
+  ],
+  "keyArtists": [
+    "jacques-louis-david",
+    "jean-auguste-dominique-ingres"
+  ],
+  "region": [
+    "France",
+    "Europe"
+  ],
+  "tags": [
+    "classical",
+    "enlightenment",
+    "order"
+  ]
+}

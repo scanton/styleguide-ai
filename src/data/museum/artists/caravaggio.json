@@ -1,0 +1,17 @@
+{
+  "id": "caravaggio",
+  "name": "Caravaggio",
+  "birthYear": 1571,
+  "deathYear": 1610,
+  "nationality": [
+    "Italian"
+  ],
+  "movements": [
+    "baroque"
+  ],
+  "description": "Violent, brilliant, and revolutionary — he lit saints like street criminals and invented the theatrical darkness the entire Baroque would paint by.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Caravaggio",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1600
+}

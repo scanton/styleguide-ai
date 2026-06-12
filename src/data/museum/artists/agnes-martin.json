@@ -1,0 +1,19 @@
+{
+  "id": "agnes-martin",
+  "name": "Agnes Martin",
+  "birthYear": 1912,
+  "deathYear": 2004,
+  "nationality": [
+    "Canadian",
+    "American"
+  ],
+  "movements": [
+    "minimalism",
+    "abstract-expressionism"
+  ],
+  "description": "Hand-drawn grids and pale bands painted in desert solitude — minimal in form, but aimed at 'innocence' and joy. The quietest major painter of the century.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Agnes_Martin",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1965
+}

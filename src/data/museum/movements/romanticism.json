@@ -1,0 +1,35 @@
+{
+  "id": "romanticism",
+  "name": "Romanticism",
+  "startYear": 1780,
+  "endYear": 1850,
+  "color": "#7D4A66",
+  "description": "Emotion, imagination, and the sublime against Enlightenment reason. Storms, ruins, revolutions, and inner torment — Turner dissolved the world into light while Goya stared into its darkness.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Romanticism",
+  "influences": [
+    "realism",
+    "symbolism",
+    "pre-raphaelite"
+  ],
+  "influencedBy": [
+    "baroque",
+    "neoclassicism"
+  ],
+  "keyArtists": [
+    "francisco-goya",
+    "eugene-delacroix",
+    "jmw-turner",
+    "caspar-david-friedrich"
+  ],
+  "region": [
+    "England",
+    "France",
+    "Germany",
+    "Spain"
+  ],
+  "tags": [
+    "sublime",
+    "emotion",
+    "nature"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "vincent-van-gogh",
+  "name": "Vincent van Gogh",
+  "birthYear": 1853,
+  "deathYear": 1890,
+  "nationality": [
+    "Dutch"
+  ],
+  "movements": [
+    "post-impressionism"
+  ],
+  "description": "Sold one painting in a decade of work and changed art forever — The Starry Night and the sunflowers burn with a color and conviction no one has matched since.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Vincent_van_Gogh",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1888
+}

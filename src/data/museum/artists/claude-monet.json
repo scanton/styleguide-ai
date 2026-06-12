@@ -1,0 +1,17 @@
+{
+  "id": "claude-monet",
+  "name": "Claude Monet",
+  "birthYear": 1840,
+  "deathYear": 1926,
+  "nationality": [
+    "French"
+  ],
+  "movements": [
+    "impressionism"
+  ],
+  "description": "Gave the movement its name with Impression, Sunrise and never stopped chasing light — haystacks, cathedrals, and finally the water lilies that fill whole rooms.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Claude_Monet",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1875
+}

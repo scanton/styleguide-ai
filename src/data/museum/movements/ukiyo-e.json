@@ -1,0 +1,27 @@
+{
+  "id": "ukiyo-e",
+  "name": "Ukiyo-e",
+  "startYear": 1670,
+  "endYear": 1880,
+  "color": "#2B6E8C",
+  "description": "Japanese woodblock prints of the 'floating world' — kabuki actors, courtesans, landscapes, and great waves. Flat color, bold contour, and daring composition that would later electrify European modernism.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Ukiyo-e",
+  "influences": [
+    "impressionism",
+    "post-impressionism",
+    "art-nouveau"
+  ],
+  "influencedBy": [],
+  "keyArtists": [
+    "katsushika-hokusai",
+    "utagawa-hiroshige"
+  ],
+  "region": [
+    "Japan"
+  ],
+  "tags": [
+    "woodblock",
+    "japan",
+    "printmaking"
+  ]
+}

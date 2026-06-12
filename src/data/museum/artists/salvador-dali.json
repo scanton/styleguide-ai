@@ -1,0 +1,17 @@
+{
+  "id": "salvador-dali",
+  "name": "Salvador Dalí",
+  "birthYear": 1904,
+  "deathYear": 1989,
+  "nationality": [
+    "Spanish"
+  ],
+  "movements": [
+    "surrealism"
+  ],
+  "description": "Showman of the unconscious whose melting clocks in The Persistence of Memory made Surrealism world-famous — 'the only difference between me and a madman is that I am not mad.'",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Salvador_Dal%C3%AD",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1931
+}
