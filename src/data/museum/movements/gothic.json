@@ -1,0 +1,31 @@
+{
+  "id": "gothic",
+  "name": "Gothic",
+  "startYear": 1140,
+  "endYear": 1500,
+  "color": "#3E5C76",
+  "description": "Cathedrals of light — pointed arches, stained glass, and a new tenderness in painting and sculpture. Giotto's solid, feeling figures cracked the door to the Renaissance.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Gothic_art",
+  "influences": [
+    "early-renaissance",
+    "pre-raphaelite"
+  ],
+  "influencedBy": [
+    "romanesque",
+    "byzantine"
+  ],
+  "keyArtists": [
+    "giotto",
+    "cimabue"
+  ],
+  "region": [
+    "France",
+    "Italy",
+    "Europe"
+  ],
+  "tags": [
+    "cathedrals",
+    "stained glass",
+    "medieval"
+  ]
+}

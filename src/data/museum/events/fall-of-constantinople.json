@@ -1,0 +1,10 @@
+{
+  "id": "fall-of-constantinople",
+  "name": "Fall of Constantinople",
+  "year": 1453,
+  "description": "Byzantium falls to the Ottomans; Greek scholars and manuscripts stream into Italy, pouring fuel on the Renaissance recovery of antiquity.",
+  "influencedMovements": [
+    "early-renaissance",
+    "high-renaissance"
+  ]
+}

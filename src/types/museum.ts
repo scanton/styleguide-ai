@@ -27,6 +27,20 @@ export interface Artist {
   timelineYear: number;
 }
 
+export interface WorldEvent {
+  id: string;
+  name: string;
+  year: number; // negative = BCE
+  description: string;
+  influencedMovements: string[]; // ArtMovement IDs
+}
+
+export interface ArtistConnection {
+  a: string; // Artist ID
+  b: string; // Artist ID
+  label: string; // e.g. "teacher and student"
+}
+
 export interface Artwork {
   id: string;
   artistId: string | null;

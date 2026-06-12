@@ -1,0 +1,11 @@
+{
+  "id": "world-war-2",
+  "name": "World War II",
+  "year": 1939,
+  "description": "War scatters Europe's avant-garde to New York, where Abstract Expressionism is born — and the rebuilding after gives the world raw-concrete Brutalism.",
+  "influencedMovements": [
+    "abstract-expressionism",
+    "surrealism",
+    "brutalism"
+  ]
+}

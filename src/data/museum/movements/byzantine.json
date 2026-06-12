@@ -1,0 +1,28 @@
+{
+  "id": "byzantine",
+  "name": "Byzantine",
+  "startYear": 330,
+  "endYear": 1453,
+  "color": "#5E3370",
+  "description": "A thousand years of gold-ground mosaics and icons — flattened, frontal, and shimmering, where the image is a window to heaven rather than the world.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Byzantine_art",
+  "influences": [
+    "romanesque",
+    "gothic"
+  ],
+  "influencedBy": [
+    "roman"
+  ],
+  "keyArtists": [
+    "andrei-rublev"
+  ],
+  "region": [
+    "Byzantium",
+    "Eastern Europe"
+  ],
+  "tags": [
+    "icons",
+    "mosaic",
+    "sacred"
+  ]
+}

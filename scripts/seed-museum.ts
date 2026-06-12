@@ -8,7 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
-import { sql } from "drizzle-orm";
+import { sql, notInArray } from "drizzle-orm";
 import * as schema from "../src/drizzle/schema";
 import type { ArtMovement, Artist, Artwork } from "../src/types/museum";
 
@@ -130,6 +130,22 @@ async function main() {
         },
       });
   }
+
+  // ── Remove rows whose source files no longer exist (e.g. renamed ids) ──
+  // These tables are wholly file-managed, so the files are the source of truth.
+  const movementIdList = movements.map((m) => m.id);
+  const artistIdList = artists.map((a) => a.id);
+  const artworkIdList = artworks.map((w) => w.id);
+
+  if (artworkIdList.length > 0) {
+    await db.delete(schema.artworks).where(notInArray(schema.artworks.id, artworkIdList));
+  } else {
+    await db.delete(schema.artworks);
+  }
+  await db.delete(schema.artists).where(notInArray(schema.artists.id, artistIdList));
+  await db
+    .delete(schema.artMovements)
+    .where(notInArray(schema.artMovements.id, movementIdList));
 
   const result = await db.execute(
     sql`select

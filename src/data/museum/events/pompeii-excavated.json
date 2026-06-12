@@ -1,0 +1,9 @@
+{
+  "id": "pompeii-excavated",
+  "name": "Pompeii Rediscovered",
+  "year": 1748,
+  "description": "Excavations at Pompeii and Herculaneum expose intact Roman art and design, igniting Europe-wide classical fever and the Neoclassical style.",
+  "influencedMovements": [
+    "neoclassicism"
+  ]
+}

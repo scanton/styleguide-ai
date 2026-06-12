@@ -1,0 +1,157 @@
+[
+  {
+    "a": "cimabue",
+    "b": "giotto",
+    "label": "master and pupil"
+  },
+  {
+    "a": "leonardo-da-vinci",
+    "b": "michelangelo",
+    "label": "rivals in Florence"
+  },
+  {
+    "a": "leonardo-da-vinci",
+    "b": "raphael",
+    "label": "Raphael studied his work"
+  },
+  {
+    "a": "michelangelo",
+    "b": "raphael",
+    "label": "bitter rivals in Rome"
+  },
+  {
+    "a": "caravaggio",
+    "b": "artemisia-gentileschi",
+    "label": "her defining influence"
+  },
+  {
+    "a": "caravaggio",
+    "b": "diego-velazquez",
+    "label": "shaped his early style"
+  },
+  {
+    "a": "diego-velazquez",
+    "b": "edouard-manet",
+    "label": "Manet's 'painter of painters'"
+  },
+  {
+    "a": "francois-boucher",
+    "b": "jean-honore-fragonard",
+    "label": "teacher and student"
+  },
+  {
+    "a": "jacques-louis-david",
+    "b": "jean-auguste-dominique-ingres",
+    "label": "teacher and student"
+  },
+  {
+    "a": "claude-lorrain",
+    "b": "jmw-turner",
+    "label": "Turner's chosen rival"
+  },
+  {
+    "a": "eugene-delacroix",
+    "b": "pierre-auguste-renoir",
+    "label": "color lessons across generations"
+  },
+  {
+    "a": "jmw-turner",
+    "b": "claude-monet",
+    "label": "the light before Impressionism"
+  },
+  {
+    "a": "gustave-courbet",
+    "b": "edouard-manet",
+    "label": "realist forerunner"
+  },
+  {
+    "a": "edouard-manet",
+    "b": "claude-monet",
+    "label": "mentor, champion, and friend"
+  },
+  {
+    "a": "edouard-manet",
+    "b": "berthe-morisot",
+    "label": "close friends; she married his brother"
+  },
+  {
+    "a": "claude-monet",
+    "b": "pierre-auguste-renoir",
+    "label": "painted side by side"
+  },
+  {
+    "a": "edgar-degas",
+    "b": "mary-cassatt",
+    "label": "closest artistic allies"
+  },
+  {
+    "a": "katsushika-hokusai",
+    "b": "vincent-van-gogh",
+    "label": "japonisme revelation"
+  },
+  {
+    "a": "utagawa-hiroshige",
+    "b": "vincent-van-gogh",
+    "label": "copied his prints in oil"
+  },
+  {
+    "a": "vincent-van-gogh",
+    "b": "paul-gauguin",
+    "label": "nine weeks in Arles"
+  },
+  {
+    "a": "paul-cezanne",
+    "b": "pablo-picasso",
+    "label": "'the father of us all'"
+  },
+  {
+    "a": "paul-cezanne",
+    "b": "henri-matisse",
+    "label": "lodestar for both rivals"
+  },
+  {
+    "a": "pablo-picasso",
+    "b": "georges-braque",
+    "label": "invented Cubism roped together"
+  },
+  {
+    "a": "pablo-picasso",
+    "b": "henri-matisse",
+    "label": "lifelong rivals and friends"
+  },
+  {
+    "a": "edvard-munch",
+    "b": "ernst-ludwig-kirchner",
+    "label": "torchbearer to the Brücke"
+  },
+  {
+    "a": "wassily-kandinsky",
+    "b": "paul-klee",
+    "label": "Bauhaus neighbors and friends"
+  },
+  {
+    "a": "marcel-duchamp",
+    "b": "andy-warhol",
+    "label": "conceptual grandfather"
+  },
+  {
+    "a": "jackson-pollock",
+    "b": "lee-krasner",
+    "label": "married; she shaped his career"
+  },
+  {
+    "a": "willem-de-kooning",
+    "b": "jackson-pollock",
+    "label": "friendly New York rivals"
+  },
+  {
+    "a": "andy-warhol",
+    "b": "jean-michel-basquiat",
+    "label": "collaborators and friends"
+  },
+  {
+    "a": "jean-michel-basquiat",
+    "b": "keith-haring",
+    "label": "downtown New York brothers"
+  }
+]

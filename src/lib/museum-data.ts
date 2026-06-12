@@ -1,7 +1,13 @@
 import "server-only";
 import fs from "node:fs";
 import path from "node:path";
-import type { ArtMovement, Artist, Artwork } from "@/types/museum";
+import type {
+  ArtMovement,
+  Artist,
+  Artwork,
+  WorldEvent,
+  ArtistConnection,
+} from "@/types/museum";
 
 const MUSEUM_DIR = path.join(process.cwd(), "src", "data", "museum");
 
@@ -28,4 +34,14 @@ export function getArtists(): Artist[] {
 
 export function getArtworks(): Artwork[] {
   return readJsonDir<Artwork>("artworks");
+}
+
+export function getEvents(): WorldEvent[] {
+  return readJsonDir<WorldEvent>("events").sort((a, b) => a.year - b.year);
+}
+
+export function getConnections(): ArtistConnection[] {
+  const file = path.join(MUSEUM_DIR, "artist-connections.json");
+  if (!fs.existsSync(file)) return [];
+  return JSON.parse(fs.readFileSync(file, "utf-8")) as ArtistConnection[];
 }

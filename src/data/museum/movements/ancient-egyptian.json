@@ -1,0 +1,24 @@
+{
+  "id": "ancient-egyptian",
+  "name": "Ancient Egyptian",
+  "startYear": -3100,
+  "endYear": -300,
+  "color": "#2456A6",
+  "description": "Three thousand years of astonishing stylistic continuity — profile figures, hieroglyphs, gold and lapis, all in service of gods and the afterlife. Art as eternity-engineering.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Art_of_ancient_Egypt",
+  "influences": [
+    "ancient-greek"
+  ],
+  "influencedBy": [
+    "prehistoric"
+  ],
+  "keyArtists": [],
+  "region": [
+    "Egypt"
+  ],
+  "tags": [
+    "hieroglyphs",
+    "tombs",
+    "afterlife"
+  ]
+}

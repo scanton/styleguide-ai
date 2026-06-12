@@ -1,0 +1,10 @@
+{
+  "id": "world-wide-web",
+  "name": "The World Wide Web",
+  "year": 1991,
+  "description": "The Web goes public. Screens become galleries, code becomes a brush, and digital art finds a global audience without museum walls.",
+  "influencedMovements": [
+    "digital-art",
+    "street-art"
+  ]
+}

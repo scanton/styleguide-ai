@@ -1,0 +1,9 @@
+{
+  "id": "reformation",
+  "name": "The Reformation",
+  "year": 1517,
+  "description": "Luther's theses split Christendom. The Catholic response — the Counter-Reformation — commissions the emotional, persuasive art we call Baroque.",
+  "influencedMovements": [
+    "baroque"
+  ]
+}

@@ -7,8 +7,9 @@
   "description": "The German school that fused art, craft, and industry — geometric clarity, primary colors, and the conviction that good design could rebuild society. Closed by the Nazis, its ideas conquered the world anyway.",
   "wikipediaUrl": "https://en.wikipedia.org/wiki/Bauhaus",
   "influences": [
-    "minimalism",
-    "digital-art"
+    "brutalism",
+    "digital-art",
+    "minimalism"
   ],
   "influencedBy": [
     "cubism",

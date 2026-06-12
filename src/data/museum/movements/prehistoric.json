@@ -1,0 +1,24 @@
+{
+  "id": "prehistoric",
+  "name": "Prehistoric Art",
+  "startYear": -40000,
+  "endYear": -10000,
+  "color": "#6E5849",
+  "description": "The first art on Earth — ochre handprints, carved figurines, and the great painted caves of Chauvet, Lascaux, and Altamira. Bulls and horses drawn by firelight, tens of thousands of years before writing.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Prehistoric_art",
+  "influences": [
+    "ancient-egyptian"
+  ],
+  "influencedBy": [],
+  "keyArtists": [],
+  "region": [
+    "Europe",
+    "Africa",
+    "Global"
+  ],
+  "tags": [
+    "cave painting",
+    "paleolithic",
+    "origins"
+  ]
+}

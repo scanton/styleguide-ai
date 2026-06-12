@@ -1,0 +1,18 @@
+{
+  "id": "el-greco",
+  "name": "El Greco",
+  "birthYear": 1541,
+  "deathYear": 1614,
+  "nationality": [
+    "Greek",
+    "Spanish"
+  ],
+  "movements": [
+    "mannerism"
+  ],
+  "description": "Crete-born, Venice-trained, Toledo-transfigured — elongated saints in storm-lit color, too strange for his century and prophetic of Expressionism three hundred years on.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/El_Greco",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1590
+}

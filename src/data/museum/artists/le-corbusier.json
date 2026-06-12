@@ -1,0 +1,18 @@
+{
+  "id": "le-corbusier",
+  "name": "Le Corbusier",
+  "birthYear": 1887,
+  "deathYear": 1965,
+  "nationality": [
+    "Swiss",
+    "French"
+  ],
+  "movements": [
+    "brutalism"
+  ],
+  "description": "Architect of the machine age whose raw-concrete Unité d'Habitation named a movement — béton brut — and reshaped the world's postwar cities, for better and worse.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Le_Corbusier",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1952
+}

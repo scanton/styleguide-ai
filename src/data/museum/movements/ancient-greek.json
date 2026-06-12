@@ -1,0 +1,30 @@
+{
+  "id": "ancient-greek",
+  "name": "Ancient Greek",
+  "startYear": -900,
+  "endYear": -31,
+  "color": "#A9A28D",
+  "description": "The invention of the ideal human body — from rigid kouroi to the living marble of the Classical age. Phidias's Parthenon set a standard the West has been answering ever since.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Ancient_Greek_art",
+  "influences": [
+    "roman",
+    "high-renaissance",
+    "neoclassicism",
+    "classicism"
+  ],
+  "influencedBy": [
+    "ancient-egyptian"
+  ],
+  "keyArtists": [
+    "phidias",
+    "praxiteles"
+  ],
+  "region": [
+    "Greece"
+  ],
+  "tags": [
+    "classical",
+    "sculpture",
+    "idealism"
+  ]
+}

@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { getMovements, getArtists } from "@/lib/museum-data";
+import {
+  getMovements,
+  getArtists,
+  getEvents,
+  getConnections,
+} from "@/lib/museum-data";
 import MuseumTimeline from "@/components/museum/MuseumTimeline";
 
 export const dynamic = "force-static";
@@ -7,12 +12,14 @@ export const dynamic = "force-static";
 export const metadata: Metadata = {
   title: "Virtual Museum — Explore Art History | StyleGuideAI",
   description:
-    "Travel through six centuries of art history on an interactive timeline — movements, masters, and the connections between them.",
+    "Travel through 40,000 years of art history on an interactive timeline — movements, masters, world events, and the connections between them.",
 };
 
 export default function MuseumPage() {
   const movements = getMovements();
   const artists = getArtists();
+  const events = getEvents();
+  const connections = getConnections();
 
   return (
     <div className="py-8 md:py-12">
@@ -22,17 +29,22 @@ export default function MuseumPage() {
           The Virtual Museum
         </p>
         <h1 className="font-heading text-4xl text-primary md:text-5xl">
-          Six Centuries of Art, One Timeline
+          40,000 Years of Art, One Timeline
         </h1>
         <p className="mx-auto max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
-          From Renaissance Florence to the digital frontier — {""}
-          {movements.length} movements and {artists.length} artists, mapped in
-          time. Tap anything to step closer.
+          From the painted caves to the digital frontier — {movements.length}{" "}
+          movements, {artists.length} artists, and the world events and
+          friendships that connect them. Tap anything to step closer.
         </p>
       </header>
 
       {/* Timeline (full-bleed) */}
-      <MuseumTimeline movements={movements} artists={artists} />
+      <MuseumTimeline
+        movements={movements}
+        artists={artists}
+        events={events}
+        connections={connections}
+      />
     </div>
   );
 }

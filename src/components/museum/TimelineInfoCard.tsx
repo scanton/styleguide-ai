@@ -2,24 +2,29 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
-import type { ArtMovement, Artist } from "@/types/museum";
+import type { ArtMovement, Artist, WorldEvent } from "@/types/museum";
 import { prefersReducedMotion } from "@/lib/motion";
+import { formatYear } from "@/lib/timeline-scale";
 import { useWikiThumb } from "@/lib/wiki-thumb";
 
 export type TimelineSelection =
   | { type: "artist"; id: string }
-  | { type: "movement"; id: string };
+  | { type: "movement"; id: string }
+  | { type: "event"; id: string };
 
 interface TimelineInfoCardProps {
   selection: TimelineSelection;
   movements: Map<string, ArtMovement>;
   artists: Map<string, Artist>;
+  events: Map<string, WorldEvent>;
   onClose: () => void;
   onSelect: (selection: TimelineSelection) => void;
 }
 
 function yearsLabel(start: number, end: number | null): string {
-  return end === null ? `${start} – today` : `${start} – ${end}`;
+  return end === null
+    ? `${formatYear(start)} – today`
+    : `${formatYear(start)} – ${formatYear(end)}`;
 }
 
 function ArtistThumbChip({
@@ -99,6 +104,7 @@ export default function TimelineInfoCard({
   selection,
   movements,
   artists,
+  events,
   onClose,
   onSelect,
 }: TimelineInfoCardProps) {
@@ -107,9 +113,9 @@ export default function TimelineInfoCard({
 
   const artist = selection.type === "artist" ? artists.get(selection.id) : undefined;
   const movement = selection.type === "movement" ? movements.get(selection.id) : undefined;
+  const event = selection.type === "event" ? events.get(selection.id) : undefined;
   const portraitThumb = useWikiThumb(artist?.wikipediaUrl);
 
-  // Slide in on mount; animate out before unmount via the close helper.
   useEffect(() => {
     const panel = panelRef.current;
     const backdrop = backdropRef.current;
@@ -151,7 +157,11 @@ export default function TimelineInfoCard({
     return () => window.removeEventListener("keydown", onKey);
   }, [animateClose]);
 
-  const heading = artist?.name ?? movement?.name ?? "";
+  const heading = artist?.name ?? movement?.name ?? event?.name ?? "";
+  const bandColor =
+    movement?.color ??
+    (artist ? movements.get(artist.movements[0] ?? "")?.color : undefined) ??
+    (event ? "var(--brand-gold)" : "var(--primary)");
 
   return (
     <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={heading}>
@@ -172,17 +182,12 @@ export default function TimelineInfoCard({
         {/* Color band header */}
         <div
           className="h-2.5 w-full md:h-3"
-          style={{
-            backgroundColor:
-              movement?.color ??
-              (artist ? movements.get(artist.movements[0] ?? "")?.color : undefined) ??
-              "var(--primary)",
-          }}
+          style={{ backgroundColor: bandColor }}
           aria-hidden="true"
         />
 
         <div className="space-y-5 p-5 md:p-6">
-          {/* Close */}
+          {/* Heading + close */}
           <div className="flex items-start justify-between gap-4">
             <div>
               <h2 className="font-heading text-2xl leading-tight text-foreground md:text-3xl">
@@ -196,6 +201,11 @@ export default function TimelineInfoCard({
                 {movement && yearsLabel(movement.startYear, movement.endYear)}
                 {movement && movement.region.length > 0 && (
                   <> · {movement.region.join(", ")}</>
+                )}
+                {event && (
+                  <>
+                    {formatYear(event.year)} · World event
+                  </>
                 )}
               </p>
             </div>
@@ -221,18 +231,12 @@ export default function TimelineInfoCard({
                   src={portraitThumb}
                   alt={`Portrait of ${artist.name}`}
                   className="h-36 w-36 rounded-full border-4 object-cover shadow-md md:h-44 md:w-44"
-                  style={{
-                    borderColor:
-                      movements.get(artist.movements[0] ?? "")?.color ?? "var(--border)",
-                  }}
+                  style={{ borderColor: bandColor }}
                 />
               ) : (
                 <div
                   className="flex h-36 w-36 items-center justify-center rounded-full border-4 bg-muted font-heading text-4xl text-muted-foreground md:h-44 md:w-44"
-                  style={{
-                    borderColor:
-                      movements.get(artist.movements[0] ?? "")?.color ?? "var(--border)",
-                  }}
+                  style={{ borderColor: bandColor }}
                   role="img"
                   aria-label={`Portrait of ${artist.name} pending`}
                 >
@@ -248,7 +252,7 @@ export default function TimelineInfoCard({
 
           {/* Description */}
           <p className="text-sm leading-relaxed text-foreground">
-            {artist?.description ?? movement?.description}
+            {artist?.description ?? movement?.description ?? event?.description}
           </p>
 
           {/* Artist → movements */}
@@ -341,17 +345,41 @@ export default function TimelineInfoCard({
             </div>
           )}
 
+          {/* Event → movements it shaped */}
+          {event && event.influencedMovements.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Shaped these movements
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {event.influencedMovements.map((mid) => {
+                  const m = movements.get(mid);
+                  if (!m) return null;
+                  return (
+                    <MovementChip
+                      key={mid}
+                      movement={m}
+                      onClick={() => onSelect({ type: "movement", id: mid })}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Actions */}
           <div className="space-y-3 pt-1">
-            <EnterGalleryButton />
-            <a
-              href={artist?.wikipediaUrl ?? movement?.wikipediaUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block w-full rounded-md border border-border px-4 py-3 text-center text-sm text-foreground hover:bg-muted transition-colors min-h-[44px]"
-            >
-              Read on Wikipedia ↗
-            </a>
+            {!event && <EnterGalleryButton />}
+            {(artist?.wikipediaUrl ?? movement?.wikipediaUrl) && (
+              <a
+                href={artist?.wikipediaUrl ?? movement?.wikipediaUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full rounded-md border border-border px-4 py-3 text-center text-sm text-foreground hover:bg-muted transition-colors min-h-[44px]"
+              >
+                Read on Wikipedia ↗
+              </a>
+            )}
           </div>
         </div>
       </div>

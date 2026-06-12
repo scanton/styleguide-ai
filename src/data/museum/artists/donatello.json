@@ -1,0 +1,17 @@
+{
+  "id": "donatello",
+  "name": "Donatello",
+  "birthYear": 1386,
+  "deathYear": 1466,
+  "nationality": [
+    "Italian"
+  ],
+  "movements": [
+    "early-renaissance"
+  ],
+  "description": "The sculptor of the Early Renaissance — his bronze David, the first freestanding nude since antiquity, brought classical confidence back to European art.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Donatello",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1440
+}

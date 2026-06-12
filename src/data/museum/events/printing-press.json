@@ -1,0 +1,9 @@
+{
+  "id": "printing-press",
+  "name": "Gutenberg's Printing Press",
+  "year": 1440,
+  "description": "Movable type makes images and ideas mass media. Printmaking becomes fine art in the hands of Dürer, and the Renaissance spreads at the speed of paper.",
+  "influencedMovements": [
+    "northern-renaissance"
+  ]
+}

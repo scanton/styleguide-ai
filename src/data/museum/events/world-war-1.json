@@ -1,0 +1,11 @@
+{
+  "id": "world-war-1",
+  "name": "World War I",
+  "year": 1914,
+  "description": "The mechanized catastrophe shatters faith in reason and progress. Dada answers with absurdity; Expressionism with anguish; Bauhaus with a plan to rebuild.",
+  "influencedMovements": [
+    "dada",
+    "expressionism",
+    "bauhaus"
+  ]
+}

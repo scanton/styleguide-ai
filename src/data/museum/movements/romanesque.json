@@ -1,0 +1,27 @@
+{
+  "id": "romanesque",
+  "name": "Romanesque",
+  "startYear": 1000,
+  "endYear": 1200,
+  "color": "#8B7355",
+  "description": "Thick walls, round arches, and carved portals crowded with judgment scenes — the art of pilgrimage roads and monastic Europe after the year 1000.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Romanesque_art",
+  "influences": [
+    "gothic"
+  ],
+  "influencedBy": [
+    "roman",
+    "byzantine"
+  ],
+  "keyArtists": [],
+  "region": [
+    "France",
+    "Spain",
+    "Europe"
+  ],
+  "tags": [
+    "monastic",
+    "architecture",
+    "medieval"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "invention-of-writing",
+  "name": "Invention of Writing",
+  "year": -3100,
+  "description": "Cuneiform and hieroglyphs emerge in Mesopotamia and Egypt — art and record-keeping fuse, and the named artist becomes possible.",
+  "influencedMovements": [
+    "ancient-egyptian"
+  ]
+}

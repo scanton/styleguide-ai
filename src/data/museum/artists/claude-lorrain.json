@@ -1,0 +1,17 @@
+{
+  "id": "claude-lorrain",
+  "name": "Claude Lorrain",
+  "birthYear": 1600,
+  "deathYear": 1682,
+  "nationality": [
+    "French"
+  ],
+  "movements": [
+    "classicism"
+  ],
+  "description": "Painter of the ideal landscape — golden light over classical harbors and campagna ruins. Turner asked to be hung beside him, and won the wish in his will.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Claude_Lorrain",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1650
+}

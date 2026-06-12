@@ -1,0 +1,10 @@
+{
+  "id": "fall-of-rome",
+  "name": "Fall of Rome",
+  "year": 476,
+  "description": "The Western Empire collapses. Classical knowledge retreats into monasteries and Byzantium, reshaping European art for a thousand years.",
+  "influencedMovements": [
+    "byzantine",
+    "romanesque"
+  ]
+}

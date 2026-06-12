@@ -1,0 +1,18 @@
+{
+  "id": "cimabue",
+  "name": "Cimabue",
+  "birthYear": 1240,
+  "deathYear": 1302,
+  "nationality": [
+    "Italian"
+  ],
+  "movements": [
+    "gothic",
+    "byzantine"
+  ],
+  "description": "The last great painter of the Byzantine manner in Italy — and, tradition says, the master who discovered a shepherd boy named Giotto drawing on a stone.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Cimabue",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1280
+}

@@ -1,0 +1,10 @@
+{
+  "id": "french-revolution",
+  "name": "French Revolution",
+  "year": 1789,
+  "description": "Revolution recasts art as political instrument — David's Roman virtue serves the Republic, while its upheavals feed Romanticism's storms.",
+  "influencedMovements": [
+    "neoclassicism",
+    "romanticism"
+  ]
+}

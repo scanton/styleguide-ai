@@ -1,0 +1,17 @@
+{
+  "id": "phidias",
+  "name": "Phidias",
+  "birthYear": -480,
+  "deathYear": -430,
+  "nationality": [
+    "Greek"
+  ],
+  "movements": [
+    "ancient-greek"
+  ],
+  "description": "Master sculptor of the Athenian golden age — the Parthenon friezes and the lost colossal Zeus at Olympia, one of the Seven Wonders, were his.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Phidias",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": -445
+}

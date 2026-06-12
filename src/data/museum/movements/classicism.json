@@ -1,0 +1,29 @@
+{
+  "id": "classicism",
+  "name": "Classicism",
+  "startYear": 1600,
+  "endYear": 1715,
+  "color": "#607744",
+  "description": "Order against the Baroque storm — Poussin's measured histories and Claude's golden landscapes, painting governed by reason, geometry, and the example of antiquity.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Classicism",
+  "influences": [
+    "neoclassicism"
+  ],
+  "influencedBy": [
+    "high-renaissance",
+    "ancient-greek"
+  ],
+  "keyArtists": [
+    "nicolas-poussin",
+    "claude-lorrain"
+  ],
+  "region": [
+    "France",
+    "Italy"
+  ],
+  "tags": [
+    "order",
+    "reason",
+    "antiquity"
+  ]
+}

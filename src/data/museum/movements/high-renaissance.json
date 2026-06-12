@@ -1,0 +1,33 @@
+{
+  "id": "high-renaissance",
+  "name": "High Renaissance",
+  "startYear": 1490,
+  "endYear": 1530,
+  "color": "#D4A017",
+  "description": "Forty miraculous years when Leonardo, Michelangelo, and Raphael worked at once — perfect balance, monumental grace, and the most famous images in Western art.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/High_Renaissance",
+  "influences": [
+    "mannerism",
+    "baroque",
+    "classicism",
+    "neoclassicism"
+  ],
+  "influencedBy": [
+    "early-renaissance",
+    "ancient-greek"
+  ],
+  "keyArtists": [
+    "leonardo-da-vinci",
+    "michelangelo",
+    "raphael",
+    "titian"
+  ],
+  "region": [
+    "Italy"
+  ],
+  "tags": [
+    "perfection",
+    "rome",
+    "masters"
+  ]
+}

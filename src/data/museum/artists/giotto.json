@@ -1,0 +1,17 @@
+{
+  "id": "giotto",
+  "name": "Giotto",
+  "birthYear": 1267,
+  "deathYear": 1337,
+  "nationality": [
+    "Italian"
+  ],
+  "movements": [
+    "gothic"
+  ],
+  "description": "Broke the Byzantine spell — his Scrovegni Chapel frescoes gave figures weight, space, and human feeling, planting the seed of the Renaissance a century early.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Giotto",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1305
+}

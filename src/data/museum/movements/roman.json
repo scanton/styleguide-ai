@@ -1,0 +1,27 @@
+{
+  "id": "roman",
+  "name": "Roman Art",
+  "startYear": -500,
+  "endYear": 476,
+  "color": "#963D2F",
+  "description": "Greek beauty put to imperial work — veristic portrait busts, triumphal reliefs, frescoed villas, and concrete architecture on a scale the world had never seen.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Roman_art",
+  "influences": [
+    "byzantine",
+    "romanesque",
+    "neoclassicism"
+  ],
+  "influencedBy": [
+    "ancient-greek"
+  ],
+  "keyArtists": [],
+  "region": [
+    "Italy",
+    "Mediterranean"
+  ],
+  "tags": [
+    "empire",
+    "portraiture",
+    "fresco"
+  ]
+}

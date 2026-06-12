@@ -2,11 +2,16 @@ import type { ArtMovement, Artist } from "@/types/museum";
 
 /**
  * Piecewise-linear time scale for the museum timeline.
- * Art history is dense after 1850 — older centuries are compressed so the
- * modern era gets the room it needs.
+ * Deep time is compressed hard (40,000 BCE fits on screen); the dense modern
+ * era is expanded. Negative years are BCE.
  */
 const SEGMENTS = [
-  { from: 1380, to: 1700, pxPerYear: 3.2 },
+  { from: -40000, to: -10000, pxPerYear: 0.008 },
+  { from: -10000, to: -3000, pxPerYear: 0.03 },
+  { from: -3000, to: -500, pxPerYear: 0.12 },
+  { from: -500, to: 500, pxPerYear: 0.4 },
+  { from: 500, to: 1400, pxPerYear: 0.62 },
+  { from: 1400, to: 1700, pxPerYear: 3.2 },
   { from: 1700, to: 1850, pxPerYear: 8 },
   { from: 1850, to: 2030, pxPerYear: 18 },
 ] as const;
@@ -39,9 +44,31 @@ export function xToYear(x: number): number {
 
 export const TIMELINE_WIDTH = yearToX(TIMELINE_END);
 
-/** Ruler tick marks: sparse in the compressed early centuries, denser later. */
+/** "17,000 BCE" / "1905" — used by the ruler, year readout, and info cards. */
+export function formatYear(year: number): string {
+  if (year < 0) return `${Math.abs(year).toLocaleString("en-US")} BCE`;
+  if (year <= 500) return `${year} CE`;
+  return `${year}`;
+}
+
+/** Ruler tick marks: hand-placed in deep time, regular once dates get dense. */
 export function getTicks(): { year: number; major: boolean }[] {
-  const ticks: { year: number; major: boolean }[] = [];
+  const ticks: { year: number; major: boolean }[] = [
+    { year: -40000, major: true },
+    { year: -30000, major: false },
+    { year: -20000, major: false },
+    { year: -10000, major: true },
+    { year: -5000, major: false },
+    { year: -3000, major: true },
+    { year: -2000, major: false },
+    { year: -1000, major: false },
+    { year: -500, major: true },
+    { year: 1, major: true },
+    { year: 500, major: true },
+    { year: 800, major: false },
+    { year: 1000, major: true },
+    { year: 1200, major: false },
+  ];
   for (let y = 1400; y < 1850; y += 50) {
     ticks.push({ year: y, major: y % 100 === 0 });
   }
@@ -53,6 +80,10 @@ export function getTicks(): { year: number; major: boolean }[] {
 
 /** Era jump points for the mini-map navigation. */
 export const ERAS = [
+  { id: "prehistoric", label: "Prehistoric", year: -40000 },
+  { id: "ancient", label: "Ancient", year: -3100 },
+  { id: "classical", label: "Classical", year: -700 },
+  { id: "medieval", label: "Medieval", year: 500 },
   { id: "renaissance", label: "Renaissance", year: 1400 },
   { id: "baroque", label: "Baroque", year: 1590 },
   { id: "rococo", label: "Rococo", year: 1700 },
@@ -115,12 +146,10 @@ export function assignNodeRows(
 
   for (const a of sorted) {
     const x = yearToX(a.timelineYear);
-    // Prefer the row with the most clearance.
     let best = 0;
     for (let r = 1; r < rowCount; r++) {
       if (rowEnds[r] < rowEnds[best]) best = r;
     }
-    // If any row has full clearance, take the topmost such row for stability.
     for (let r = 0; r < rowCount; r++) {
       if (x - rowEnds[r] >= minSpacing) {
         best = r;

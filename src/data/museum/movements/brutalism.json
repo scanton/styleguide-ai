@@ -1,0 +1,28 @@
+{
+  "id": "brutalism",
+  "name": "Brutalism",
+  "startYear": 1950,
+  "endYear": 1980,
+  "color": "#5B5B5B",
+  "description": "Raw concrete and honest structure — the postwar style of rebuilding, born from Le Corbusier's béton brut. Monumental, divisive, and lately beloved again.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Brutalist_architecture",
+  "influences": [
+    "minimalism"
+  ],
+  "influencedBy": [
+    "bauhaus"
+  ],
+  "keyArtists": [
+    "le-corbusier"
+  ],
+  "region": [
+    "England",
+    "France",
+    "Global"
+  ],
+  "tags": [
+    "concrete",
+    "architecture",
+    "postwar"
+  ]
+}

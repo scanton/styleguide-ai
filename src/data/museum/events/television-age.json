@@ -1,0 +1,9 @@
+{
+  "id": "television-age",
+  "name": "The Television Age",
+  "year": 1955,
+  "description": "Mass media saturates daily life with celebrities, ads, and comics — the exact image-stream Pop Art holds up as a mirror.",
+  "influencedMovements": [
+    "pop-art"
+  ]
+}

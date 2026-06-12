@@ -1,0 +1,30 @@
+{
+  "id": "early-renaissance",
+  "name": "Early Renaissance",
+  "startYear": 1400,
+  "endYear": 1495,
+  "color": "#B8860B",
+  "description": "Florence rediscovers antiquity and invents perspective — Masaccio's weighty figures, Donatello's bronze David, and Botticelli's myths. The toolkit of Western painting, assembled in one city.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Italian_Renaissance_painting",
+  "influences": [
+    "high-renaissance",
+    "northern-renaissance"
+  ],
+  "influencedBy": [
+    "gothic",
+    "ancient-greek"
+  ],
+  "keyArtists": [
+    "masaccio",
+    "donatello",
+    "sandro-botticelli"
+  ],
+  "region": [
+    "Italy"
+  ],
+  "tags": [
+    "perspective",
+    "florence",
+    "humanism"
+  ]
+}
