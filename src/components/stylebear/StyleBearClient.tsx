@@ -5,9 +5,9 @@ import { artMovements } from "@/data/stylebear/art-movements";
 import { mediaTypes } from "@/data/stylebear/media-types";
 import { promptData, cultureKeys, checkboxOptions } from "@/data/stylebear/prompt-data";
 import { promptTypes, TRIPLE_COUNT } from "@/data/stylebear/config";
-
-const STYLEBEAR_MODEL = "openrouter/auto";
 import { processWildcards } from "@/lib/wildcards";
+
+const STYLEBEAR_MODEL = "openrouter/free";
 
 const sortedMovements = [...artMovements].sort((a, b) =>
   a.name.localeCompare(b.name)
@@ -88,13 +88,10 @@ export default function StyleBearClient() {
   const [promptType, setPromptType] = useState<string>(promptTypes[0].value);
   const [output, setOutput] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const [analyzing, setAnalyzing] = useState(false);
-  const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
 
   const subjectRef = useRef<HTMLTextAreaElement>(null);
   const footerRef = useRef<HTMLTextAreaElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleGenerate = useCallback(async () => {
     const subject = subjectRef.current?.value ?? "";
@@ -160,64 +157,6 @@ export default function StyleBearClient() {
     }
   }, [output]);
 
-  const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const img = new Image();
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      img.src = ev.target?.result as string;
-    };
-    img.onload = () => {
-      const maxDim = 800;
-      let { width, height } = img;
-      if (width > maxDim || height > maxDim) {
-        if (width > height) {
-          height = Math.round((height * maxDim) / width);
-          width = maxDim;
-        } else {
-          width = Math.round((width * maxDim) / height);
-          height = maxDim;
-        }
-      }
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-      ctx.drawImage(img, 0, 0, width, height);
-      setImageDataUrl(canvas.toDataURL("image/jpeg", 0.8));
-    };
-    reader.readAsDataURL(file);
-  }, []);
-
-  const handleAnalyze = useCallback(async () => {
-    if (!imageDataUrl) return;
-    setAnalyzing(true);
-    try {
-      const res = await fetch("/api/llm", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [{ role: "user", content: "Analyze this image and describe the subject, art style, mood, and notable visual elements." }],
-          promptStyle: promptType,
-          model: STYLEBEAR_MODEL,
-          imageData: imageDataUrl,
-          maxTokens: 1024,
-        }),
-      });
-      const data = (await res.json()) as { content?: string; error?: string };
-      if (subjectRef.current) {
-        subjectRef.current.value = data.content ?? "";
-      }
-    } catch {
-      // silently fail — user can still type subject manually
-    } finally {
-      setAnalyzing(false);
-    }
-  }, [imageDataUrl, promptType]);
-
   const toggleOption = useCallback((key: string) => {
     setCheckedOptions((prev) => {
       const next = new Set(prev);
@@ -254,49 +193,6 @@ export default function StyleBearClient() {
           AI art prompt generator. Pick your movements, media, and style — StyleBear does the rest.
         </p>
       </div>
-
-      {/* Image Upload */}
-      <section className="border border-border rounded-lg p-4 space-y-3 bg-card">
-        <h2 className="font-heading text-lg text-foreground">Analyze an Image</h2>
-        <p className="text-xs text-muted-foreground">Upload an image to auto-fill the Subject field.</p>
-
-        {imageDataUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={imageDataUrl}
-            alt="Uploaded image for analysis"
-            className="max-h-48 rounded-md object-contain border border-border"
-          />
-        )}
-
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="px-4 py-2 text-sm rounded-md border border-border bg-secondary text-secondary-foreground hover:bg-muted transition-colors min-h-[44px]"
-          >
-            Choose Image
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="sr-only"
-            onChange={handleImageChange}
-            aria-label="Upload image for analysis"
-          />
-          {imageDataUrl && (
-            <button
-              type="button"
-              onClick={handleAnalyze}
-              disabled={analyzing}
-              className="px-4 py-2 text-sm rounded-md bg-accent text-accent-foreground hover:opacity-90 transition-opacity min-h-[44px] disabled:opacity-50"
-            >
-              {analyzing ? "Analyzing…" : "Analyze Image"}
-            </button>
-          )}
-        </div>
-      </section>
 
       {/* Prompt Output */}
       <section className="border border-border rounded-lg p-4 space-y-3 bg-card min-h-[100px]">
@@ -340,7 +236,7 @@ export default function StyleBearClient() {
           </select>
         </div>
 
-<button
+        <button
           type="button"
           onClick={handleRandomize}
           className="h-11 px-4 rounded-md border border-border bg-secondary text-secondary-foreground hover:bg-muted transition-colors text-sm min-w-[100px]"
