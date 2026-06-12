@@ -48,8 +48,8 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
   /* Brand colors */
-  --color-brand-red: var(--brand-red);
-  --color-brand-red-foreground: var(--brand-red-foreground);
+  --color-brand-purple: var(--brand-purple);
+  --color-brand-purple-foreground: var(--brand-purple-foreground);
   --color-brand-teal: var(--brand-teal);
   --color-brand-teal-foreground: var(--brand-teal-foreground);
   --color-brand-gold: var(--brand-gold);
@@ -57,14 +57,14 @@
 }
 
 :root {
-  /* Retro 1950s diner palette */
+  /* Retro 1950s palette — deep purple primary, warm cream base */
   --background: oklch(0.98 0.02 88);       /* warm cream */
   --foreground: oklch(0.16 0.02 55);        /* dark warm charcoal */
   --card: oklch(1 0.01 88);
   --card-foreground: oklch(0.16 0.02 55);
   --popover: oklch(1 0.01 88);
   --popover-foreground: oklch(0.16 0.02 55);
-  --primary: oklch(0.52 0.19 27);           /* diner red */
+  --primary: oklch(0.42 0.22 285);          /* deep purple */
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.93 0.03 88);         /* warm off-white */
   --secondary-foreground: oklch(0.16 0.02 55);
@@ -72,11 +72,12 @@
   --muted-foreground: oklch(0.48 0.02 55);
   --accent: oklch(0.56 0.09 193);           /* diner teal */
   --accent-foreground: oklch(0.99 0 0);
-  --destructive: oklch(0.52 0.19 27);
+  --destructive: oklch(0.52 0.19 27);       /* red — semantic only */
+  --destructive-foreground: oklch(0.99 0 0);
   --border: oklch(0.86 0.03 88);
   --input: oklch(0.86 0.03 88);
-  --ring: oklch(0.52 0.19 27);
-  --chart-1: oklch(0.52 0.19 27);
+  --ring: oklch(0.42 0.22 285);             /* matches primary */
+  --chart-1: oklch(0.42 0.22 285);
   --chart-2: oklch(0.56 0.09 193);
   --chart-3: oklch(0.83 0.15 88);
   --chart-4: oklch(0.65 0.12 150);
@@ -84,15 +85,15 @@
   --radius: 0.5rem;
   --sidebar: oklch(0.97 0.02 88);
   --sidebar-foreground: oklch(0.16 0.02 55);
-  --sidebar-primary: oklch(0.52 0.19 27);
+  --sidebar-primary: oklch(0.42 0.22 285);
   --sidebar-primary-foreground: oklch(0.99 0 0);
   --sidebar-accent: oklch(0.93 0.02 88);
   --sidebar-accent-foreground: oklch(0.16 0.02 55);
   --sidebar-border: oklch(0.86 0.03 88);
-  --sidebar-ring: oklch(0.52 0.19 27);
+  --sidebar-ring: oklch(0.42 0.22 285);
   /* Brand-specific tokens */
-  --brand-red: oklch(0.52 0.19 27);
-  --brand-red-foreground: oklch(0.99 0 0);
+  --brand-purple: oklch(0.42 0.22 285);
+  --brand-purple-foreground: oklch(0.99 0 0);
   --brand-teal: oklch(0.56 0.09 193);
   --brand-teal-foreground: oklch(0.99 0 0);
   --brand-gold: oklch(0.83 0.15 88);
@@ -106,7 +107,7 @@
   --card-foreground: oklch(0.96 0.01 88);
   --popover: oklch(0.18 0.02 55);
   --popover-foreground: oklch(0.96 0.01 88);
-  --primary: oklch(0.60 0.19 27);
+  --primary: oklch(0.60 0.20 285);          /* lighter purple for dark bg */
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.22 0.02 55);
   --secondary-foreground: oklch(0.96 0.01 88);
@@ -115,24 +116,25 @@
   --accent: oklch(0.60 0.09 193);
   --accent-foreground: oklch(0.99 0 0);
   --destructive: oklch(0.60 0.19 27);
+  --destructive-foreground: oklch(0.99 0 0);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.60 0.19 27);
-  --chart-1: oklch(0.60 0.19 27);
+  --ring: oklch(0.60 0.20 285);
+  --chart-1: oklch(0.60 0.20 285);
   --chart-2: oklch(0.60 0.09 193);
   --chart-3: oklch(0.83 0.15 88);
   --chart-4: oklch(0.65 0.12 150);
   --chart-5: oklch(0.60 0.14 260);
   --sidebar: oklch(0.18 0.02 55);
   --sidebar-foreground: oklch(0.96 0.01 88);
-  --sidebar-primary: oklch(0.60 0.19 27);
+  --sidebar-primary: oklch(0.60 0.20 285);
   --sidebar-primary-foreground: oklch(0.99 0 0);
   --sidebar-accent: oklch(0.22 0.02 55);
   --sidebar-accent-foreground: oklch(0.96 0.01 88);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.60 0.19 27);
-  --brand-red: oklch(0.60 0.19 27);
-  --brand-red-foreground: oklch(0.99 0 0);
+  --sidebar-ring: oklch(0.60 0.20 285);
+  --brand-purple: oklch(0.60 0.20 285);
+  --brand-purple-foreground: oklch(0.99 0 0);
   --brand-teal: oklch(0.60 0.09 193);
   --brand-teal-foreground: oklch(0.99 0 0);
   --brand-gold: oklch(0.83 0.15 88);

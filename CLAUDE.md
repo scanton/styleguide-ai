@@ -48,6 +48,8 @@ Owner: Satori Canton, Head of AI at HeartStamp, founder of StyleGuideAI.
 
 **Style:** Retro/vintage 1950s. Playful, stylish, expressive. Diner booth energy — not corporate, not minimal. GSAP animation expressiveness is core to the brand personality.
 
+**Primary color:** Deep purple (`oklch(0.42 0.22 285)`). The palette is warm cream background, deep purple primary, teal accent, and gold. Do NOT use red as a primary or brand color — red is reserved for `--destructive` (error states only).
+
 **Logo character:** 1950s retro diner/soda-fountain waitress — long brunette hair, black glasses, pin-up style.
 
 **Mascot:** StyleBear — cute white plush fluffy chibi-style teddy bear with meerkat-like eyes. Use him on the 404 page, StyleBear tool, and any friendly brand moment. Base prompt for generating StyleBear images: *"cute white plush fluffy chibi-style teddy bear with meerkat-like eyes, retro 1950s style, [scene], warm vintage color palette, adorable and expressive"*
