@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/sync-discord",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/sync-deviantart",
+      "schedule": "0 */6 * * *"
     }
   ]
 }

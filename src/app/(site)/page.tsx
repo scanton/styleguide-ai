@@ -4,7 +4,7 @@ import { FeatureGrid } from "@/components/home/FeatureGrid";
 import { CommunitySection } from "@/components/home/CommunitySection";
 import { ConsultingCTA } from "@/components/home/ConsultingCTA";
 import { db } from "@/lib/db";
-import { communityEvents } from "@/drizzle/schema";
+import { communityEvents, communitySpotlight } from "@/drizzle/schema";
 import { desc } from "drizzle-orm";
 
 export const metadata: Metadata = {
@@ -16,18 +16,36 @@ export const metadata: Metadata = {
 export const revalidate = 3600; // re-fetch latest event at most once per hour
 
 export default async function HomePage() {
-  const [latestEvent] = await db
-    .select({ title: communityEvents.title, threadUrl: communityEvents.threadUrl })
-    .from(communityEvents)
-    .orderBy(desc(communityEvents.postedAt))
-    .limit(1)
-    .catch(() => []);
+  const [[latestEvent], spotlightItems] = await Promise.all([
+    db
+      .select({ title: communityEvents.title, threadUrl: communityEvents.threadUrl })
+      .from(communityEvents)
+      .orderBy(desc(communityEvents.postedAt))
+      .limit(1)
+      .catch(() => []),
+    db
+      .select({
+        id: communitySpotlight.id,
+        title: communitySpotlight.title,
+        artistName: communitySpotlight.artistName,
+        thumbnailUrl: communitySpotlight.thumbnailUrl,
+        deviationUrl: communitySpotlight.deviationUrl,
+      })
+      .from(communitySpotlight)
+      .orderBy(desc(communitySpotlight.publishedAt))
+      .limit(4)
+      .catch(() => []),
+  ]);
 
   return (
     <>
       <HeroSection />
       <FeatureGrid />
-      <CommunitySection latestEventTitle={latestEvent?.title ?? null} latestEventUrl={latestEvent?.threadUrl ?? null} />
+      <CommunitySection
+        latestEventTitle={latestEvent?.title ?? null}
+        latestEventUrl={latestEvent?.threadUrl ?? null}
+        spotlightItems={spotlightItems}
+      />
       <ConsultingCTA />
     </>
   );

@@ -137,8 +137,19 @@ export function ThemesClient({ initialQ }: { initialQ: string }) {
           {data?.events.map((event) => (
             <article
               key={event.id}
-              className="rounded-xl border border-border bg-card p-5 flex flex-col gap-3 hover:border-primary/40 transition-colors"
+              className="rounded-xl border border-border bg-card overflow-hidden flex flex-col gap-0 hover:border-primary/40 transition-colors"
             >
+              {/* Image — Discord CDN URLs expire after ~24h, hide on error */}
+              {event.imageUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={event.imageUrl}
+                  alt={event.title}
+                  className="w-full aspect-video object-cover"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                />
+              )}
+              <div className="p-5 flex flex-col gap-3 flex-1">
               {/* Tags */}
               {event.discordTags && event.discordTags.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
@@ -181,6 +192,7 @@ export function ThemesClient({ initialQ }: { initialQ: string }) {
                     View on Discord ↗
                   </a>
                 )}
+              </div>
               </div>
             </article>
           ))}

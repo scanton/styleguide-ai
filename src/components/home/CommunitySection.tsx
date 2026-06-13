@@ -12,12 +12,21 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+interface SpotlightItem {
+  id: string;
+  title: string;
+  artistName: string;
+  thumbnailUrl: string | null;
+  deviationUrl: string;
+}
+
 interface CommunitySectionProps {
   latestEventTitle: string | null;
   latestEventUrl: string | null;
+  spotlightItems: SpotlightItem[];
 }
 
-export function CommunitySection({ latestEventTitle, latestEventUrl }: CommunitySectionProps) {
+export function CommunitySection({ latestEventTitle, latestEventUrl, spotlightItems }: CommunitySectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -45,21 +54,35 @@ export function CommunitySection({ latestEventTitle, latestEventUrl }: Community
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           {/* Spotlight grid */}
           <div className="reveal grid grid-cols-2 gap-3" aria-label="Community art spotlight">
-            {[
-              "[PROMPT: abstract AI art in the style of Kandinsky, flowing geometric shapes, vivid colors, retro texture]",
-              "[PROMPT: Art Nouveau portrait of a woman with floral hair, detailed line work, warm gold and green palette]",
-              "[PROMPT: Impressionist landscape with AI color distortion, Monet-style water lilies, dreamy soft focus]",
-              "[PROMPT: Cubist still life with digital glitch effects, Picasso-inspired fragmented forms, bold outlines]",
-            ].map((prompt, i) => (
-              <div key={i} className="overflow-hidden rounded-xl border border-border bg-muted aspect-square">
-                <Placeholder
-                  width={200}
-                  height={200}
-                  alt={prompt}
-                  className="w-full h-full"
-                />
-              </div>
-            ))}
+            {Array.from({ length: 4 }).map((_, i) => {
+              const item = spotlightItems[i];
+              return item?.thumbnailUrl ? (
+                <a
+                  key={item.id}
+                  href={item.deviationUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="overflow-hidden rounded-xl border border-border bg-muted aspect-square group focus-visible:outline-ring"
+                  aria-label={`${item.title} by ${item.artistName} — view on DeviantArt`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={item.thumbnailUrl}
+                    alt={`${item.title} by ${item.artistName}`}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </a>
+              ) : (
+                <div key={item?.id ?? i} className="overflow-hidden rounded-xl border border-border bg-muted aspect-square">
+                  <Placeholder
+                    width={200}
+                    height={200}
+                    alt="[PROMPT: AI art community spotlight, abstract colorful artwork, retro vintage style, warm palette]"
+                    className="w-full h-full"
+                  />
+                </div>
+              );
+            })}
           </div>
 
           {/* Text */}
