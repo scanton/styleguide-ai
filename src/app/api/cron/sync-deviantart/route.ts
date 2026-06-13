@@ -6,7 +6,8 @@ import { communitySpotlight, currentTheme } from "@/drizzle/schema";
 const DA_BASE = "https://www.deviantart.com/api/v1/oauth2";
 const DA_TOKEN_URL = "https://www.deviantart.com/oauth2/token";
 const GROUP_NAME = "styleguideai";
-const JOURNAL_AUTHOR = "satoricanton";
+// Journals for the monthly theme are posted to the group, not the owner's personal profile
+const JOURNAL_AUTHOR = GROUP_NAME;
 
 interface DATokenResponse {
   access_token: string;
