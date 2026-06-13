@@ -3,31 +3,47 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { communitySpotlight } from "@/drizzle/schema";
 
-const RSS_URL =
-  "https://backend.deviantart.com/rss.xml?q=gallery:styleguideai/Featured";
+const DA_TOKEN_URL = "https://www.deviantart.com/oauth2/token";
+const DA_GALLERY_URL = "https://www.deviantart.com/api/v1/oauth2/gallery/all";
+const GROUP_NAME = "styleguideai";
 
-function extractTag(xml: string, tag: string): string {
-  const escaped = tag.replace(":", "\\:");
-  const match = xml.match(new RegExp(`<${escaped}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${escaped}>`));
-  if (!match) return "";
-  return match[1]
-    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
-    .trim();
+interface DATokenResponse {
+  access_token: string;
 }
 
-function extractAttr(xml: string, tag: string, attr: string): string {
-  const escaped = tag.replace(":", "\\:");
-  const match = xml.match(
-    new RegExp(`<${escaped}(?:[^>]*?)\\s${attr}="([^"]*)"[^>]*>`)
-  );
-  return match?.[1]?.trim() ?? "";
+interface DAThumb {
+  src: string;
+  height: number;
+  width: number;
 }
 
-function parseThumbnail(itemXml: string): string | null {
-  // Prefer the largest media:thumbnail (last one DeviantArt lists tends to be bigger)
-  const all = [...itemXml.matchAll(/<media:thumbnail\s[^>]*url="([^"]*)"[^>]*/g)];
-  if (!all.length) return null;
-  return all[all.length - 1][1];
+interface DADeviation {
+  deviationid: string;
+  url: string;
+  title: string;
+  published_time: number;
+  author: { username: string };
+  thumbs: DAThumb[];
+}
+
+interface DAGalleryResponse {
+  results: DADeviation[];
+  has_more: boolean;
+}
+
+async function getAccessToken(): Promise<string> {
+  const res = await fetch(DA_TOKEN_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "client_credentials",
+      client_id: process.env.DEVIANTART_CLIENT_ID!,
+      client_secret: process.env.DEVIANTART_CLIENT_SECRET!,
+    }),
+  });
+  if (!res.ok) throw new Error(`Token request failed: ${res.status}`);
+  const data = (await res.json()) as DATokenResponse;
+  return data.access_token;
 }
 
 export async function GET(request: Request) {
@@ -36,59 +52,58 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const res = await fetch(RSS_URL, {
-    headers: { "User-Agent": "StyleGuideAI/1.0" },
-    next: { revalidate: 0 },
-  });
-  if (!res.ok) {
-    return NextResponse.json({ error: `RSS fetch failed: ${res.status}` }, { status: 502 });
+  let accessToken: string;
+  try {
+    accessToken = await getAccessToken();
+  } catch (err) {
+    console.error("[sync-deviantart] Token error:", err);
+    return NextResponse.json({ error: "DeviantArt token failed" }, { status: 502 });
   }
 
-  const xml = await res.text();
+  const params = new URLSearchParams({
+    username: GROUP_NAME,
+    limit: "24",
+    mature_content: "false",
+    access_token: accessToken,
+  });
 
-  // Use regex match to reliably capture <item>...</item> blocks
-  const itemMatches = [...xml.matchAll(/<item(?:\s[^>]*)?>[\s\S]*?<\/item>/g)];
-  const rawItems = itemMatches.map((m) => m[0]);
+  const galleryRes = await fetch(`${DA_GALLERY_URL}?${params}`);
+  if (!galleryRes.ok) {
+    const body = await galleryRes.text();
+    console.error("[sync-deviantart] Gallery fetch failed:", body);
+    return NextResponse.json({ error: "Gallery fetch failed" }, { status: 502 });
+  }
 
-  // Debug: log first 300 chars of raw XML if nothing found
-  if (!rawItems.length) {
-    console.error("[sync-deviantart] No <item> elements found. RSS preview:", xml.slice(0, 300));
-    return NextResponse.json({
-      ok: true,
-      synced: 0,
-      total: 0,
-      debug: "No <item> elements found — check RSS URL or group name",
-    });
+  const gallery = (await galleryRes.json()) as DAGalleryResponse;
+  const deviations = gallery.results ?? [];
+
+  if (!deviations.length) {
+    return NextResponse.json({ ok: true, synced: 0, total: 0, message: "Empty gallery response" });
   }
 
   let synced = 0;
-  for (const item of rawItems) {
-    const title = extractTag(item, "title");
-    // <link> in RSS is often a text node after <guid>; try both
-    const link = extractTag(item, "link") || extractAttr(item, "guid", "isPermaLink") || extractTag(item, "guid");
-    const deviationUrl = link.startsWith("http") ? link : extractTag(item, "guid");
-    const artistName = extractTag(item, "dc:creator") || "Unknown";
-    const pubDateStr = extractTag(item, "pubDate");
-    const thumbnailUrl = parseThumbnail(item);
-
-    if (!title || !deviationUrl) continue;
+  for (const deviation of deviations) {
+    // Use the largest available thumbnail (last in array)
+    const thumb = deviation.thumbs?.[deviation.thumbs.length - 1];
 
     try {
       await db
         .insert(communitySpotlight)
         .values({
-          title,
-          artistName,
-          thumbnailUrl: thumbnailUrl ?? null,
-          deviationUrl,
-          publishedAt: pubDateStr ? new Date(pubDateStr) : null,
+          title: deviation.title,
+          artistName: deviation.author?.username ?? "Unknown",
+          thumbnailUrl: thumb?.src ?? null,
+          deviationUrl: deviation.url,
+          publishedAt: deviation.published_time
+            ? new Date(deviation.published_time * 1000)
+            : null,
         })
         .onConflictDoNothing({ target: communitySpotlight.deviationUrl });
       synced++;
     } catch (err) {
-      console.error("Spotlight insert error:", err);
+      console.error("[sync-deviantart] Insert error:", err);
     }
   }
 
-  return NextResponse.json({ ok: true, synced, total: rawItems.length });
+  return NextResponse.json({ ok: true, synced, total: deviations.length });
 }
