@@ -3,12 +3,15 @@ import { Suspense } from "react";
 import { ArticlesClient } from "@/components/articles/ArticlesClient";
 import { db } from "@/lib/db";
 import { articles } from "@/drizzle/schema";
-import { count } from "drizzle-orm";
+import { count, notInArray } from "drizzle-orm";
+import { ARTICLES_BLOCKLIST } from "@/data/articles-blocklist";
+
+const BLOCKED_SLUGS = Array.from(ARTICLES_BLOCKLIST);
 
 export const metadata: Metadata = {
   title: "Art History Articles",
   description:
-    "233 articles on art movements, art history, and AI art by Satori Canton. Explore Impressionism, Cubism, Art Nouveau, and more.",
+    "Deep-dives into art movements, techniques, and the history behind the styles that inspire our AI art community. Originally published on Medium.",
 };
 
 interface Props {
@@ -19,7 +22,11 @@ export default async function ArticlesPage({ searchParams }: Props) {
   const { q = "", page: pageParam = "1" } = await searchParams;
   const initialPage = Math.max(1, parseInt(pageParam, 10) || 1);
 
-  const [{ total }] = await db.select({ total: count() }).from(articles).catch(() => [{ total: 0 }]);
+  const [{ total }] = await db
+    .select({ total: count() })
+    .from(articles)
+    .where(notInArray(articles.slug, BLOCKED_SLUGS))
+    .catch(() => [{ total: 0 }]);
 
   return (
     <main className="min-h-screen px-4 py-12 md:py-16">
