@@ -23,7 +23,7 @@ const FEATURES = [
     accent: "bg-accent/10 text-accent",
   },
   {
-    icon: "🐻",
+    icon: "🐻‍❄️",
     title: "StyleBear",
     description:
       "Our flagship AI art prompt generator. Pick art movements, media, styles, and let StyleBear craft the perfect prompt for Flux, Midjourney, SDXL, and more.",

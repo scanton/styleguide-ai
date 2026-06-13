@@ -29,16 +29,18 @@ export default function ConsultingPage() {
             Head of AI at HeartStamp. Founder of StyleGuideAI. Author of 300+ articles on art history and AI art. I help teams build AI-powered creative systems that actually work.
           </p>
 
-          {/* Past clients */}
-          <div className="pt-4 space-y-3">
+          {/* Past clients — hidden until ready to publish */}
+          <div className="pt-4 space-y-3 hidden">
             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               Past clients include
             </p>
             <div className="flex flex-wrap gap-3">
               {[
-                { name: "Playground", desc: "AI image generation platform" },
+                { name: "Zynga", desc: "Social game company" },
+                { name: "CivitAI", desc: "Open image model platform" },
                 { name: "HeartStamp", desc: "AI greeting cards" },
                 { name: "PicRenew", desc: "AI photo restoration" },
+                { name: "Playground", desc: "AI image generation platform" },
               ].map((c) => (
                 <div
                   key={c.name}

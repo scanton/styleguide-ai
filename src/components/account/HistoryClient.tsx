@@ -310,7 +310,7 @@ export function HistoryClient() {
                 : "text-muted-foreground hover:text-foreground",
             ].join(" ")}
           >
-            {t === "dice" ? "🎲 StyleDice" : t === "bear" ? "🐻 StyleBear" : "🃏 StyleTarot"}
+            {t === "dice" ? "🎲 StyleDice" : t === "bear" ? "🐻‍❄️ StyleBear" : "🃏 StyleTarot"}
           </button>
         ))}
       </div>
