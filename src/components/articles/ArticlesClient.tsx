@@ -171,8 +171,8 @@ export function ArticlesClient({ initialQ, initialPage, initialTotal }: Props) {
               aria-label={`Read "${article.title}" on Medium`}
             >
               {/* Thumbnail */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               {article.thumbnailUrl && (
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={article.thumbnailUrl}
                   alt=""
