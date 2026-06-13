@@ -11,6 +11,7 @@
     "db:migrate": "node --env-file=.env.local ./node_modules/.bin/drizzle-kit migrate",
     "db:push": "node --env-file=.env.local ./node_modules/.bin/drizzle-kit push",
     "db:seed": "node --env-file=.env.local ./node_modules/.bin/tsx scripts/seed-museum.ts",
+    "db:import-medium": "node --env-file=.env.local ./node_modules/.bin/tsx scripts/import-medium.ts",
     "db:studio": "node --env-file=.env.local ./node_modules/.bin/drizzle-kit studio"
   },
   "dependencies": {
