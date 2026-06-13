@@ -2,9 +2,11 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { articles } from "@/drizzle/schema";
-import { desc, ilike, or, count, sql } from "drizzle-orm";
+import { desc, ilike, or, count, and, notInArray } from "drizzle-orm";
+import { ARTICLES_BLOCKLIST } from "@/data/articles-blocklist";
 
 const PAGE_SIZE = 24;
+const BLOCKED_SLUGS = Array.from(ARTICLES_BLOCKLIST);
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -12,9 +14,10 @@ export async function GET(request: Request) {
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
   const offset = (page - 1) * PAGE_SIZE;
 
+  const visibleOnly = notInArray(articles.slug, BLOCKED_SLUGS);
   const where = q
-    ? or(ilike(articles.title, `%${q}%`), ilike(articles.summary, `%${q}%`))
-    : undefined;
+    ? and(visibleOnly, or(ilike(articles.title, `%${q}%`), ilike(articles.summary, `%${q}%`)))
+    : visibleOnly;
 
   try {
     const [rows, [{ total }]] = await Promise.all([
