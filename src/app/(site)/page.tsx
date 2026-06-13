@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     "A 1,000+ member community for AI artists. Explore our prompt generators, Virtual Museum of art history, and daily art inspiration.",
 };
 
-export const revalidate = 3600; // re-fetch latest event at most once per hour
+export const revalidate = 300; // re-fetch every 5 minutes
 
 export default async function HomePage() {
   const [[latestEvent], spotlightItems] = await Promise.all([
