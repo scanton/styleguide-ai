@@ -12,7 +12,12 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-export function CommunitySection() {
+interface CommunitySectionProps {
+  latestEventTitle: string | null;
+  latestEventUrl: string | null;
+}
+
+export function CommunitySection({ latestEventTitle, latestEventUrl }: CommunitySectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -77,7 +82,7 @@ export function CommunitySection() {
             <div className="reveal flex flex-wrap gap-3">
               <Button asChild size="lg" variant="outline" className="min-h-[44px]">
                 <a
-                  href="https://discord.gg/styleguideai"
+                  href="https://discord.gg/3QK2B3zhGb"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -94,16 +99,31 @@ export function CommunitySection() {
                 </a>
               </Button>
             </div>
-            {/* Daily theme teaser */}
+            {/* Latest community theme */}
             <div className="reveal rounded-xl border border-border bg-background p-4 flex items-center gap-4">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-lg flex-shrink-0" aria-hidden="true">
                 🎨
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground font-medium">Today&apos;s Community Theme</p>
-                <p className="font-bold text-primary">Art Nouveau</p>
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground font-medium">Latest Community Theme</p>
+                {latestEventTitle ? (
+                  latestEventUrl ? (
+                    <a
+                      href={latestEventUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold text-primary hover:underline underline-offset-2 line-clamp-1"
+                    >
+                      {latestEventTitle}
+                    </a>
+                  ) : (
+                    <p className="font-bold text-primary line-clamp-1">{latestEventTitle}</p>
+                  )
+                ) : (
+                  <p className="font-bold text-primary">Coming soon…</p>
+                )}
               </div>
-              <Button asChild variant="ghost" size="sm" className="ml-auto">
+              <Button asChild variant="ghost" size="sm" className="ml-auto flex-shrink-0">
                 <Link href="/themes">All themes →</Link>
               </Button>
             </div>

@@ -61,7 +61,7 @@ export const verificationTokens = pgTable(
   (t) => [primaryKey({ columns: [t.identifier, t.token] })]
 );
 
-// ─── Community Events (from Discord) ─────────────────────────────────────────
+// ─── Community Events (from Discord forum threads) ────────────────────────────
 
 export const communityEvents = pgTable(
   "community_events",
@@ -69,13 +69,16 @@ export const communityEvents = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
+    discordThreadId: text("discord_thread_id").unique(),
     title: text("title").notNull(),
     description: text("description"),
-    eventDate: timestamp("event_date", { mode: "date" }).notNull(),
-    discordMessageId: text("discord_message_id").unique(),
+    imageUrl: text("image_url"),
+    discordTags: text("discord_tags").array().default(sql`'{}'::text[]`),
+    threadUrl: text("thread_url"),
+    postedAt: timestamp("posted_at", { mode: "date" }),
     createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
   },
-  (t) => [index("community_events_date_idx").on(t.eventDate)]
+  (t) => [index("community_events_posted_at_idx").on(t.postedAt)]
 );
 
 // ─── Articles cache (from Medium RSS) ────────────────────────────────────────
