@@ -75,7 +75,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ ok: true, synced: 0, message: "No threads found" });
   }
 
-  // 4. Skip threads already in DB
+  // 4. Separate new threads from existing ones
   const threadIds = allThreads.map((t) => t.id);
   const existing = await db
     .select({ discordThreadId: communityEvents.discordThreadId })
@@ -84,11 +84,23 @@ export async function GET(request: Request) {
   const existingIds = new Set(existing.map((e) => e.discordThreadId));
 
   const newThreads = allThreads.filter((t) => !existingIds.has(t.id));
-  if (!newThreads.length) {
-    return NextResponse.json({ ok: true, synced: 0, message: "All threads already synced" });
+  const existingThreads = allThreads.filter((t) => existingIds.has(t.id));
+
+  // 5. Patch thread_url on already-synced records (no extra API calls needed)
+  for (const thread of existingThreads) {
+    const threadUrl = `https://discord.com/channels/${GUILD_ID}/${thread.id}`;
+    await db
+      .insert(communityEvents)
+      .values({ discordThreadId: thread.id, title: thread.name, threadUrl })
+      .onConflictDoUpdate({ target: communityEvents.discordThreadId, set: { threadUrl } })
+      .catch(() => {});
   }
 
-  // 5. Fetch opening message for each new thread and upsert
+  if (!newThreads.length) {
+    return NextResponse.json({ ok: true, synced: 0, patched: existingThreads.length, message: "URLs patched, no new threads" });
+  }
+
+  // 6. Fetch opening message for each new thread and insert
   let synced = 0;
   for (const thread of newThreads) {
     try {
@@ -108,7 +120,7 @@ export async function GET(request: Request) {
         .map((id) => tagMap.get(id))
         .filter((n): n is string => Boolean(n));
 
-      const threadUrl = `https://discord.com/channels/${GUILD_ID}/${FORUM_CHANNEL_ID}/${thread.id}`;
+      const threadUrl = `https://discord.com/channels/${GUILD_ID}/${thread.id}`;
 
       await db
         .insert(communityEvents)
@@ -129,5 +141,5 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.json({ ok: true, synced, total: allThreads.length });
+  return NextResponse.json({ ok: true, synced, patched: existingThreads.length, total: allThreads.length });
 }
