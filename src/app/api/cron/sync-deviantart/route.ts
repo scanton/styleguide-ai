@@ -71,7 +71,7 @@ function themeKeyword(galleryName: string): string {
 }
 
 // Find the URL of a journal posted by satoricanton whose title matches the gallery name.
-// Tries multiple DA API endpoints so we have a good chance of finding it.
+// Uses /user/profile/posts which returns journals + status updates for a given user.
 async function findJournalUrl(
   authHeaders: Record<string, string>,
   galleryName: string
@@ -80,50 +80,42 @@ async function findJournalUrl(
   if (!keyword) return null;
   console.log("[sync-deviantart] Searching journals for keyword:", keyword, "(from gallery:", galleryName + ")");
 
-  // Attempt 1: browse/user/journals — dedicated journal endpoint
   try {
     const res = await fetch(
-      `${DA_BASE}/browse/user/journals?${new URLSearchParams({ username: JOURNAL_AUTHOR, limit: "24" })}`,
+      `${DA_BASE}/user/profile/posts?${new URLSearchParams({ username: JOURNAL_AUTHOR, limit: "24" })}`,
       { headers: authHeaders }
     );
-    console.log("[sync-deviantart] browse/user/journals status:", res.status);
-    if (res.ok) {
-      const data = (await res.json()) as DAGalleryResponse;
-      console.log("[sync-deviantart] browse/user/journals returned", data.results?.length ?? 0, "items");
-      data.results?.forEach((d) => console.log("  journal:", d.title, d.url));
-      const match = data.results?.find((d) => d.title.toLowerCase().includes(keyword));
-      if (match) {
-        console.log("[sync-deviantart] Found journal via browse/user/journals:", match.url);
-        return match.url;
-      }
+    console.log("[sync-deviantart] user/profile/posts status:", res.status);
+    if (!res.ok) {
+      const body = await res.text();
+      console.error("[sync-deviantart] user/profile/posts error body:", body);
+      return null;
     }
-  } catch (err) {
-    console.error("[sync-deviantart] browse/user/journals error:", err);
-  }
+    const data = (await res.json()) as DAGalleryResponse;
+    console.log("[sync-deviantart] user/profile/posts returned", data.results?.length ?? 0, "items");
+    data.results?.forEach((d) => console.log("  post:", JSON.stringify(d.title), d.url));
 
-  // Attempt 2: gallery/all for the user — journals appear here as /journal/ URLs
-  try {
-    const res = await fetch(
-      `${DA_BASE}/gallery/all?${new URLSearchParams({ username: JOURNAL_AUTHOR, limit: "50" })}`,
-      { headers: authHeaders }
+    // Match on the theme keyword; also filter to journal URLs to avoid status posts
+    const match = data.results?.find(
+      (d) => d.title.toLowerCase().includes(keyword) && d.url.includes("/journal/")
     );
-    console.log("[sync-deviantart] gallery/all status:", res.status);
-    if (res.ok) {
-      const data = (await res.json()) as DAGalleryResponse;
-      const journalItems = (data.results ?? []).filter((d) => d.url.includes("/journal/"));
-      console.log("[sync-deviantart] gallery/all returned", data.results?.length ?? 0, "items,", journalItems.length, "journal URLs");
-      journalItems.forEach((d) => console.log("  journal:", d.title, d.url));
-      const match = journalItems.find((d) => d.title.toLowerCase().includes(keyword));
-      if (match) {
-        console.log("[sync-deviantart] Found journal via gallery/all:", match.url);
-        return match.url;
-      }
+    if (match) {
+      console.log("[sync-deviantart] Found journal:", match.title, match.url);
+      return match.url;
     }
+
+    // Looser fallback: any item (journal or status) whose title contains the keyword
+    const loose = data.results?.find((d) => d.title.toLowerCase().includes(keyword));
+    if (loose) {
+      console.log("[sync-deviantart] Found post (loose match):", loose.title, loose.url);
+      return loose.url;
+    }
+
+    console.log("[sync-deviantart] No post matched keyword:", keyword);
   } catch (err) {
-    console.error("[sync-deviantart] gallery/all journal search error:", err);
+    console.error("[sync-deviantart] user/profile/posts error:", err);
   }
 
-  console.log("[sync-deviantart] No journal found for keyword:", keyword);
   return null;
 }
 
