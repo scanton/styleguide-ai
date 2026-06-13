@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -9,6 +10,11 @@ import { prefersReducedMotion } from "@/lib/motion";
 import { wikimediaThumb } from "@/lib/wikimedia";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+// Three.js loads only when someone steps inside.
+const Gallery3D = dynamic(() => import("@/components/museum/Gallery3D"), {
+  ssr: false,
+});
 
 export interface GalleryWork {
   id: string;
@@ -42,6 +48,7 @@ export default function EditorialGallery({
 }: EditorialGalleryProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
+  const [show3D, setShow3D] = useState(false);
 
   useGSAP(
     () => {
@@ -143,11 +150,11 @@ export default function EditorialGallery({
             </Link>
             <button
               type="button"
-              disabled
-              title="The walkable 3D gallery arrives in the next phase"
-              className="cursor-not-allowed rounded-md border border-border px-4 py-3 text-sm text-muted-foreground min-h-[44px]"
+              onClick={() => setShow3D(true)}
+              className="rounded-md px-5 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 min-h-[44px]"
+              style={{ backgroundColor: accentColor }}
             >
-              Step Inside → <span className="text-[10px] uppercase">3D coming soon</span>
+              Step Inside → <span className="text-[10px] uppercase opacity-80">3D</span>
             </button>
           </div>
           <p className="pt-6 text-xs text-muted-foreground" aria-hidden="true">
@@ -215,16 +222,35 @@ export default function EditorialGallery({
       <footer className="flex min-h-[60dvh] flex-col items-center justify-center gap-6 px-5 py-20 text-center">
         <h2 className="font-heading text-3xl md:text-4xl">The end of this room.</h2>
         <p className="max-w-md text-sm text-muted-foreground">
-          The timeline holds {`40,000`} years more — keep exploring.
+          Walk these works in 3D, or head back — the timeline holds 40,000 years more.
         </p>
-        <Link
-          href="/museum"
-          className="rounded-md px-6 py-3 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 min-h-[44px]"
-          style={{ backgroundColor: accentColor }}
-        >
-          Return to the Timeline
-        </Link>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={() => setShow3D(true)}
+            className="rounded-md px-6 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 min-h-[44px]"
+            style={{ backgroundColor: accentColor }}
+          >
+            Step Inside →
+          </button>
+          <Link
+            href="/museum"
+            className="rounded-md border border-border px-6 py-3 text-sm transition-colors hover:bg-muted min-h-[44px]"
+          >
+            Return to the Timeline
+          </Link>
+        </div>
       </footer>
+
+      {/* 3D gallery overlay */}
+      {show3D && (
+        <Gallery3D
+          title={title}
+          accentColor={accentColor}
+          works={works}
+          onExit={() => setShow3D(false)}
+        />
+      )}
     </div>
   );
 }
