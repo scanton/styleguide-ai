@@ -11,10 +11,9 @@ import { UserMenu } from "./UserMenu";
 
 const NAV_LINKS = [
   { href: "/museum", label: "Virtual Museum" },
-  { href: "/stylebear", label: "StyleBear" },
-  { href: "/styledice", label: "StyleDice" },
-  { href: "/styletarot", label: "StyleTarot" },
   { href: "/articles", label: "Articles" },
+  { href: "/styletarot", label: "StyleTarot" },
+  { href: "/stylebear", label: "StyleBear" },
   { href: "/consulting", label: "Consulting" },
 ];
 
