@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { gsap } from "gsap";
 import { useSession } from "next-auth/react";
+import { prefersReducedMotion } from "@/lib/motion";
 import { artMovements } from "@/data/stylebear/art-movements";
 import { mediaTypes } from "@/data/stylebear/media-types";
 import { promptData, cultureKeys, checkboxOptions } from "@/data/stylebear/prompt-data";
@@ -92,14 +94,28 @@ export default function StyleBearClient() {
   const [loading, setLoading] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
 
+  const [hasGenerated, setHasGenerated] = useState(false);
   const subjectRef = useRef<HTMLTextAreaElement>(null);
   const footerRef = useRef<HTMLTextAreaElement>(null);
+  const outputRef = useRef<HTMLDivElement>(null);
+
+  // Animate output section into view the first time Generate is clicked
+  useEffect(() => {
+    if (hasGenerated && outputRef.current && !prefersReducedMotion()) {
+      gsap.fromTo(
+        outputRef.current,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }
+      );
+    }
+  }, [hasGenerated]);
 
   const handleGenerate = useCallback(async () => {
     const subject = subjectRef.current?.value ?? "";
     const footer = footerRef.current?.value ?? "";
     const rawPrompt = buildPrompt(subject, footer, selectedMovements, selectedMedia, checkedOptions);
 
+    setHasGenerated(true);
     setLoading(true);
     setOutput("");
 
@@ -195,9 +211,7 @@ export default function StyleBearClient() {
           <img
             src="/images/stylebear-face.png"
             alt="StyleBear, the StyleGuideAI mascot — a cute white plush teddy bear"
-            width={120}
-            height={120}
-            className="h-[120px] w-[120px] rounded-full object-cover shadow-md"
+            className="h-[140px] w-auto"
           />
         </div>
         <h1 className="font-heading text-4xl text-primary">StyleBear</h1>
@@ -205,28 +219,6 @@ export default function StyleBearClient() {
           AI art prompt generator. Pick your movements, media, and style — StyleBear does the rest.
         </p>
       </div>
-
-      {/* Prompt Output */}
-      <section className="border border-border rounded-lg p-4 space-y-3 bg-card min-h-[100px]">
-        {loading ? (
-          <div className="flex items-center justify-center h-16 text-muted-foreground text-sm animate-pulse">
-            StyleBear is crafting your prompt…
-          </div>
-        ) : output ? (
-          <>
-            <p className="text-sm leading-relaxed whitespace-pre-wrap">{output}</p>
-            <button
-              type="button"
-              onClick={handleCopy}
-              className="px-4 py-2 text-sm rounded-md bg-primary text-primary-foreground hover:opacity-90 transition-opacity min-h-[44px]"
-            >
-              {copySuccess ? "Copied!" : "Copy Prompt"}
-            </button>
-          </>
-        ) : (
-          <p className="text-muted-foreground text-sm italic">Your generated prompt will appear here.</p>
-        )}
-      </section>
 
       {/* Controls Row */}
       <section className="flex flex-wrap gap-3 items-end">
@@ -280,6 +272,30 @@ export default function StyleBearClient() {
           aria-label="Subject description"
         />
       </section>
+
+      {/* Prompt Output — hidden until Generate is clicked */}
+      {hasGenerated && (
+        <div ref={outputRef}>
+          <section className="border border-border rounded-lg p-4 space-y-3 bg-card min-h-[100px]">
+            {loading ? (
+              <div className="flex items-center justify-center h-16 text-muted-foreground text-sm animate-pulse">
+                StyleBear is crafting your prompt…
+              </div>
+            ) : (
+              <>
+                <p className="text-sm leading-relaxed whitespace-pre-wrap">{output}</p>
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  className="px-4 py-2 text-sm rounded-md bg-primary text-primary-foreground hover:opacity-90 transition-opacity min-h-[44px]"
+                >
+                  {copySuccess ? "Copied!" : "Copy Prompt"}
+                </button>
+              </>
+            )}
+          </section>
+        </div>
+      )}
 
       {/* Art Movements */}
       <section className="space-y-2">
