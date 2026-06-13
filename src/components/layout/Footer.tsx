@@ -16,7 +16,7 @@ export function Footer() {
             </p>
             <div className="flex gap-3 pt-1">
               <a
-                href="https://discord.gg/styleguideai"
+                href="https://discord.gg/3QK2B3zhGb"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm font-medium text-primary hover:underline focus-visible:outline-ring rounded"

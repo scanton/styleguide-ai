@@ -368,9 +368,10 @@ Create a detailed, ready-to-use Flux image generation prompt that weaves all six
 
         <button
           onClick={handlePlayAgain}
-          className="px-7 py-3 rounded-full font-semibold border border-foreground/20 text-foreground/70 hover:text-foreground hover:border-foreground/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+          disabled={phase === "rolling" && rerollsLeft > 0}
+          className="px-7 py-3 rounded-full font-semibold border border-foreground/20 text-foreground/70 hover:text-foreground hover:border-foreground/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:text-foreground/70 disabled:hover:border-foreground/20"
         >
-          Roll Again
+          Restart
         </button>
       </div>
 
