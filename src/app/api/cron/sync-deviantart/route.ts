@@ -46,11 +46,20 @@ export async function GET(request: Request) {
 
   const xml = await res.text();
 
-  // Split on <item> boundaries
-  const rawItems = xml.split(/<item[^>]*>/).slice(1).map((chunk) => {
-    const end = chunk.indexOf("</item>");
-    return end > -1 ? chunk.slice(0, end) : chunk;
-  });
+  // Use regex match to reliably capture <item>...</item> blocks
+  const itemMatches = [...xml.matchAll(/<item(?:\s[^>]*)?>[\s\S]*?<\/item>/g)];
+  const rawItems = itemMatches.map((m) => m[0]);
+
+  // Debug: log first 300 chars of raw XML if nothing found
+  if (!rawItems.length) {
+    console.error("[sync-deviantart] No <item> elements found. RSS preview:", xml.slice(0, 300));
+    return NextResponse.json({
+      ok: true,
+      synced: 0,
+      total: 0,
+      debug: "No <item> elements found — check RSS URL or group name",
+    });
+  }
 
   let synced = 0;
   for (const item of rawItems) {
