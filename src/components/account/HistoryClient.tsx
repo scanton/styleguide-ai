@@ -255,7 +255,7 @@ function TarotHistoryTab() {
                   <span className="opacity-70 text-[10px] uppercase tracking-wide font-semibold">
                     {card!.type}
                   </span>
-                  <span className="font-medium mt-0.5">{card!.name}</span>
+                  <span className="font-medium mt-0.5">{card!.title}</span>
                 </span>
               ))}
             </div>
