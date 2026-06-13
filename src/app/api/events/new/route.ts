@@ -1,49 +1,7 @@
-export const dynamic = "force-dynamic";
+// This route is no longer used — events are synced from Discord via the hourly
+// cron job at /api/cron/sync-discord. Kept as a 404 stub to avoid broken imports.
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { communityEvents } from "@/drizzle/schema";
 
-interface EventPayload {
-  title: string;
-  description?: string;
-  eventDate: string;
-  discordMessageId?: string;
-}
-
-export async function POST(request: Request) {
-  const secret = request.headers.get("x-discord-secret");
-  if (secret !== process.env.DISCORD_BOT_SECRET) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
-  }
-
-  const { title, description, eventDate, discordMessageId } = body as EventPayload;
-
-  if (!title?.trim() || !eventDate) {
-    return NextResponse.json({ error: "title and eventDate required" }, { status: 422 });
-  }
-
-  try {
-    const [event] = await db
-      .insert(communityEvents)
-      .values({
-        title: title.trim(),
-        description: description?.trim() ?? null,
-        eventDate: new Date(eventDate),
-        discordMessageId: discordMessageId ?? null,
-      })
-      .onConflictDoNothing({ target: communityEvents.discordMessageId })
-      .returning();
-
-    return NextResponse.json({ ok: true, event });
-  } catch (err) {
-    console.error("Event insert error:", err);
-    return NextResponse.json({ error: "Failed to save event" }, { status: 500 });
-  }
+export async function POST() {
+  return NextResponse.json({ error: "Deprecated — use cron sync" }, { status: 410 });
 }
