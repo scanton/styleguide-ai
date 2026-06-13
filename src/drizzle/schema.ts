@@ -223,6 +223,25 @@ export const currentTheme = pgTable("current_theme", {
   updatedAt: timestamp("updated_at", { mode: "date" }).default(sql`now()`),
 });
 
+// ─── StyleTarot hand history ──────────────────────────────────────────────────
+
+export const styletarotHistory = pgTable(
+  "styletarot_history",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    // JSON array of 5 card indices
+    cardIndices: text("card_indices").notNull(),
+    generatedPrompt: text("generated_prompt"),
+    createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
+  },
+  (t) => [index("styletarot_history_user_idx").on(t.userId)]
+);
+
 // ─── StyleBear prompt history ─────────────────────────────────────────────────
 
 export const stylebearHistory = pgTable(

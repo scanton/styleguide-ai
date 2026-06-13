@@ -1,0 +1,755 @@
+"use client";
+
+import { useState, useRef, useCallback, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { gsap } from "gsap";
+import { prefersReducedMotion as shouldReduceMotion } from "@/lib/motion";
+import { TAROT_CARDS, CARD_TYPE_COLORS, type TarotCard } from "@/data/styletarot/cards";
+
+// ── Constants ────────────────────────────────────────────────────────────────
+
+const HAND_SIZE = 5;
+const MAX_REDRAWS = 1;
+
+// Clean up creator display names (strip emoji)
+function cleanCreator(name: string): string {
+  return name.replace(/[\u{1F300}-\u{1FAFF}]/gu, "").trim();
+}
+
+// Map a card type to a short display label
+function typeLabel(type: string): string {
+  const MAP: Record<string, string> = {
+    movement: "Movement",
+    artist: "Artist",
+    media: "Media",
+    technique: "Technique",
+    subject: "Subject",
+    setting: "Setting",
+    inspiration: "Inspiration",
+    situation: "Situation",
+    "pop culture": "Pop Culture",
+    location: "Location",
+  };
+  return MAP[type] ?? type;
+}
+
+function pickRandom<T>(arr: T[], count: number): T[] {
+  const shuffled = [...arr].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
+// ── Sub-components ───────────────────────────────────────────────────────────
+
+function CardBack() {
+  return (
+    <div className="absolute inset-0 rounded-2xl flex flex-col items-center justify-center gap-2 select-none"
+      style={{ background: "linear-gradient(135deg, oklch(0.30 0.20 285) 0%, oklch(0.22 0.15 285) 100%)" }}>
+      <div className="text-white/30 text-5xl font-bold tracking-widest rotate-45">✦</div>
+      <div className="text-white/50 text-xs font-bold uppercase tracking-widest">StyleTarot</div>
+    </div>
+  );
+}
+
+function CardFace({ card, held, onClick, interactive }: {
+  card: TarotCard;
+  held: boolean;
+  onClick?: () => void;
+  interactive?: boolean;
+}) {
+  const [imgError, setImgError] = useState(false);
+  const typeColor = CARD_TYPE_COLORS[card.type] ?? "oklch(0.42 0.22 285)";
+
+  return (
+    <button
+      onClick={onClick}
+      disabled={!interactive}
+      aria-pressed={interactive ? held : undefined}
+      aria-label={interactive
+        ? `${card.title}, ${typeLabel(card.type)} card. ${held ? "Held — click to release" : "Click to hold"}`
+        : card.title}
+      className={[
+        "relative flex flex-col overflow-hidden rounded-2xl text-left transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 w-full",
+        interactive ? "cursor-pointer" : "cursor-default",
+        held ? "shadow-xl" : "shadow-md",
+      ].join(" ")}
+      style={{
+        aspectRatio: "2/3",
+        boxShadow: held ? `0 0 0 3px ${typeColor}, 0 8px 24px rgba(0,0,0,0.15)` : undefined,
+      }}
+    >
+      {/* Card image */}
+      <div className="flex-1 relative bg-gray-100 overflow-hidden min-h-0">
+        {!imgError ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={`/images/styletarot/${card.imageFilename}`}
+            alt={card.title}
+            className="absolute inset-0 w-full h-full object-cover"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center"
+            style={{ backgroundColor: `color-mix(in oklch, ${typeColor} 20%, white)` }}>
+            <span className="text-3xl opacity-30">🎴</span>
+          </div>
+        )}
+
+        {/* Hold badge overlay */}
+        {held && (
+          <div className="absolute top-2 left-2 right-2 flex justify-center">
+            <span
+              className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full text-white shadow"
+              style={{ backgroundColor: typeColor }}
+            >
+              Held
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Card info */}
+      <div className="flex-none p-2.5 bg-white space-y-0.5">
+        <div className="flex items-center gap-1.5">
+          <span
+            className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full text-white flex-none"
+            style={{ backgroundColor: typeColor }}
+          >
+            {typeLabel(card.type)}
+          </span>
+        </div>
+        <p className="text-xs font-semibold text-foreground leading-tight line-clamp-2">{card.title}</p>
+        <p className="text-[10px] text-muted-foreground">by {cleanCreator(card.creator)}</p>
+      </div>
+    </button>
+  );
+}
+
+// ── Explore mode card picker ──────────────────────────────────────────────────
+
+const ALL_TYPES = Array.from(new Set(TAROT_CARDS.map((c) => c.type))).sort();
+
+function ExploreMode({
+  selected,
+  onToggle,
+}: {
+  selected: Set<number>;
+  onToggle: (index: number) => void;
+}) {
+  const [search, setSearch] = useState("");
+  const [filterType, setFilterType] = useState<string>("all");
+
+  const filtered = TAROT_CARDS.filter((card) => {
+    const matchType = filterType === "all" || card.type === filterType;
+    const matchSearch =
+      !search ||
+      card.title.toLowerCase().includes(search.toLowerCase()) ||
+      card.type.toLowerCase().includes(search.toLowerCase()) ||
+      card.creator.toLowerCase().includes(search.toLowerCase());
+    return matchType && matchSearch;
+  });
+
+  return (
+    <div className="space-y-4">
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <input
+          type="search"
+          placeholder="Search cards…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="flex-1 rounded-full border border-black/15 bg-white px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+        />
+        <select
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value)}
+          className="rounded-full border border-black/15 bg-white px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
+        >
+          <option value="all">All types</option>
+          {ALL_TYPES.map((t) => (
+            <option key={t} value={t}>{typeLabel(t)}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Grid */}
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+        {filtered.map((card) => {
+          const isSelected = selected.has(card.index);
+          const isDisabled = !isSelected && selected.size >= HAND_SIZE;
+          return (
+            <div
+              key={card.index}
+              className={["relative transition-opacity", isDisabled ? "opacity-30" : ""].join(" ")}
+            >
+              <CardFace
+                card={card}
+                held={isSelected}
+                onClick={() => !isDisabled && onToggle(card.index)}
+                interactive={!isDisabled || isSelected}
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      {filtered.length === 0 && (
+        <p className="text-center text-muted-foreground py-12">No cards match your search.</p>
+      )}
+    </div>
+  );
+}
+
+// ── Main game component ───────────────────────────────────────────────────────
+
+type GameMode = "draw" | "explore";
+type DrawPhase = "start" | "dealt" | "drawn" | "locked";
+
+export function StyleTarotClient() {
+  const { data: session } = useSession();
+
+  // Mode
+  const [mode, setMode] = useState<GameMode>("draw");
+
+  // Draw mode state
+  const [drawPhase, setDrawPhase] = useState<DrawPhase>("start");
+  const [hand, setHand] = useState<TarotCard[]>([]);
+  const [held, setHeld] = useState<boolean[]>(Array(HAND_SIZE).fill(false));
+  const [redrawsLeft, setRedrawsLeft] = useState(MAX_REDRAWS);
+
+  // Explore mode state
+  const [exploreSelected, setExploreSelected] = useState<Set<number>>(new Set());
+
+  // Shared output state
+  const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null);
+  const [generating, setGenerating] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [savedEntryId, setSavedEntryId] = useState<string | null>(null);
+
+  // Refs for GSAP
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const promptRef = useRef<HTMLDivElement | null>(null);
+  const handRef = useRef<HTMLDivElement | null>(null);
+
+  // Deal counter: increment each deal so the animation effect runs exactly once per deal
+  const [dealCount, setDealCount] = useState(0);
+  const lastAnimatedDeal = useRef(0);
+
+  // Animation trigger for redraw (set before setState, consumed by useEffect after render)
+  const pendingRedrawAnim = useRef<number[] | null>(null);
+
+  // ── GSAP hold animation ────────────────────────────────────────────────────
+
+  // ── Draw mode actions ──────────────────────────────────────────────────────
+
+  const handleDeal = useCallback(() => {
+    const newHand = pickRandom(TAROT_CARDS, HAND_SIZE);
+    setDealCount((c) => c + 1);
+    setHand(newHand);
+    setHeld(Array(HAND_SIZE).fill(false));
+    setRedrawsLeft(MAX_REDRAWS);
+    setGeneratedPrompt(null);
+    setSavedEntryId(null);
+    setCopied(false);
+    setDrawPhase("dealt");
+  }, []);
+
+  const handleToggleHold = useCallback((i: number) => {
+    if (drawPhase !== "dealt") return;
+    const el = cardRefs.current[i];
+    setHeld((prev) => {
+      const next = [...prev];
+      next[i] = !next[i];
+      if (el && !shouldReduceMotion()) {
+        gsap.to(el, { y: next[i] ? -10 : 0, duration: 0.18, ease: "power2.out" });
+      }
+      return next;
+    });
+  }, [drawPhase]);
+
+  const handleRedraw = useCallback(() => {
+    if (redrawsLeft <= 0 || drawPhase !== "dealt") return;
+    const replaceIndices = held.map((h, i) => (!h ? i : -1)).filter((i) => i >= 0);
+
+    const next = redrawsLeft - 1;
+    setRedrawsLeft(next);
+    if (next === 0) setDrawPhase("drawn");
+
+    if (shouldReduceMotion()) {
+      // No animation — just swap cards
+      const newHand = [...hand];
+      const replacements = pickRandom(
+        TAROT_CARDS.filter((c) => !hand.some((hc) => hc.index === c.index)),
+        replaceIndices.length
+      );
+      replaceIndices.forEach((i, idx) => { newHand[i] = replacements[idx] ?? newHand[i]; });
+      setHand(newHand);
+      return;
+    }
+
+    // Animate out, then swap, then animate in via useEffect
+    const tl = gsap.timeline({
+      onComplete: () => {
+        const newHand = [...hand];
+        const replacements = pickRandom(
+          TAROT_CARDS.filter((c) => !hand.some((hc) => hc.index === c.index)),
+          replaceIndices.length
+        );
+        replaceIndices.forEach((i, idx) => { newHand[i] = replacements[idx] ?? newHand[i]; });
+        pendingRedrawAnim.current = replaceIndices;
+        setHand(newHand);
+      },
+    });
+    replaceIndices.forEach((i, idx) => {
+      const el = cardRefs.current[i];
+      if (!el) return;
+      tl.to(el, { y: 16, opacity: 0, scale: 0.9, duration: 0.18, ease: "power2.in" }, idx * 0.04);
+    });
+  }, [redrawsLeft, drawPhase, held, hand]);
+
+  const handleLockHand = useCallback(() => {
+    setDrawPhase("locked");
+    setHeld(Array(HAND_SIZE).fill(false));
+    // Reset y offsets from hold animation
+    cardRefs.current.forEach((el) => {
+      if (el) gsap.to(el, { y: 0, duration: 0.15 });
+    });
+  }, []);
+
+  // ── Explore mode actions ───────────────────────────────────────────────────
+
+  const handleExploreToggle = useCallback((index: number) => {
+    setExploreSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else if (next.size < HAND_SIZE) next.add(index);
+      return next;
+    });
+    setGeneratedPrompt(null);
+    setSavedEntryId(null);
+  }, []);
+
+  // ── Shared: generate prompt ────────────────────────────────────────────────
+
+  const getActiveCards = useCallback((): TarotCard[] => {
+    if (mode === "draw") return hand;
+    return Array.from(exploreSelected).map(
+      (idx) => TAROT_CARDS.find((c) => c.index === idx)!
+    ).filter(Boolean);
+  }, [mode, hand, exploreSelected]);
+
+  const handleGenerate = useCallback(async () => {
+    const cards = getActiveCards();
+    if (cards.length !== HAND_SIZE) return;
+
+    setGenerating(true);
+    setGeneratedPrompt(null);
+
+    const cardList = cards
+      .map((c, i) =>
+        `${i + 1}. **${c.title}** (${typeLabel(c.type)})${c.description ? `\n   ${c.description}` : ""}`
+      )
+      .join("\n\n");
+
+    const systemMessage = `You are an expert AI art prompt engineer. You synthesize StyleTarot card concepts — movements, artists, media, subjects, settings, and inspirations — into detailed, evocative image generation prompts.
+
+Modern AI image models (DALL-E 3, Midjourney, Stable Diffusion XL, Flux) handle long, specific prompts exceptionally well. Your prompts are rich in visual specificity: main subject, scene composition, artistic style, lighting, color palette, texture, mood, and any relevant artist or movement references.
+
+Return ONLY the art prompt itself — 150 to 250 words of pure visual description. No preamble, no explanation, no labels, no quotation marks.`;
+
+    const userMessage = `I drew these 5 StyleTarot cards as creative inspiration:
+
+${cardList}
+
+Create a single, unified AI art prompt that weaves all five cards into one cohesive, visually stunning artwork. Draw from the card descriptions for specific visual elements, style cues, subject matter, setting, and mood. The result should feel like a natural, intentional artwork — not a random mashup. Be specific: name colors, lighting conditions, compositional choices, textures, and emotional tone.`;
+
+    let prompt: string | null = null;
+
+    try {
+      const res = await fetch("/api/llm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [
+            { role: "system", content: systemMessage },
+            { role: "user", content: userMessage },
+          ],
+          maxTokens: 600,
+        }),
+      });
+      const data = await res.json();
+      prompt = data.content ?? data.text ?? data.choices?.[0]?.message?.content ?? null;
+      setGeneratedPrompt(prompt);
+    } catch {
+      setGeneratedPrompt("Failed to generate prompt. Please try again.");
+    }
+
+    // Save history
+    if (session?.user && prompt) {
+      const indices = cards.map((c) => c.index);
+      try {
+        if (!savedEntryId) {
+          const saveRes = await fetch("/api/styletarot/history", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ cardIndices: indices, generatedPrompt: prompt }),
+          });
+          const saved = await saveRes.json();
+          if (saved.entry?.id) setSavedEntryId(saved.entry.id);
+        } else {
+          await fetch("/api/styletarot/history", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: savedEntryId, generatedPrompt: prompt }),
+          });
+        }
+      } catch {
+        // Non-fatal
+      }
+    }
+
+    setGenerating(false);
+    requestAnimationFrame(() => {
+      promptRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+  }, [getActiveCards, session, savedEntryId]);
+
+  const handleCopy = useCallback(() => {
+    if (!generatedPrompt) return;
+    navigator.clipboard.writeText(generatedPrompt).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [generatedPrompt]);
+
+  const handleNewHand = useCallback(() => {
+    setDrawPhase("start");
+    setHand([]);
+    setHeld(Array(HAND_SIZE).fill(false));
+    setRedrawsLeft(MAX_REDRAWS);
+    setGeneratedPrompt(null);
+    setSavedEntryId(null);
+    setCopied(false);
+  }, []);
+
+  // Fire deal animation after React commits card DOM elements.
+  // Uses dealCount so Strict Mode's second run skips (lastAnimatedDeal already matches).
+  useEffect(() => {
+    if (dealCount === 0 || dealCount <= lastAnimatedDeal.current) return;
+    if (!handRef.current) return;
+    const els = Array.from(handRef.current.querySelectorAll<HTMLDivElement>(":scope > div"));
+    if (els.length !== HAND_SIZE) return;
+
+    lastAnimatedDeal.current = dealCount;
+    if (shouldReduceMotion()) return;
+
+    els.forEach((el, i) => {
+      gsap.fromTo(
+        el,
+        { y: -20, opacity: 0, scale: 0.92 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.4)", delay: i * 0.07 }
+      );
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dealCount, hand]);
+
+  // Fire redraw-in animation after new cards are in the DOM
+  useEffect(() => {
+    const indices = pendingRedrawAnim.current;
+    if (!indices || hand.length !== HAND_SIZE) return;
+    const els = indices.map((i) => cardRefs.current[i]).filter(Boolean) as HTMLDivElement[];
+    if (els.length !== indices.length) return;
+
+    pendingRedrawAnim.current = null;
+    if (shouldReduceMotion()) return;
+
+    els.forEach((el, i) => {
+      gsap.fromTo(
+        el,
+        { y: -16, opacity: 0, scale: 0.92 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.25, ease: "back.out(1.4)", delay: i * 0.06 }
+      );
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hand]);
+
+  // Animate prompt appearance
+  useEffect(() => {
+    if (generatedPrompt && promptRef.current && !shouldReduceMotion()) {
+      gsap.fromTo(
+        promptRef.current,
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
+      );
+    }
+  }, [generatedPrompt]);
+
+  // ── Derived state ──────────────────────────────────────────────────────────
+
+  const activeCards = getActiveCards();
+  const canGenerate =
+    mode === "draw"
+      ? (drawPhase === "drawn" || drawPhase === "locked") && hand.length === HAND_SIZE
+      : exploreSelected.size === HAND_SIZE;
+
+  const showDrawActions = mode === "draw" && drawPhase !== "start";
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+
+  return (
+    <div className="space-y-8">
+      {/* Mode tabs */}
+      <div className="flex justify-center">
+        <div className="inline-flex rounded-full border border-black/10 bg-white p-1 gap-1">
+          {(["draw", "explore"] as const).map((m) => (
+            <button
+              key={m}
+              onClick={() => {
+                setMode(m);
+                setGeneratedPrompt(null);
+                setSavedEntryId(null);
+              }}
+              className={[
+                "px-5 py-2 rounded-full text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1",
+                mode === m
+                  ? "text-white shadow-sm"
+                  : "text-foreground/60 hover:text-foreground",
+              ].join(" ")}
+              style={mode === m ? { backgroundColor: "oklch(0.42 0.22 285)" } : {}}
+            >
+              {m === "draw" ? "Draw Mode" : "Explore Mode"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Draw mode ── */}
+      {mode === "draw" && (
+        <div className="space-y-6">
+          {/* Start screen */}
+          {drawPhase === "start" && (
+            <div className="flex flex-col items-center gap-6 py-8 text-center">
+              <p className="text-muted-foreground max-w-sm">
+                Deal five cards at random. Hold the ones that inspire you, then redraw the
+                rest — once. Lock in your hand and generate your art prompt.
+              </p>
+              <button
+                onClick={handleDeal}
+                className="px-8 py-4 rounded-full text-lg font-semibold text-white transition-transform hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                style={{ backgroundColor: "oklch(0.42 0.22 285)" }}
+              >
+                Deal Cards
+              </button>
+            </div>
+          )}
+
+          {/* Hand */}
+          {hand.length > 0 && (
+            <div>
+              {/* Instructions */}
+              {drawPhase === "dealt" && (
+                <p className="text-center text-sm text-muted-foreground mb-4">
+                  <span className="font-semibold text-foreground/80">
+                    {redrawsLeft} redraw left
+                  </span>
+                  {" · "}
+                  Click a card to hold it, then Redraw the rest.
+                </p>
+              )}
+              {drawPhase === "drawn" && (
+                <p className="text-center text-sm text-muted-foreground mb-4">
+                  <span className="font-semibold text-foreground/80">Hand locked.</span>
+                  {" "}Generate your art prompt from these five cards.
+                </p>
+              )}
+              {drawPhase === "locked" && !generatedPrompt && (
+                <p className="text-center text-sm text-muted-foreground mb-4">
+                  <span className="font-semibold text-foreground/80">Hand locked.</span>
+                  {" "}Generate your art prompt from these five cards.
+                </p>
+              )}
+
+              {/* Cards */}
+              <div
+                ref={handRef}
+                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"
+              >
+                {hand.map((card, i) => (
+                  <div
+                    key={`${card.index}-${i}`}
+                    ref={(el) => { cardRefs.current[i] = el; }}
+                    className={[
+                      // Center the 5th card on mobile 2-col grid
+                      i === 4 ? "col-span-2 sm:col-span-1 mx-auto w-1/2 sm:w-full" : "",
+                    ].join(" ")}
+                  >
+                    <CardFace
+                      card={card}
+                      held={held[i]}
+                      onClick={() => handleToggleHold(i)}
+                      interactive={drawPhase === "dealt"}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Actions */}
+              {showDrawActions && (
+                <div className="flex flex-wrap justify-center gap-3 mt-6">
+                  {drawPhase === "dealt" && (
+                    <button
+                      onClick={handleRedraw}
+                      disabled={redrawsLeft <= 0}
+                      className="px-6 py-3 rounded-full font-semibold text-white transition-transform hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2"
+                      style={{ backgroundColor: "oklch(0.42 0.22 285)" }}
+                    >
+                      Redraw ({redrawsLeft} left)
+                    </button>
+                  )}
+
+                  {drawPhase === "dealt" && (
+                    <button
+                      onClick={handleLockHand}
+                      className="px-6 py-3 rounded-full font-semibold border border-black/20 text-foreground/70 hover:text-foreground hover:border-black/40 transition-colors focus-visible:outline-none focus-visible:ring-2"
+                    >
+                      Lock Hand
+                    </button>
+                  )}
+
+                  {(drawPhase === "drawn" || drawPhase === "locked") && (
+                    <button
+                      onClick={handleGenerate}
+                      disabled={generating}
+                      className="px-6 py-3 rounded-full font-semibold text-white transition-transform hover:scale-105 active:scale-95 disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2"
+                      style={{ backgroundColor: "oklch(0.60 0.14 195)" }}
+                    >
+                      {generating ? "Generating…" : generatedPrompt ? "Re-generate" : "Generate Prompt"}
+                    </button>
+                  )}
+
+                  <button
+                    onClick={handleNewHand}
+                    className="px-6 py-3 rounded-full font-semibold border border-black/20 text-foreground/60 hover:text-foreground hover:border-black/40 transition-colors focus-visible:outline-none focus-visible:ring-2"
+                  >
+                    New Hand
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Explore mode ── */}
+      {mode === "explore" && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">
+              Select exactly{" "}
+              <span className="font-semibold text-foreground">{HAND_SIZE} cards</span>
+              {" "}to generate a prompt.
+            </p>
+            <span
+              className="text-sm font-bold tabular-nums"
+              style={{ color: exploreSelected.size === HAND_SIZE ? "oklch(0.60 0.14 195)" : "oklch(0.42 0.22 285)" }}
+            >
+              {exploreSelected.size}/{HAND_SIZE}
+            </span>
+          </div>
+
+          <ExploreMode selected={exploreSelected} onToggle={handleExploreToggle} />
+
+          {exploreSelected.size === HAND_SIZE && (
+            <div className="flex flex-wrap justify-center gap-3 pt-2">
+              <button
+                onClick={handleGenerate}
+                disabled={generating}
+                className="px-6 py-3 rounded-full font-semibold text-white transition-transform hover:scale-105 active:scale-95 disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2"
+                style={{ backgroundColor: "oklch(0.60 0.14 195)" }}
+              >
+                {generating ? "Generating…" : generatedPrompt ? "Re-generate" : "Generate Prompt"}
+              </button>
+              <button
+                onClick={() => { setExploreSelected(new Set()); setGeneratedPrompt(null); }}
+                className="px-6 py-3 rounded-full font-semibold border border-black/20 text-foreground/60 hover:text-foreground hover:border-black/40 transition-colors focus-visible:outline-none focus-visible:ring-2"
+              >
+                Clear Selection
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Selected cards preview (explore mode) ── */}
+      {mode === "explore" && exploreSelected.size > 0 && (
+        <div className="space-y-2">
+          <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground text-center">
+            Your Selection
+          </h2>
+          <div className="grid grid-cols-5 gap-2">
+            {Array.from(exploreSelected).map((idx) => {
+              const card = TAROT_CARDS.find((c) => c.index === idx);
+              if (!card) return null;
+              return (
+                <div key={idx}>
+                  <CardFace
+                    card={card}
+                    held={true}
+                    onClick={() => handleExploreToggle(idx)}
+                    interactive={true}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── Generated prompt ── */}
+      {generatedPrompt && (
+        <div
+          ref={promptRef}
+          className="rounded-2xl border border-black/10 bg-white p-6 space-y-4"
+        >
+          <div className="flex items-center justify-between gap-2">
+            <span
+              className="text-xs font-bold uppercase tracking-wider"
+              style={{ color: "oklch(0.42 0.22 285)" }}
+            >
+              Generated Art Prompt
+            </span>
+            <button
+              onClick={handleCopy}
+              className="text-xs font-semibold px-3 py-1.5 rounded-full border border-black/10 hover:bg-black/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+            >
+              {copied ? "Copied!" : "Copy"}
+            </button>
+          </div>
+          <p className="text-sm leading-relaxed text-foreground">{generatedPrompt}</p>
+
+          {/* Cards used summary */}
+          <div className="border-t border-black/5 pt-3 space-y-1">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Cards used</p>
+            <div className="flex flex-wrap gap-1.5">
+              {activeCards.map((card) => {
+                const color = CARD_TYPE_COLORS[card.type] ?? "oklch(0.42 0.22 285)";
+                return (
+                  <span
+                    key={card.index}
+                    className="text-[10px] font-semibold px-2 py-0.5 rounded-full text-white"
+                    style={{ backgroundColor: color }}
+                  >
+                    {card.title}
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+
+          {session?.user && (
+            <p className="text-[11px] text-foreground/40">Saved to your history.</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
