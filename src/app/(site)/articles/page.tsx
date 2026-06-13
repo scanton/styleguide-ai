@@ -1,19 +1,25 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ArticlesClient } from "@/components/articles/ArticlesClient";
+import { db } from "@/lib/db";
+import { articles } from "@/drizzle/schema";
+import { count } from "drizzle-orm";
 
 export const metadata: Metadata = {
   title: "Art History Articles",
   description:
-    "300+ articles on art movements, art history, and AI art by Satori Canton. Explore Impressionism, Cubism, Art Nouveau, and more.",
+    "233 articles on art movements, art history, and AI art by Satori Canton. Explore Impressionism, Cubism, Art Nouveau, and more.",
 };
 
 interface Props {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; page?: string }>;
 }
 
 export default async function ArticlesPage({ searchParams }: Props) {
-  const { q = "" } = await searchParams;
+  const { q = "", page: pageParam = "1" } = await searchParams;
+  const initialPage = Math.max(1, parseInt(pageParam, 10) || 1);
+
+  const [{ total }] = await db.select({ total: count() }).from(articles).catch(() => [{ total: 0 }]);
 
   return (
     <main className="min-h-screen px-4 py-12 md:py-16">
@@ -28,7 +34,7 @@ export default async function ArticlesPage({ searchParams }: Props) {
             Art History Articles
           </h1>
           <p className="text-muted-foreground leading-relaxed text-lg">
-            300+ deep-dives into art movements, techniques, and the history behind the styles that inspire our community. Originally published on Medium.
+            {total} deep-dives into art movements, techniques, and the history behind the styles that inspire our community. Originally published on Medium.
           </p>
           <a
             href="https://medium.com/@satoricanton"
@@ -42,7 +48,7 @@ export default async function ArticlesPage({ searchParams }: Props) {
 
         {/* Articles grid with search */}
         <Suspense>
-          <ArticlesClient initialQ={q} />
+          <ArticlesClient initialQ={q} initialPage={initialPage} initialTotal={total} />
         </Suspense>
       </div>
     </main>

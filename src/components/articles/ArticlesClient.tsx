@@ -21,6 +21,12 @@ interface ArticlesResponse {
   limit: number;
 }
 
+interface Props {
+  initialQ: string;
+  initialPage: number;
+  initialTotal: number;
+}
+
 function formatDate(iso: string | null) {
   if (!iso) return "";
   return new Date(iso).toLocaleDateString("en-US", {
@@ -30,15 +36,33 @@ function formatDate(iso: string | null) {
   });
 }
 
+// Returns page numbers and "…" sentinels to render.
+// Always shows first + last; shows current ±2; ellipsis fills gaps > 1.
+function getPaginationItems(current: number, total: number): (number | "…")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+
+  const around = new Set([1, total, current - 2, current - 1, current, current + 1, current + 2]);
+  const pages = Array.from(around)
+    .filter((p) => p >= 1 && p <= total)
+    .sort((a, b) => a - b);
+
+  const items: (number | "…")[] = [];
+  for (let i = 0; i < pages.length; i++) {
+    if (i > 0 && pages[i] - pages[i - 1] > 1) items.push("…");
+    items.push(pages[i]);
+  }
+  return items;
+}
+
 const PAGE_SIZE = 24;
 
-export function ArticlesClient({ initialQ }: { initialQ: string }) {
+export function ArticlesClient({ initialQ, initialPage, initialTotal }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const [query, setQuery] = useState(initialQ);
   const [inputValue, setInputValue] = useState(initialQ);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(initialPage);
   const [data, setData] = useState<ArticlesResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -59,17 +83,30 @@ export function ArticlesClient({ initialQ }: { initialQ: string }) {
     fetchArticles(query, page);
   }, [query, page, fetchArticles]);
 
+  function pushUrl(q: string, p: number) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (q) params.set("q", q); else params.delete("q");
+    if (p > 1) params.set("page", String(p)); else params.delete("page");
+    router.replace(`/articles?${params}`);
+  }
+
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
     const next = inputValue.trim();
     setQuery(next);
     setPage(1);
-    const params = new URLSearchParams(searchParams.toString());
-    if (next) params.set("q", next); else params.delete("q");
-    router.replace(`/articles?${params}`);
+    pushUrl(next, 1);
   }
 
-  const totalPages = data ? Math.ceil(data.total / PAGE_SIZE) : 1;
+  function goToPage(p: number) {
+    setPage(p);
+    pushUrl(query, p);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  const total = data?.total ?? initialTotal;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  const paginationItems = getPaginationItems(page, totalPages);
 
   return (
     <div className="space-y-8">
@@ -92,7 +129,7 @@ export function ArticlesClient({ initialQ }: { initialQ: string }) {
         {query && (
           <button
             type="button"
-            onClick={() => { setInputValue(""); setQuery(""); setPage(1); router.replace("/articles"); }}
+            onClick={() => { setInputValue(""); setQuery(""); setPage(1); pushUrl("", 1); }}
             className="h-11 px-3 rounded-md border border-border text-sm text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Clear search"
           >
@@ -192,25 +229,53 @@ export function ArticlesClient({ initialQ }: { initialQ: string }) {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 pt-4">
+        <nav
+          aria-label="Article pages"
+          className="flex items-center justify-center gap-1 pt-4 flex-wrap"
+        >
+          {/* Prev */}
           <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            onClick={() => goToPage(page - 1)}
             disabled={page === 1}
-            className="h-10 px-4 rounded-md border border-border text-sm font-medium disabled:opacity-40 hover:bg-muted transition-colors"
+            className="h-10 px-3 rounded-md border border-border text-sm font-medium disabled:opacity-40 hover:bg-muted transition-colors"
+            aria-label="Previous page"
           >
-            ← Prev
+            ←
           </button>
-          <span className="text-sm text-muted-foreground px-2">
-            Page {page} of {totalPages}
-          </span>
+
+          {/* Numbered pages */}
+          {paginationItems.map((item, i) =>
+            item === "…" ? (
+              <span key={`ellipsis-${i}`} className="h-10 w-10 flex items-center justify-center text-sm text-muted-foreground select-none">
+                …
+              </span>
+            ) : (
+              <button
+                key={item}
+                onClick={() => goToPage(item)}
+                aria-current={item === page ? "page" : undefined}
+                aria-label={`Page ${item}`}
+                className={`h-10 w-10 rounded-md text-sm font-medium transition-colors ${
+                  item === page
+                    ? "bg-primary text-primary-foreground"
+                    : "border border-border hover:bg-muted"
+                }`}
+              >
+                {item}
+              </button>
+            )
+          )}
+
+          {/* Next */}
           <button
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            onClick={() => goToPage(page + 1)}
             disabled={page === totalPages}
-            className="h-10 px-4 rounded-md border border-border text-sm font-medium disabled:opacity-40 hover:bg-muted transition-colors"
+            className="h-10 px-3 rounded-md border border-border text-sm font-medium disabled:opacity-40 hover:bg-muted transition-colors"
+            aria-label="Next page"
           >
-            Next →
+            →
           </button>
-        </div>
+        </nav>
       )}
     </div>
   );
