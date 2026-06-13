@@ -3,7 +3,7 @@ import { HistoryClient } from "@/components/account/HistoryClient";
 
 export const metadata: Metadata = {
   title: "My History",
-  description: "Your saved StyleDice rolls and StyleBear prompts.",
+  description: "Your saved StyleDice rolls, StyleBear prompts, and StyleTarot hands.",
 };
 
 export default function HistoryPage() {
@@ -12,7 +12,7 @@ export default function HistoryPage() {
       <div className="max-w-2xl mx-auto px-4 pt-10 pb-16">
         <div className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">My History</h1>
-          <p className="mt-1 text-muted-foreground text-sm">Your saved prompts and dice rolls.</p>
+          <p className="mt-1 text-muted-foreground text-sm">Your saved StyleDice rolls, StyleBear prompts, and StyleTarot hands.</p>
         </div>
         <HistoryClient />
       </div>
