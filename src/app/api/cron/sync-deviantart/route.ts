@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { communitySpotlight } from "@/drizzle/schema";
 
 const RSS_URL =
-  "https://backend.deviantart.com/rss.xml?type=deviation&q=gallery%3Astyleguideai%2FFeatured+sort%3Atime+meta%3Aall";
+  "https://backend.deviantart.com/rss.xml?q=gallery:styleguideai/Featured";
 
 function extractTag(xml: string, tag: string): string {
   const escaped = tag.replace(":", "\\:");
