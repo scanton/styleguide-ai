@@ -171,30 +171,36 @@ function ExploreMode({
         </select>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-        {filtered.map((card) => {
-          const isSelected = selected.has(card.index);
-          const isDisabled = !isSelected && selected.size >= HAND_SIZE;
-          return (
-            <div
-              key={card.index}
-              className={["relative transition-opacity", isDisabled ? "opacity-30" : ""].join(" ")}
-            >
-              <CardFace
-                card={card}
-                held={isSelected}
-                onClick={() => !isDisabled && onToggle(card.index)}
-                interactive={!isDisabled || isSelected}
-              />
-            </div>
-          );
-        })}
-      </div>
+      {/* Scrollable card grid */}
+      <div className="relative">
+        <div className="overflow-y-auto max-h-72 md:max-h-96 rounded-xl pr-1 -mr-1">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 pb-4">
+            {filtered.map((card) => {
+              const isSelected = selected.has(card.index);
+              const isDisabled = !isSelected && selected.size >= HAND_SIZE;
+              return (
+                <div
+                  key={card.index}
+                  className={["relative transition-opacity", isDisabled ? "opacity-30" : ""].join(" ")}
+                >
+                  <CardFace
+                    card={card}
+                    held={isSelected}
+                    onClick={() => !isDisabled && onToggle(card.index)}
+                    interactive={!isDisabled || isSelected}
+                  />
+                </div>
+              );
+            })}
 
-      {filtered.length === 0 && (
-        <p className="text-center text-muted-foreground py-12">No cards match your search.</p>
-      )}
+            {filtered.length === 0 && (
+              <p className="col-span-full text-center text-muted-foreground py-12">No cards match your search.</p>
+            )}
+          </div>
+        </div>
+        {/* Bottom fade hint — signals more cards below */}
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-10 rounded-b-xl bg-gradient-to-t from-[oklch(0.98_0.01_90)] to-transparent" />
+      </div>
     </div>
   );
 }
