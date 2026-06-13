@@ -58,25 +58,73 @@ async function getAccessToken(): Promise<string> {
   return data.access_token;
 }
 
-// Find the URL of a journal by satoricanton whose title matches the gallery name.
-// Falls back to null so the caller can use a different URL.
+// Extract the primary theme keyword from a gallery name like "Junique 2026" → "junique"
+// Strips years, emoji, and punctuation so we can do a loose title match.
+function themeKeyword(galleryName: string): string {
+  return galleryName
+    .replace(/\d{4}/g, "")         // remove 4-digit years
+    .replace(/[^\w\s]/gu, " ")     // strip emoji / punctuation
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)[0]
+    ?.toLowerCase() ?? "";
+}
+
+// Find the URL of a journal posted by satoricanton whose title matches the gallery name.
+// Tries multiple DA API endpoints so we have a good chance of finding it.
 async function findJournalUrl(
   authHeaders: Record<string, string>,
   galleryName: string
 ): Promise<string | null> {
+  const keyword = themeKeyword(galleryName);
+  if (!keyword) return null;
+  console.log("[sync-deviantart] Searching journals for keyword:", keyword, "(from gallery:", galleryName + ")");
+
+  // Attempt 1: browse/user/journals — dedicated journal endpoint
   try {
     const res = await fetch(
       `${DA_BASE}/browse/user/journals?${new URLSearchParams({ username: JOURNAL_AUTHOR, limit: "24" })}`,
       { headers: authHeaders }
     );
-    if (!res.ok) return null;
-    const data = (await res.json()) as DAGalleryResponse;
-    const name = galleryName.toLowerCase();
-    const match = data.results?.find((d) => d.title.toLowerCase().includes(name));
-    return match?.url ?? null;
-  } catch {
-    return null;
+    console.log("[sync-deviantart] browse/user/journals status:", res.status);
+    if (res.ok) {
+      const data = (await res.json()) as DAGalleryResponse;
+      console.log("[sync-deviantart] browse/user/journals returned", data.results?.length ?? 0, "items");
+      data.results?.forEach((d) => console.log("  journal:", d.title, d.url));
+      const match = data.results?.find((d) => d.title.toLowerCase().includes(keyword));
+      if (match) {
+        console.log("[sync-deviantart] Found journal via browse/user/journals:", match.url);
+        return match.url;
+      }
+    }
+  } catch (err) {
+    console.error("[sync-deviantart] browse/user/journals error:", err);
   }
+
+  // Attempt 2: gallery/all for the user — journals appear here as /journal/ URLs
+  try {
+    const res = await fetch(
+      `${DA_BASE}/gallery/all?${new URLSearchParams({ username: JOURNAL_AUTHOR, limit: "50" })}`,
+      { headers: authHeaders }
+    );
+    console.log("[sync-deviantart] gallery/all status:", res.status);
+    if (res.ok) {
+      const data = (await res.json()) as DAGalleryResponse;
+      const journalItems = (data.results ?? []).filter((d) => d.url.includes("/journal/"));
+      console.log("[sync-deviantart] gallery/all returned", data.results?.length ?? 0, "items,", journalItems.length, "journal URLs");
+      journalItems.forEach((d) => console.log("  journal:", d.title, d.url));
+      const match = journalItems.find((d) => d.title.toLowerCase().includes(keyword));
+      if (match) {
+        console.log("[sync-deviantart] Found journal via gallery/all:", match.url);
+        return match.url;
+      }
+    }
+  } catch (err) {
+    console.error("[sync-deviantart] gallery/all journal search error:", err);
+  }
+
+  console.log("[sync-deviantart] No journal found for keyword:", keyword);
+  return null;
 }
 
 export async function GET(request: Request) {
@@ -166,32 +214,60 @@ export async function GET(request: Request) {
     }
   }
 
-  // Step 3: Find the current month's theme gallery (second folder in arranged order,
-  // falling back to third if the second is empty). Fetch the top image as the hero.
-  // Folders at index 0 may be Featured; the theme gallery is always second by DA admin order.
+  // Step 3: Find the current month's theme gallery.
+  // nonFeaturedFolders[0] is always the current month's gallery (second in DA group admin order).
+  // Only allow fallback to nonFeaturedFolders[1] (previous month) near month boundaries
+  // (within 3 days of start or end of month) — never mid-month.
   const nonFeaturedFolders = folders.filter(
     (f) => f.name.toLowerCase() !== "featured"
   );
+  const dayOfMonth = new Date().getUTCDate();
+  const nearMonthBoundary = dayOfMonth < 3 || dayOfMonth > 28;
+  console.log("[sync-deviantart] Day of month:", dayOfMonth, "nearBoundary:", nearMonthBoundary);
+
+  const themeCandidates = nearMonthBoundary
+    ? nonFeaturedFolders.slice(0, 2)
+    : nonFeaturedFolders.slice(0, 1);
+
   let themeGalleryName: string | null = null;
   let themeHeroImageUrl: string | null = null;
   let themeHeroDeviationUrl: string | null = null;
 
-  for (const candidate of nonFeaturedFolders.slice(0, 2)) {
+  for (const candidate of themeCandidates) {
     try {
+      // Fetch up to 24 images — if the most recent is NSFW and DA filters it,
+      // we still find a valid image further down the list.
       const themeRes = await fetch(
-        `${DA_BASE}/gallery/${candidate.folderid}?${new URLSearchParams({ username: GROUP_NAME, limit: "1", mode: "newest" })}`,
+        `${DA_BASE}/gallery/${candidate.folderid}?${new URLSearchParams({ username: GROUP_NAME, limit: "24", mode: "newest" })}`,
         { headers: authHeaders }
       );
-      if (!themeRes.ok) continue;
+      if (!themeRes.ok) {
+        console.error("[sync-deviantart] Theme gallery fetch failed for", candidate.name, themeRes.status);
+        continue;
+      }
       const themeData = (await themeRes.json()) as DAGalleryResponse;
-      const top = themeData.results?.[0];
+      console.log("[sync-deviantart] Theme candidate", candidate.name, "returned", themeData.results?.length ?? 0, "deviations");
+
+      // Take the first deviation that has a usable image URL
+      const top = themeData.results?.find(
+        (d) => d.preview?.src || (d.thumbs && d.thumbs.length > 0)
+      );
+
       if (top) {
         themeGalleryName = candidate.name;
         themeHeroImageUrl = top.preview?.src
           ?? top.thumbs?.[top.thumbs.length - 1]?.src
           ?? null;
         themeHeroDeviationUrl = top.url;
-        console.log("[sync-deviantart] Theme gallery:", candidate.name, "top image:", themeHeroImageUrl);
+        console.log("[sync-deviantart] Theme gallery:", candidate.name, "hero image:", themeHeroImageUrl);
+        break;
+      }
+
+      // Gallery exists but has no visible images — mid-month we still claim this folder
+      // as the current theme (so the badge shows the right name) but skip image update.
+      if (!nearMonthBoundary) {
+        themeGalleryName = candidate.name;
+        console.log("[sync-deviantart] Theme gallery", candidate.name, "has no visible images mid-month; keeping gallery name, skipping image.");
         break;
       }
     } catch (err) {
@@ -206,9 +282,13 @@ export async function GET(request: Request) {
     console.log("[sync-deviantart] Journal URL:", journalUrl ?? "(not found, will use deviation URL)");
   }
 
-  // Step 5: Upsert current theme data
+  // Step 5: Upsert current theme data.
+  // Always update galleryName (so the badge label stays correct).
+  // Only overwrite image/link fields if we actually found an image this run —
+  // this preserves a good image from a previous run when DA happens to filter today's top result.
   if (themeGalleryName) {
     try {
+      const hasImage = !!themeHeroImageUrl;
       await db
         .insert(currentTheme)
         .values({
@@ -223,12 +303,16 @@ export async function GET(request: Request) {
           target: currentTheme.id,
           set: {
             galleryName: themeGalleryName,
-            heroImageUrl: themeHeroImageUrl,
-            heroDeviationUrl: themeHeroDeviationUrl,
-            journalUrl: journalUrl ?? themeHeroDeviationUrl,
+            ...(hasImage && {
+              heroImageUrl: themeHeroImageUrl,
+              heroDeviationUrl: themeHeroDeviationUrl,
+            }),
+            // Always update journalUrl when we found one; don't clear an existing one
+            ...(journalUrl && { journalUrl }),
             updatedAt: new Date(),
           },
         });
+      console.log("[sync-deviantart] currentTheme upserted. galleryName:", themeGalleryName, "hasImage:", hasImage, "journalUrl:", journalUrl ?? "(unchanged)");
     } catch (err) {
       console.error("[sync-deviantart] currentTheme upsert error:", err);
     }
