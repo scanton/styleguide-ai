@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { ThemesClient } from "@/components/themes/ThemesClient";
 
 export const metadata: Metadata = {
-  title: "Community Themes & Events | StyleGuideAI",
+  title: "Community Themes & Events",
   description:
     "Browse all StyleGuideAI community art themes, challenges, and special events. Click through to join the conversation on Discord.",
 };

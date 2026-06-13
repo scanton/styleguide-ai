@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { HistoryClient } from "@/components/account/HistoryClient";
 
 export const metadata: Metadata = {
-  title: "My History | StyleGuideAI",
+  title: "My History",
   description: "Your saved StyleDice rolls and StyleBear prompts.",
 };
 

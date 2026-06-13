@@ -112,9 +112,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { kind, id } = await params;
   const gallery = buildGallery(kind, id);
-  if (!gallery) return { title: "Gallery | StyleGuideAI" };
+  if (!gallery) return { title: "Gallery" };
   return {
-    title: `${gallery.title} — Editorial Gallery | StyleGuideAI`,
+    title: `${gallery.title} — Editorial Gallery`,
     description: gallery.description,
   };
 }

@@ -11,7 +11,7 @@ import MuseumTimeline from "@/components/museum/MuseumTimeline";
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  title: "Virtual Museum — Explore Art History | StyleGuideAI",
+  title: "Virtual Museum — Explore Art History",
   description:
     "Travel through 40,000 years of art history on an interactive timeline — movements, masters, world events, and the connections between them.",
 };

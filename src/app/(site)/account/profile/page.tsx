@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ProfileClient } from "@/components/account/ProfileClient";
 
 export const metadata: Metadata = {
-  title: "Profile | StyleGuideAI",
+  title: "Profile",
   description: "Manage your StyleGuideAI profile.",
 };
 

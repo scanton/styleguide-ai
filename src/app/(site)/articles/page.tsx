@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { ArticlesClient } from "@/components/articles/ArticlesClient";
 
 export const metadata: Metadata = {
-  title: "Articles — StyleGuideAI",
+  title: "Art History Articles",
   description:
     "300+ articles on art movements, art history, and AI art by Satori Canton. Explore Impressionism, Cubism, Art Nouveau, and more.",
 };

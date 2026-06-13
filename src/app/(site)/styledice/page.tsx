@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import StyleDiceClient from "@/components/styledice/StyleDiceClient";
 
 export const metadata: Metadata = {
-  title: "StyleDice — Art Inspiration Game | StyleGuideAI",
+  title: "StyleDice — Art Inspiration Game",
   description:
     "Roll six creative dice — art movements, famous artists, media types, techniques, pop culture, and genres — then generate a ready-to-use AI art prompt.",
 };

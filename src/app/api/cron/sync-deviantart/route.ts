@@ -21,7 +21,7 @@ interface DAFoldersResponse {
   has_more: boolean;
 }
 
-interface DAThumb {
+interface DAImage {
   src: string;
   height: number;
   width: number;
@@ -33,7 +33,8 @@ interface DADeviation {
   title: string;
   published_time: number;
   author: { username: string };
-  thumbs: DAThumb[];
+  preview: DAImage | null;
+  thumbs: DAImage[];
 }
 
 interface DAGalleryResponse {
@@ -120,8 +121,10 @@ export async function GET(request: Request) {
 
   let synced = 0;
   for (const deviation of deviations) {
-    // Use the largest available thumbnail (last in array)
-    const thumb = deviation.thumbs?.[deviation.thumbs.length - 1];
+    // Prefer preview (larger, ~400px) over thumbs (small)
+    const imageUrl = deviation.preview?.src
+      ?? deviation.thumbs?.[deviation.thumbs.length - 1]?.src
+      ?? null;
 
     try {
       await db
@@ -129,13 +132,16 @@ export async function GET(request: Request) {
         .values({
           title: deviation.title,
           artistName: deviation.author?.username ?? "Unknown",
-          thumbnailUrl: thumb?.src ?? null,
+          thumbnailUrl: imageUrl,
           deviationUrl: deviation.url,
           publishedAt: deviation.published_time
             ? new Date(deviation.published_time * 1000)
             : null,
         })
-        .onConflictDoNothing({ target: communitySpotlight.deviationUrl });
+        .onConflictDoUpdate({
+          target: communitySpotlight.deviationUrl,
+          set: { thumbnailUrl: imageUrl },
+        });
       synced++;
     } catch (err) {
       console.error("[sync-deviantart] Insert error:", err);

@@ -3,84 +3,62 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { articles, artMovements } from "@/drizzle/schema";
 
-const MEDIUM_RSS = "https://medium.com/feed/@satoricanton";
+const MEDIUM_USER = "satoricanton";
+const XSSI_PREFIX = "])}while(1);</x>";
+const MAX_PAGES = 40; // 400+ articles max (10 per page from internal API)
 
-interface ParsedArticle {
+interface MediumPost {
+  id: string;
   title: string;
   slug: string;
-  summary: string | null;
-  mediumUrl: string;
-  publishedAt: Date | null;
-  tags: string[];
-  thumbnailUrl: string | null;
+  firstPublishedAt: number;
+  homeCollectionId?: string;
+  virtuals?: {
+    subtitle?: string;
+    previewImage?: { imageId?: string };
+    tags?: Array<{ slug: string; name: string }>;
+  };
 }
 
-function extractCdata(xml: string, tag: string): string {
-  const re = new RegExp(`<${tag}[^>]*>(?:<!\\[CDATA\\[([\\s\\S]*?)\\]\\]>|([^<]*))<\\/${tag}>`, "i");
-  const m = xml.match(re);
-  return (m?.[1] ?? m?.[2] ?? "").trim();
+interface MediumApiResponse {
+  success: boolean;
+  payload: {
+    references?: { Post?: Record<string, MediumPost> };
+    paging?: { next?: { to?: string; source?: string; limit?: number } };
+  };
 }
 
-function extractAllCdata(xml: string, tag: string): string[] {
-  const re = new RegExp(`<${tag}[^>]*>(?:<!\\[CDATA\\[([\\s\\S]*?)\\]\\]>|([^<]*))<\\/${tag}>`, "gi");
-  const results: string[] = [];
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(xml)) !== null) {
-    const val = (m[1] ?? m[2] ?? "").trim();
-    if (val) results.push(val);
-  }
-  return results;
+function buildMediumUrl(post: MediumPost): string {
+  return `https://medium.com/@${MEDIUM_USER}/${post.slug}`;
 }
 
-function extractFirstImage(html: string): string | null {
-  const m = html.match(/<img[^>]+src=["']([^"']+)["']/i);
-  return m?.[1] ?? null;
+function buildThumbnailUrl(imageId: string | undefined): string | null {
+  if (!imageId) return null;
+  return `https://miro.medium.com/v2/resize:fit:800/${imageId}`;
 }
 
-function slugFromUrl(url: string): string {
-  try {
-    const path = new URL(url).pathname;
-    const last = path.split("/").filter(Boolean).pop() ?? "";
-    return last.slice(0, 200) || url.slice(-40);
-  } catch {
-    return url.slice(-40);
-  }
-}
+async function fetchPage(cursor?: string): Promise<{ posts: MediumPost[]; nextCursor?: string }> {
+  const params = new URLSearchParams({ format: "json", source: "overview", limit: "10" });
+  if (cursor) params.set("to", cursor);
+  const url = `https://medium.com/@${MEDIUM_USER}?${params}`;
 
-function parseRssItems(xml: string): ParsedArticle[] {
-  const itemRe = /<item>([\s\S]*?)<\/item>/gi;
-  const parsed: ParsedArticle[] = [];
-  let m: RegExpExecArray | null;
+  const res = await fetch(url, {
+    headers: {
+      "User-Agent": "StyleGuideAI/1.0",
+      Accept: "application/json",
+    },
+  });
+  if (!res.ok) throw new Error(`Medium API ${res.status}`);
 
-  while ((m = itemRe.exec(xml)) !== null) {
-    const block = m[1];
+  const text = await res.text();
+  const json = JSON.parse(text.startsWith(XSSI_PREFIX) ? text.slice(XSSI_PREFIX.length) : text) as MediumApiResponse;
 
-    const title = extractCdata(block, "title");
-    const link = extractCdata(block, "link") || block.match(/<link>([^<]+)<\/link>/)?.[1]?.trim() || "";
-    const pubDateStr = extractCdata(block, "pubDate") || block.match(/<pubDate>([^<]+)<\/pubDate>/)?.[1]?.trim();
-    const description = extractCdata(block, "description");
-    const content = extractCdata(block, "content:encoded");
-    const categories = extractAllCdata(block, "category");
+  if (!json.success) return { posts: [] };
 
-    if (!title || !link) continue;
+  const posts = Object.values(json.payload.references?.Post ?? {});
+  const nextCursor = json.payload.paging?.next?.to;
 
-    // Strip HTML from description for a clean excerpt
-    const summary = description.replace(/<[^>]+>/g, "").trim().slice(0, 500) || null;
-
-    const thumbnailUrl = extractFirstImage(content) ?? extractFirstImage(description) ?? null;
-
-    parsed.push({
-      title,
-      slug: slugFromUrl(link),
-      summary,
-      mediumUrl: link,
-      publishedAt: pubDateStr ? new Date(pubDateStr) : null,
-      tags: categories,
-      thumbnailUrl,
-    });
-  }
-
-  return parsed;
+  return { posts, nextCursor };
 }
 
 export async function GET(request: Request) {
@@ -89,37 +67,39 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Fetch RSS
-  const rssRes = await fetch(MEDIUM_RSS, {
-    headers: { "User-Agent": "StyleGuideAI/1.0 (RSS sync)" },
-  });
-  if (!rssRes.ok) {
-    console.error("[sync-articles] RSS fetch failed:", rssRes.status);
-    return NextResponse.json({ error: "RSS fetch failed" }, { status: 502 });
+  // Paginate through all Medium posts
+  const allPosts: MediumPost[] = [];
+  let cursor: string | undefined;
+  let page = 0;
+
+  try {
+    do {
+      const { posts, nextCursor } = await fetchPage(cursor);
+      allPosts.push(...posts);
+      cursor = nextCursor;
+      page++;
+      console.log(`[sync-articles] Page ${page}: ${posts.length} posts (total so far: ${allPosts.length})`);
+    } while (cursor && page < MAX_PAGES);
+  } catch (err) {
+    console.error("[sync-articles] Fetch error:", err);
+    return NextResponse.json({ error: "Medium API fetch failed", detail: String(err) }, { status: 502 });
   }
-  const xml = await rssRes.text();
 
-  const items = parseRssItems(xml);
-  console.log("[sync-articles] RSS items parsed:", items.length);
+  console.log("[sync-articles] Total posts fetched:", allPosts.length);
 
-  if (!items.length) {
-    return NextResponse.json({ ok: true, synced: 0, message: "No items in feed" });
+  if (!allPosts.length) {
+    return NextResponse.json({ ok: true, synced: 0, message: "No posts returned" });
   }
 
-  // Load all art movement names once for tag matching
-  const movements = await db
-    .select({ id: artMovements.id, name: artMovements.name })
-    .from(artMovements);
-
-  const movementNames = movements.map((mv) => ({
-    id: mv.id,
-    lower: mv.name.toLowerCase(),
-  }));
+  // Load all art movement names for tag matching
+  const movements = await db.select({ id: artMovements.id, name: artMovements.name }).from(artMovements);
+  const movementNames = movements.map((mv) => ({ id: mv.id, lower: mv.name.toLowerCase() }));
 
   let synced = 0;
-  for (const item of items) {
-    const lowerTags = item.tags.map((t) => t.toLowerCase());
-    const lowerTitle = item.title.toLowerCase();
+  for (const post of allPosts) {
+    const tags = (post.virtuals?.tags ?? []).map((t) => t.name);
+    const lowerTags = tags.map((t) => t.toLowerCase());
+    const lowerTitle = post.title.toLowerCase();
 
     const movementMatches = movementNames
       .filter(
@@ -129,36 +109,41 @@ export async function GET(request: Request) {
       )
       .map((mv) => mv.id);
 
+    const imageId = post.virtuals?.previewImage?.imageId;
+    const summary = post.virtuals?.subtitle ?? null;
+    const mediumUrl = buildMediumUrl(post);
+    const slug = post.slug || post.id;
+
     try {
       await db
         .insert(articles)
         .values({
-          title: item.title,
-          slug: item.slug,
-          summary: item.summary,
-          mediumUrl: item.mediumUrl,
-          publishedAt: item.publishedAt,
-          tags: item.tags,
-          thumbnailUrl: item.thumbnailUrl,
+          title: post.title,
+          slug: slug.slice(0, 200),
+          summary,
+          mediumUrl,
+          publishedAt: post.firstPublishedAt ? new Date(post.firstPublishedAt) : null,
+          tags,
+          thumbnailUrl: buildThumbnailUrl(imageId),
           movementMatches,
         })
         .onConflictDoUpdate({
           target: articles.mediumUrl,
           set: {
-            title: item.title,
-            summary: item.summary,
-            tags: item.tags,
-            thumbnailUrl: item.thumbnailUrl,
+            title: post.title,
+            summary,
+            tags,
+            thumbnailUrl: buildThumbnailUrl(imageId),
             movementMatches,
             updatedAt: new Date(),
           },
         });
       synced++;
     } catch (err) {
-      console.error("[sync-articles] Insert error for", item.slug, err);
+      console.error("[sync-articles] Insert error for", slug, err);
     }
   }
 
-  console.log("[sync-articles] Synced:", synced, "of", items.length);
-  return NextResponse.json({ ok: true, synced, total: items.length });
+  console.log("[sync-articles] Synced:", synced, "of", allPosts.length);
+  return NextResponse.json({ ok: true, synced, total: allPosts.length, pages: page });
 }
