@@ -7,7 +7,18 @@ import { prefersReducedMotion } from "@/lib/motion";
 import { Button } from "@/components/ui/button";
 import { Placeholder } from "@/components/ui/placeholder";
 
-export function HeroSection() {
+interface HeroTheme {
+  galleryName: string | null;
+  heroImageUrl: string | null;
+  heroDeviationUrl: string | null;
+  journalUrl: string | null;
+}
+
+interface HeroSectionProps {
+  theme?: HeroTheme | null;
+}
+
+export function HeroSection({ theme }: HeroSectionProps) {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
@@ -21,6 +32,8 @@ export function HeroSection() {
       .from(ctaRef.current, { y: 20, opacity: 0, duration: 0.5 }, "-=0.3")
       .from(imageRef.current, { x: 40, opacity: 0, duration: 0.8 }, "-=0.6");
   }, []);
+
+  const heroLink = theme?.journalUrl ?? theme?.heroDeviationUrl ?? null;
 
   return (
     <section
@@ -55,14 +68,14 @@ export function HeroSection() {
             </p>
             <div ref={ctaRef} className="flex flex-wrap gap-3">
               <Button asChild size="lg" className="min-h-[44px]">
-                <Link href="/stylebear">Try StyleBear</Link>
+                <Link href="/museum">Explore Museum</Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="min-h-[44px]">
-                <Link href="/museum">Explore Museum</Link>
+                <Link href="/styletarot">Play StyleTarot</Link>
               </Button>
               <Button asChild variant="ghost" size="lg" className="min-h-[44px]">
                 <a
-                  href="https://discord.gg/styleguideai"
+                  href="https://discord.gg/3QK2B3zhGb"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -77,17 +90,44 @@ export function HeroSection() {
             <div className="relative w-full max-w-sm lg:max-w-md">
               <div className="absolute -inset-4 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 blur-xl" aria-hidden="true" />
               <div className="relative overflow-hidden rounded-2xl border-2 border-primary/20 bg-card shadow-2xl">
-                <Placeholder
-                  width={480}
-                  height={520}
-                  alt="[PROMPT: 1950s retro diner soda-fountain waitress with long brunette hair and black glasses, surrounded by floating vintage art prints and paintbrushes, retro illustration style, warm cream and deep purple color palette, pin-up style, cheerful and stylish]"
-                  className="w-full"
-                />
+                {theme?.heroImageUrl ? (
+                  heroLink ? (
+                    <a
+                      href={heroLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`View ${theme.galleryName ?? "theme gallery"} on DeviantArt`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={theme.heroImageUrl}
+                        alt={`Community art for ${theme.galleryName ?? "this month's theme"}`}
+                        className="w-full aspect-[4/4.3] object-cover"
+                      />
+                    </a>
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={theme.heroImageUrl}
+                      alt={`Community art for ${theme.galleryName ?? "this month's theme"}`}
+                      className="w-full aspect-[4/4.3] object-cover"
+                    />
+                  )
+                ) : (
+                  <Placeholder
+                    width={480}
+                    height={520}
+                    alt="[PROMPT: 1950s retro diner soda-fountain waitress with long brunette hair and black glasses, surrounded by floating vintage art prints and paintbrushes, retro illustration style, warm cream and deep purple color palette, pin-up style, cheerful and stylish]"
+                    className="w-full"
+                  />
+                )}
               </div>
               {/* Floating badge */}
               <div className="absolute -bottom-4 -left-4 rounded-xl bg-card border border-border shadow-lg px-4 py-3">
-                <p className="text-xs font-medium text-muted-foreground">Today&apos;s theme</p>
-                <p className="text-sm font-bold text-primary">Art Nouveau</p>
+                <p className="text-xs font-medium text-muted-foreground">This month&apos;s theme</p>
+                <p className="text-sm font-bold text-primary">
+                  {theme?.galleryName ?? "Daily Themes"}
+                </p>
               </div>
             </div>
           </div>

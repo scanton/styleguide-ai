@@ -13,16 +13,6 @@ if (typeof window !== "undefined") {
 
 const FEATURES = [
   {
-    icon: "🐻",
-    title: "StyleBear",
-    description:
-      "Our flagship AI art prompt generator. Pick art movements, media, styles, and let StyleBear craft the perfect prompt for Flux, Midjourney, SDXL, and more.",
-    href: "/stylebear",
-    cta: "Generate prompts",
-    color: "from-primary/10 to-primary/5",
-    accent: "bg-primary/10 text-primary",
-  },
-  {
     icon: "🏛️",
     title: "Virtual Museum",
     description:
@@ -33,14 +23,14 @@ const FEATURES = [
     accent: "bg-accent/10 text-accent",
   },
   {
-    icon: "🎲",
-    title: "StyleDice",
+    icon: "🐻",
+    title: "StyleBear",
     description:
-      "Roll six creative dice — artists, movements, media, genres — and generate a unique art prompt from your hand. Re-roll up to twice before committing.",
-    href: "/styledice",
-    cta: "Roll the dice",
-    color: "from-brand-gold/20 to-brand-gold/5",
-    accent: "bg-brand-gold/20 text-foreground",
+      "Our flagship AI art prompt generator. Pick art movements, media, styles, and let StyleBear craft the perfect prompt for Flux, Midjourney, SDXL, and more.",
+    href: "/stylebear",
+    cta: "Generate prompts",
+    color: "from-primary/10 to-primary/5",
+    accent: "bg-primary/10 text-primary",
   },
   {
     icon: "🃏",
@@ -51,6 +41,16 @@ const FEATURES = [
     cta: "Deal the cards",
     color: "from-primary/10 to-accent/5",
     accent: "bg-primary/10 text-primary",
+  },
+  {
+    icon: "📚",
+    title: "Articles",
+    description:
+      "233 deep-dives into art history, movements, and techniques by Satori Canton. From Impressionism to AI art — fuel your creative research.",
+    href: "/articles",
+    cta: "Read articles",
+    color: "from-brand-gold/20 to-brand-gold/5",
+    accent: "bg-brand-gold/20 text-foreground",
   },
 ];
 

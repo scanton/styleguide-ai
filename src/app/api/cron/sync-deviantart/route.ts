@@ -1,11 +1,12 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { communitySpotlight } from "@/drizzle/schema";
+import { communitySpotlight, currentTheme } from "@/drizzle/schema";
 
 const DA_BASE = "https://www.deviantart.com/api/v1/oauth2";
 const DA_TOKEN_URL = "https://www.deviantart.com/oauth2/token";
 const GROUP_NAME = "styleguideai";
+const JOURNAL_AUTHOR = "satoricanton";
 
 interface DATokenResponse {
   access_token: string;
@@ -57,6 +58,27 @@ async function getAccessToken(): Promise<string> {
   return data.access_token;
 }
 
+// Find the URL of a journal by satoricanton whose title matches the gallery name.
+// Falls back to null so the caller can use a different URL.
+async function findJournalUrl(
+  authHeaders: Record<string, string>,
+  galleryName: string
+): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `${DA_BASE}/browse/user/journals?${new URLSearchParams({ username: JOURNAL_AUTHOR, limit: "24" })}`,
+      { headers: authHeaders }
+    );
+    if (!res.ok) return null;
+    const data = (await res.json()) as DAGalleryResponse;
+    const name = galleryName.toLowerCase();
+    const match = data.results?.find((d) => d.title.toLowerCase().includes(name));
+    return match?.url ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -73,9 +95,10 @@ export async function GET(request: Request) {
 
   const authHeaders = { Authorization: `Bearer ${accessToken}` };
 
-  // Step 1: Get gallery folders for the group to find the Featured folder UUID.
-  // Groups don't have deviations in gallery/all — their content lives in folders
-  // contributed by members.
+  // Step 1: Get gallery folders for the group.
+  // Folders come back in the same order the owner arranged them in DA group admin.
+  // folders[0] = Featured (community spotlight source)
+  // folders[1] = Current month's daily themes (hero image source)
   const foldersRes = await fetch(
     `${DA_BASE}/gallery/folders?${new URLSearchParams({ username: GROUP_NAME, calculate_size: "false", limit: "50" })}`,
     { headers: authHeaders },
@@ -91,18 +114,18 @@ export async function GET(request: Request) {
   console.log("[sync-deviantart] Folders found:", folders.map((f) => `${f.name}:${f.folderid}`));
 
   // Prefer "Featured", fall back to first folder
-  const target =
+  const featuredFolder =
     folders.find((f) => f.name.toLowerCase() === "featured") ?? folders[0];
 
-  if (!target) {
+  if (!featuredFolder) {
     return NextResponse.json({ ok: true, synced: 0, message: "No gallery folders found" });
   }
 
-  console.log("[sync-deviantart] Using folder:", target.name, target.folderid);
+  console.log("[sync-deviantart] Using folder:", featuredFolder.name, featuredFolder.folderid);
 
-  // Step 2: Fetch deviations from the chosen folder
+  // Step 2: Fetch deviations from Featured folder → community spotlight
   const galleryRes = await fetch(
-    `${DA_BASE}/gallery/${target.folderid}?${new URLSearchParams({ username: GROUP_NAME, limit: "24", mode: "newest" })}`,
+    `${DA_BASE}/gallery/${featuredFolder.folderid}?${new URLSearchParams({ username: GROUP_NAME, limit: "24", mode: "newest" })}`,
     { headers: authHeaders },
   );
   if (!galleryRes.ok) {
@@ -115,13 +138,8 @@ export async function GET(request: Request) {
   const deviations = gallery.results ?? [];
   console.log("[sync-deviantart] Deviations returned:", deviations.length);
 
-  if (!deviations.length) {
-    return NextResponse.json({ ok: true, synced: 0, total: 0, message: "Empty gallery response" });
-  }
-
   let synced = 0;
   for (const deviation of deviations) {
-    // Prefer preview (larger, ~400px) over thumbs (small)
     const imageUrl = deviation.preview?.src
       ?? deviation.thumbs?.[deviation.thumbs.length - 1]?.src
       ?? null;
@@ -148,5 +166,79 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.json({ ok: true, synced, total: deviations.length, folder: target.name });
+  // Step 3: Find the current month's theme gallery (second folder in arranged order,
+  // falling back to third if the second is empty). Fetch the top image as the hero.
+  // Folders at index 0 may be Featured; the theme gallery is always second by DA admin order.
+  const nonFeaturedFolders = folders.filter(
+    (f) => f.name.toLowerCase() !== "featured"
+  );
+  let themeGalleryName: string | null = null;
+  let themeHeroImageUrl: string | null = null;
+  let themeHeroDeviationUrl: string | null = null;
+
+  for (const candidate of nonFeaturedFolders.slice(0, 2)) {
+    try {
+      const themeRes = await fetch(
+        `${DA_BASE}/gallery/${candidate.folderid}?${new URLSearchParams({ username: GROUP_NAME, limit: "1", mode: "newest" })}`,
+        { headers: authHeaders }
+      );
+      if (!themeRes.ok) continue;
+      const themeData = (await themeRes.json()) as DAGalleryResponse;
+      const top = themeData.results?.[0];
+      if (top) {
+        themeGalleryName = candidate.name;
+        themeHeroImageUrl = top.preview?.src
+          ?? top.thumbs?.[top.thumbs.length - 1]?.src
+          ?? null;
+        themeHeroDeviationUrl = top.url;
+        console.log("[sync-deviantart] Theme gallery:", candidate.name, "top image:", themeHeroImageUrl);
+        break;
+      }
+    } catch (err) {
+      console.error("[sync-deviantart] Theme gallery fetch error:", err);
+    }
+  }
+
+  // Step 4: Find journal article by satoricanton with matching title
+  let journalUrl: string | null = null;
+  if (themeGalleryName) {
+    journalUrl = await findJournalUrl(authHeaders, themeGalleryName);
+    console.log("[sync-deviantart] Journal URL:", journalUrl ?? "(not found, will use deviation URL)");
+  }
+
+  // Step 5: Upsert current theme data
+  if (themeGalleryName) {
+    try {
+      await db
+        .insert(currentTheme)
+        .values({
+          id: "singleton",
+          galleryName: themeGalleryName,
+          heroImageUrl: themeHeroImageUrl,
+          heroDeviationUrl: themeHeroDeviationUrl,
+          journalUrl: journalUrl ?? themeHeroDeviationUrl,
+          updatedAt: new Date(),
+        })
+        .onConflictDoUpdate({
+          target: currentTheme.id,
+          set: {
+            galleryName: themeGalleryName,
+            heroImageUrl: themeHeroImageUrl,
+            heroDeviationUrl: themeHeroDeviationUrl,
+            journalUrl: journalUrl ?? themeHeroDeviationUrl,
+            updatedAt: new Date(),
+          },
+        });
+    } catch (err) {
+      console.error("[sync-deviantart] currentTheme upsert error:", err);
+    }
+  }
+
+  return NextResponse.json({
+    ok: true,
+    synced,
+    total: deviations.length,
+    folder: featuredFolder.name,
+    theme: themeGalleryName ?? null,
+  });
 }

@@ -4,8 +4,8 @@ import { FeatureGrid } from "@/components/home/FeatureGrid";
 import { CommunitySection } from "@/components/home/CommunitySection";
 import { ConsultingCTA } from "@/components/home/ConsultingCTA";
 import { db } from "@/lib/db";
-import { communityEvents, communitySpotlight } from "@/drizzle/schema";
-import { desc } from "drizzle-orm";
+import { communityEvents, communitySpotlight, currentTheme } from "@/drizzle/schema";
+import { desc, eq } from "drizzle-orm";
 
 export const metadata: Metadata = {
   title: "StyleGuideAI — AI Art Community & Tools",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export const revalidate = 300; // re-fetch every 5 minutes
 
 export default async function HomePage() {
-  const [[latestEvent], spotlightItems] = await Promise.all([
+  const [[latestEvent], spotlightItems, [heroTheme]] = await Promise.all([
     db
       .select({ title: communityEvents.title, threadUrl: communityEvents.threadUrl })
       .from(communityEvents)
@@ -42,11 +42,22 @@ export default async function HomePage() {
           .slice(0, 4),
       )
       .catch(() => []),
+    db
+      .select({
+        galleryName: currentTheme.galleryName,
+        heroImageUrl: currentTheme.heroImageUrl,
+        heroDeviationUrl: currentTheme.heroDeviationUrl,
+        journalUrl: currentTheme.journalUrl,
+      })
+      .from(currentTheme)
+      .where(eq(currentTheme.id, "singleton"))
+      .limit(1)
+      .catch(() => []),
   ]);
 
   return (
     <>
-      <HeroSection />
+      <HeroSection theme={heroTheme ?? null} />
       <FeatureGrid />
       <CommunitySection
         latestEventTitle={latestEvent?.title ?? null}

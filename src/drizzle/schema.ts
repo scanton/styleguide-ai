@@ -212,6 +212,17 @@ export const stylediceHistory = pgTable(
   (t) => [index("styledice_history_user_idx").on(t.userId)]
 );
 
+// ─── Current theme hero (DeviantArt second gallery) ──────────────────────────
+
+export const currentTheme = pgTable("current_theme", {
+  id: text("id").primaryKey(),
+  galleryName: text("gallery_name"),
+  heroImageUrl: text("hero_image_url"),
+  heroDeviationUrl: text("hero_deviation_url"),
+  journalUrl: text("journal_url"),
+  updatedAt: timestamp("updated_at", { mode: "date" }).default(sql`now()`),
+});
+
 // ─── StyleBear prompt history ─────────────────────────────────────────────────
 
 export const stylebearHistory = pgTable(
