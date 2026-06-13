@@ -355,7 +355,6 @@ export default function Gallery3D({ title, accentColor, works, onExit }: Gallery
 
     // ── Benches ──
     const benchWood = new THREE.MeshStandardMaterial({ color: "#4a3a28", roughness: 0.5 });
-    const benches: THREE.Vector3[] = [];
     const benchCount = Math.max(1, Math.floor(HALL_L / 14));
     for (let b = 0; b < benchCount; b++) {
       const bz = HALL_L / 2 - 10 - b * 14;
@@ -371,7 +370,6 @@ export default function Gallery3D({ title, accentColor, works, onExit }: Gallery
       }
       bench.position.set(0, 0, bz);
       scene.add(bench);
-      benches.push(new THREE.Vector3(0, 0, bz));
     }
 
     // ── Controls state ──
@@ -408,6 +406,16 @@ export default function Gallery3D({ title, accentColor, works, onExit }: Gallery
       }
     };
     document.addEventListener("pointerlockchange", onLockChange);
+
+    // While pointer-locked, a click pauses (the cursor is captured, so this
+    // is the only way to reach the UI without Esc). Touch devices never hold
+    // pointer lock, so taps are unaffected.
+    const onCanvasClick = () => {
+      if (document.pointerLockElement === renderer.domElement) {
+        document.exitPointerLock();
+      }
+    };
+    renderer.domElement.addEventListener("click", onCanvasClick);
 
     // Touch: left zone joystick for movement, elsewhere drag to look.
     const joy = { active: false, id: -1, baseX: 0, baseY: 0, dx: 0, dy: 0 };
@@ -500,19 +508,9 @@ export default function Gallery3D({ title, accentColor, works, onExit }: Gallery
       camera.position.x += velocity.x * dt;
       camera.position.z += velocity.z * dt;
 
-      // Bounds + bench collision
+      // Keep the walker inside the room (benches are walk-through set dressing)
       camera.position.x = Math.max(-HALL_W / 2 + 0.7, Math.min(HALL_W / 2 - 0.7, camera.position.x));
       camera.position.z = Math.max(-HALL_L / 2 + 0.8, Math.min(HALL_L / 2 - 0.8, camera.position.z));
-      for (const b of benches) {
-        const dx = camera.position.x - b.x;
-        const dz = camera.position.z - b.z;
-        const px = 1.45 - Math.abs(dx);
-        const pz = 0.75 - Math.abs(dz);
-        if (px > 0 && pz > 0) {
-          if (px < pz) camera.position.x = b.x + Math.sign(dx || 1) * 1.45;
-          else camera.position.z = b.z + Math.sign(dz || 1) * 0.75;
-        }
-      }
 
       // Head bob
       const speed2 = velocity.lengthSq();
@@ -548,6 +546,7 @@ export default function Gallery3D({ title, accentColor, works, onExit }: Gallery
       window.removeEventListener("resize", onResize);
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("pointerlockchange", onLockChange);
+      renderer.domElement.removeEventListener("click", onCanvasClick);
       mount.removeEventListener("touchstart", onTouchStart);
       mount.removeEventListener("touchmove", onTouchMove);
       mount.removeEventListener("touchend", onTouchEnd);
@@ -606,11 +605,11 @@ export default function Gallery3D({ title, accentColor, works, onExit }: Gallery
         </div>
       )}
 
-      {/* Exit button (always available) */}
+      {/* Exit button (always available, above every overlay) */}
       <button
         type="button"
         onClick={fadeOutAndExit}
-        className="absolute right-4 top-4 z-10 rounded-md border border-white/30 bg-black/50 px-4 py-2.5 text-sm text-white backdrop-blur-sm transition-colors hover:bg-black/70 min-h-[44px]"
+        className="absolute right-4 top-4 z-30 rounded-md border border-white/30 bg-black/50 px-4 py-2.5 text-sm text-white backdrop-blur-sm transition-colors hover:bg-black/70 min-h-[44px]"
       >
         Exit Gallery ✕
       </button>
@@ -656,7 +655,7 @@ export default function Gallery3D({ title, accentColor, works, onExit }: Gallery
               <p className="max-w-sm text-sm leading-relaxed text-white/60">
                 {isTouch
                   ? "Left thumb to walk, right thumb to look around."
-                  : "WASD or arrow keys to walk · mouse to look · Esc to pause"}
+                  : "WASD or arrow keys to walk · mouse to look · click or Esc to pause"}
               </p>
               <button
                 type="button"
