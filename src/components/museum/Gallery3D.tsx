@@ -120,10 +120,10 @@ function makeTitleWallTexture(title: string, count: number, accent: string): THR
   g.fillRect(0, 0, 1024, 512);
   g.fillStyle = accent;
   g.fillRect(0, 388, 1024, 16);
-  g.fillStyle = "#9b8e72";
-  g.font = "28px Georgia, serif";
+  g.fillStyle = "#6e6248";
+  g.font = "30px Georgia, serif";
   g.textAlign = "center";
-  g.fillText("THE  VIRTUAL  MUSEUM", 512, 130);
+  g.fillText("StyleGuideAI  Virtual  Museum", 512, 130);
   g.fillStyle = "#2a2118";
   let size = 92;
   g.font = `bold ${size}px Georgia, serif`;
@@ -374,31 +374,6 @@ export default function Gallery3D({ title, accentColor, works, onExit }: Gallery
       benches.push(new THREE.Vector3(0, 0, bz));
     }
 
-    // ── Dust motes ──
-    const moteCount = reduced ? 0 : 320;
-    let motes: THREE.Points | null = null;
-    if (moteCount > 0) {
-      const moteGeo = new THREE.BufferGeometry();
-      const pos = new Float32Array(moteCount * 3);
-      for (let i = 0; i < moteCount; i++) {
-        pos[i * 3] = (Math.random() - 0.5) * HALL_W * 0.9;
-        pos[i * 3 + 1] = Math.random() * HALL_H;
-        pos[i * 3 + 2] = (Math.random() - 0.5) * HALL_L * 0.95;
-      }
-      moteGeo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-      motes = new THREE.Points(
-        moteGeo,
-        new THREE.PointsMaterial({
-          color: "#ffe9c0",
-          size: 0.02,
-          transparent: true,
-          opacity: 0.4,
-          depthWrite: false,
-        })
-      );
-      scene.add(motes);
-    }
-
     // ── Controls state ──
     let yaw = Math.PI; // facing down the hall (-z)... camera at +z looking toward -z = yaw PI? compute: default camera looks -z with yaw 0. Start looking toward -z → yaw 0.
     yaw = 0;
@@ -499,7 +474,6 @@ export default function Gallery3D({ title, accentColor, works, onExit }: Gallery
       raf = requestAnimationFrame(animate);
       timer.update();
       const dt = Math.min(timer.getDelta(), 0.05);
-      const t = timer.getElapsed();
       const playing = phaseRef.current === "playing";
 
       // Input → desired velocity in camera space
@@ -548,12 +522,6 @@ export default function Gallery3D({ title, accentColor, works, onExit }: Gallery
       camera.rotation.set(0, 0, 0);
       camera.rotateY(yaw);
       camera.rotateX(pitch);
-
-      // Dust drift
-      if (motes) {
-        motes.position.y = Math.sin(t * 0.07) * 0.25;
-        motes.rotation.y = t * 0.004;
-      }
 
       // Proximity metadata
       let best: { work: GalleryWork; d: number } | null = null;
