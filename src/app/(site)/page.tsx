@@ -23,17 +23,24 @@ export default async function HomePage() {
       .orderBy(desc(communityEvents.postedAt))
       .limit(1)
       .catch(() => []),
+    // DISTINCT ON (artist_name) picks the newest post per artist,
+    // then JS sort takes the 4 most recent across all distinct artists.
     db
-      .select({
+      .selectDistinctOn([communitySpotlight.artistName], {
         id: communitySpotlight.id,
         title: communitySpotlight.title,
         artistName: communitySpotlight.artistName,
         thumbnailUrl: communitySpotlight.thumbnailUrl,
         deviationUrl: communitySpotlight.deviationUrl,
+        publishedAt: communitySpotlight.publishedAt,
       })
       .from(communitySpotlight)
-      .orderBy(desc(communitySpotlight.publishedAt))
-      .limit(4)
+      .orderBy(communitySpotlight.artistName, desc(communitySpotlight.publishedAt))
+      .then((rows) =>
+        rows
+          .sort((a, b) => (b.publishedAt?.getTime() ?? 0) - (a.publishedAt?.getTime() ?? 0))
+          .slice(0, 4),
+      )
       .catch(() => []),
   ]);
 
