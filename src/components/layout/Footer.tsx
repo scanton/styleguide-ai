@@ -102,7 +102,7 @@ export function Footer() {
           <p>
             Built by{" "}
             <a
-              href="https://medium.com/@satoricanton"
+              href="https://satoricanton.com"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary hover:underline focus-visible:outline-ring rounded"

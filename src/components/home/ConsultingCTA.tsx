@@ -62,10 +62,10 @@ export function ConsultingCTA() {
                 id="consulting-heading"
                 className="reveal font-heading text-3xl font-bold sm:text-4xl"
               >
-                Work With Satori
+                Work With StyleGuideAI
               </h2>
               <p className="reveal leading-relaxed opacity-90 max-w-md">
-                Head of AI at HeartStamp, founder of StyleGuideAI, and author of 300+ articles on art history and AI. Available for consulting on AI art production, model training, and agentic system design.
+                Founded by an AI art director with 300+ published articles on art history and AI. Available for consulting on AI art production, model training, and agentic system design.
               </p>
               <div className="reveal flex flex-wrap gap-3">
                 <Button

@@ -51,7 +51,7 @@ export function HeroSection() {
               ref={subRef}
               className="max-w-lg text-lg text-muted-foreground leading-relaxed"
             >
-              Explore a living community of AI artists, generate stunning prompts with StyleBear, and tour 500+ years of art history in our Virtual Museum.
+              Explore a living community of AI artists, generate stunning prompts with StyleBear, and tour 40,000 years of art history in our Virtual Museum.
             </p>
             <div ref={ctaRef} className="flex flex-wrap gap-3">
               <Button asChild size="lg" className="min-h-[44px]">
@@ -80,7 +80,7 @@ export function HeroSection() {
                 <Placeholder
                   width={480}
                   height={520}
-                  alt="[PROMPT: 1950s retro diner soda-fountain waitress with long brunette hair and black glasses, surrounded by floating vintage art prints and paintbrushes, retro illustration style, warm cream and red color palette, pin-up style, cheerful and stylish]"
+                  alt="[PROMPT: 1950s retro diner soda-fountain waitress with long brunette hair and black glasses, surrounded by floating vintage art prints and paintbrushes, retro illustration style, warm cream and deep purple color palette, pin-up style, cheerful and stylish]"
                   className="w-full"
                 />
               </div>

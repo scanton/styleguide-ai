@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession, signIn, signOut } from "next-auth/react";
 import { gsap } from "gsap";
 import { prefersReducedMotion } from "@/lib/motion";
 
@@ -14,6 +15,7 @@ interface NavLink {
 export function MobileNav({ links }: { links: NavLink[] }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const { data: session } = useSession();
   const drawerRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -89,7 +91,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
             </svg>
           </button>
         </div>
-        <nav className="flex flex-col gap-1 p-4" aria-label="Mobile navigation">
+        <nav className="flex flex-col gap-1 p-4 flex-1 overflow-y-auto" aria-label="Mobile navigation">
           {links.map((link) => (
             <Link
               key={link.href}
@@ -101,6 +103,39 @@ export function MobileNav({ links }: { links: NavLink[] }) {
               {link.label}
             </Link>
           ))}
+
+          {/* Account section */}
+          <div className="mt-2 pt-2 border-t border-border space-y-0.5">
+            {session?.user ? (
+              <>
+                <Link
+                  href="/account/history"
+                  className="rounded-md px-4 py-3 text-base font-medium min-h-[44px] flex items-center gap-2 transition-colors hover:bg-muted focus-visible:outline-ring text-foreground"
+                >
+                  📋 My History
+                </Link>
+                <Link
+                  href="/account/profile"
+                  className="rounded-md px-4 py-3 text-base font-medium min-h-[44px] flex items-center gap-2 transition-colors hover:bg-muted focus-visible:outline-ring text-foreground"
+                >
+                  👤 Profile
+                </Link>
+                <button
+                  onClick={() => { setOpen(false); signOut(); }}
+                  className="w-full rounded-md px-4 py-3 text-base font-medium min-h-[44px] flex items-center gap-2 transition-colors hover:bg-muted focus-visible:outline-ring text-foreground text-left"
+                >
+                  ↩ Sign out
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => { setOpen(false); signIn("google"); }}
+                className="w-full rounded-md px-4 py-3 text-base font-medium min-h-[44px] flex items-center transition-colors hover:bg-muted focus-visible:outline-ring text-primary text-left"
+              >
+                Sign in with Google
+              </button>
+            )}
+          </div>
         </nav>
       </div>
     </>

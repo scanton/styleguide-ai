@@ -19,6 +19,7 @@ export const users = pgTable("users", {
   email: text("email").unique(),
   emailVerified: timestamp("email_verified", { mode: "date" }),
   image: text("image"),
+  displayName: text("display_name"),
   createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
 });
 
@@ -187,6 +188,25 @@ export const artworks = pgTable("artworks", {
   height: integer("height").notNull(),
   description: text("description"),
 });
+
+// ─── StyleDice roll history ───────────────────────────────────────────────────
+
+export const stylediceHistory = pgTable(
+  "styledice_history",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    // JSON array of 6 strings: [movement, artist, media, technique, popCulture, genre]
+    diceValues: text("dice_values").notNull(),
+    generatedPrompt: text("generated_prompt"),
+    createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
+  },
+  (t) => [index("styledice_history_user_idx").on(t.userId)]
+);
 
 // ─── StyleBear prompt history ─────────────────────────────────────────────────
 

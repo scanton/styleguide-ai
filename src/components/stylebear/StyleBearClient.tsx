@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
+import { useSession } from "next-auth/react";
 import { artMovements } from "@/data/stylebear/art-movements";
 import { mediaTypes } from "@/data/stylebear/media-types";
 import { promptData, cultureKeys, checkboxOptions } from "@/data/stylebear/prompt-data";
@@ -75,6 +76,7 @@ function buildPrompt(
 }
 
 export default function StyleBearClient() {
+  const { data: session } = useSession();
   const [selectedMovements, setSelectedMovements] = useState<string[]>(
     Array(TRIPLE_COUNT).fill("")
   );
@@ -113,13 +115,27 @@ export default function StyleBearClient() {
         }),
       });
       const data = (await res.json()) as { content?: string; error?: string };
-      setOutput(data.content ?? data.error ?? "No response");
+      const generated = data.content ?? data.error ?? "No response";
+      setOutput(generated);
+
+      // Save to history for authenticated users (non-fatal)
+      if (session?.user && data.content) {
+        const inputSummary = [
+          ...selectedMovements.filter(Boolean).map((m) => `Movement: ${m}`),
+          ...selectedMedia.filter(Boolean).map((m) => `Media: ${m}`),
+        ].join(", ") || "Randomized inputs";
+        fetch("/api/stylebear/history", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: data.content, inputs: inputSummary }),
+        }).catch(() => {});
+      }
     } catch {
       setOutput("Error generating prompt. Please try again.");
     } finally {
       setLoading(false);
     }
-  }, [selectedMovements, selectedMedia, checkedOptions, promptType]);
+  }, [selectedMovements, selectedMedia, checkedOptions, promptType, session]);
 
   const handleRandomize = useCallback(() => {
     const randMovements = Array.from({ length: TRIPLE_COUNT }, (_, i) => {

@@ -7,7 +7,7 @@ import { gsap } from "gsap";
 import { prefersReducedMotion } from "@/lib/motion";
 import { MobileNav } from "./MobileNav";
 import { SearchButton } from "./SearchButton";
-import { AuthButton } from "./AuthButton";
+import { UserMenu } from "./UserMenu";
 
 const NAV_LINKS = [
   { href: "/museum", label: "Virtual Museum" },
@@ -84,7 +84,7 @@ export function Header() {
         {/* Right actions */}
         <div className="flex items-center gap-2">
           <SearchButton />
-          <AuthButton />
+          <UserMenu />
           <MobileNav links={NAV_LINKS} />
         </div>
       </div>
