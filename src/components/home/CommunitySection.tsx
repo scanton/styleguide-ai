@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -62,14 +63,15 @@ export function CommunitySection({ latestEventTitle, latestEventUrl, spotlightIt
                   href={item.deviationUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="overflow-hidden rounded-xl border border-border bg-muted aspect-square group focus-visible:outline-ring"
+                  className="relative overflow-hidden rounded-xl border border-border bg-muted aspect-square group focus-visible:outline-ring"
                   aria-label={`${item.title} by ${item.artistName} — view on DeviantArt`}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={item.thumbnailUrl}
                     alt={`${item.title} by ${item.artistName}`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    fill
+                    sizes="(min-width: 1024px) 200px, (min-width: 640px) 25vw, 45vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </a>
               ) : (

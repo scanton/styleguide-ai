@@ -172,11 +172,13 @@ export function ArticlesClient({ initialQ, initialPage, initialTotal }: Props) {
             >
               {/* Thumbnail */}
               {article.thumbnailUrl && (
-                // eslint-disable-next-line @next/next/no-img-element
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={article.thumbnailUrl}
                   alt=""
                   aria-hidden="true"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full aspect-video object-cover group-hover:scale-[1.02] transition-transform duration-300"
                   onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
                 />
