@@ -37,7 +37,7 @@ export async function GET(request: Request) {
         .limit(5),
 
       db
-        .select({ id: articles.id, title: articles.title, summary: articles.summary, mediumUrl: articles.mediumUrl })
+        .select({ id: articles.id, title: articles.title, summary: articles.summary, mediumUrl: articles.mediumUrl, tags: articles.tags })
         .from(articles)
         .where(or(ilike(articles.title, pattern), ilike(articles.summary, pattern)))
         .limit(5),
@@ -62,8 +62,8 @@ export async function GET(request: Request) {
         id: `article-${a.id}`,
         type: "article" as const,
         title: a.title,
-        subtitle: a.summary?.slice(0, 80) || undefined,
-        href: `/articles/${a.id}`,
+        subtitle: (a.tags ?? []).slice(0, 3).join(", ") || a.summary?.slice(0, 80) || undefined,
+        href: a.mediumUrl,
       })),
     ];
 

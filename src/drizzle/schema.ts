@@ -94,6 +94,7 @@ export const articles = pgTable(
     summary: text("summary"),
     mediumUrl: text("medium_url").notNull().unique(),
     publishedAt: timestamp("published_at", { mode: "date" }),
+    thumbnailUrl: text("thumbnail_url"),
     tags: text("tags").array().default(sql`'{}'::text[]`),
     movementMatches: text("movement_matches").array().default(sql`'{}'::text[]`),
     createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
