@@ -64,10 +64,11 @@ export async function GET(request: Request) {
     username: GROUP_NAME,
     limit: "24",
     mature_content: "false",
-    access_token: accessToken,
   });
 
-  const galleryRes = await fetch(`${DA_GALLERY_URL}?${params}`);
+  const galleryRes = await fetch(`${DA_GALLERY_URL}?${params}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
   if (!galleryRes.ok) {
     const body = await galleryRes.text();
     console.error("[sync-deviantart] Gallery fetch failed:", body);
