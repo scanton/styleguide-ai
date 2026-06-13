@@ -16,7 +16,7 @@ export async function GET() {
     .from(stylediceHistory)
     .where(eq(stylediceHistory.userId, session.user.id))
     .orderBy(desc(stylediceHistory.createdAt))
-    .limit(50);
+    .limit(200);
 
   return NextResponse.json({ history: rows });
 }

@@ -14,6 +14,12 @@ export const metadata: Metadata = {
   title: "Virtual Museum — Explore Art History",
   description:
     "Travel through 40,000 years of art history on an interactive timeline — movements, masters, world events, and the connections between them.",
+  openGraph: {
+    title: "Virtual Museum — Explore Art History",
+    description: "Travel through 40,000 years of art history on an interactive timeline — movements, masters, world events, and the connections between them.",
+    images: [{ url: "/images/og/og-museum.png", width: 1672, height: 941, alt: "StyleGuideAI Virtual Museum" }],
+  },
+  twitter: { card: "summary_large_image", images: ["/images/og/og-museum.png"] },
 };
 
 export default function MuseumPage() {

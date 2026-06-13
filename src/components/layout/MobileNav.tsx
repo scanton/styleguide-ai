@@ -96,6 +96,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
             <Link
               key={link.href}
               href={link.href}
+              aria-current={pathname.startsWith(link.href) ? "page" : undefined}
               className={`rounded-md px-4 py-3 text-base font-medium min-h-[44px] flex items-center transition-colors hover:bg-muted focus-visible:outline-ring ${
                 pathname.startsWith(link.href) ? "text-primary bg-muted" : "text-foreground"
               }`}

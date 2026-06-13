@@ -22,6 +22,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://styleguideai.com"),
   title: {
     default: "StyleGuideAI — AI Art Community & Tools",
     template: "%s | StyleGuideAI",
@@ -32,6 +33,18 @@ export const metadata: Metadata = {
   openGraph: {
     siteName: "StyleGuideAI",
     type: "website",
+    images: [
+      {
+        url: "/images/og/og-default.png",
+        width: 1672,
+        height: 941,
+        alt: "StyleGuideAI — AI Art Community & Tools",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/images/og/og-default.png"],
   },
   icons: {
     icon: [
@@ -54,6 +67,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:font-medium focus:shadow-lg"
+        >
+          Skip to main content
+        </a>
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>

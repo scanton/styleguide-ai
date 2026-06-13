@@ -5,6 +5,12 @@ export const metadata: Metadata = {
   title: "StyleDice — Art Inspiration Game",
   description:
     "Roll six creative dice — art movements, famous artists, media types, techniques, pop culture, and genres — then generate a ready-to-use AI art prompt.",
+  openGraph: {
+    title: "StyleDice — Art Inspiration Game",
+    description: "Roll six creative dice — art movements, famous artists, media types, techniques, pop culture, and genres — then generate a ready-to-use AI art prompt.",
+    images: [{ url: "/images/og/og-styledice.png", width: 1672, height: 941, alt: "StyleDice — Art Inspiration Game" }],
+  },
+  twitter: { card: "summary_large_image", images: ["/images/og/og-styledice.png"] },
 };
 
 export default function StyleDicePage() {

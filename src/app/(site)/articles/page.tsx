@@ -12,6 +12,12 @@ export const metadata: Metadata = {
   title: "Art History Articles",
   description:
     "Deep-dives into art movements, techniques, and the history behind the styles that inspire our AI art community. Originally published on Medium.",
+  openGraph: {
+    title: "Art History Articles — StyleGuideAI",
+    description: "Deep-dives into art movements, techniques, and the history behind the styles that inspire our AI art community. Originally published on Medium.",
+    images: [{ url: "/images/og/og-articles.png", width: 1672, height: 941, alt: "Art History Articles — StyleGuideAI" }],
+  },
+  twitter: { card: "summary_large_image", images: ["/images/og/og-articles.png"] },
 };
 
 interface Props {

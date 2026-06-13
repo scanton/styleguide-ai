@@ -84,6 +84,8 @@ function CardFace({ card, held, onClick, interactive }: {
           <img
             src={`/images/styletarot/${card.imageFilename}`}
             alt={card.title}
+            loading="lazy"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover"
             onError={() => setImgError(true)}
           />

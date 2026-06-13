@@ -11,6 +11,12 @@ export const metadata: Metadata = {
   title: "StyleGuideAI — AI Art Community & Tools",
   description:
     "A 1,000+ member community for AI artists. Explore our prompt generators, Virtual Museum of art history, and daily art inspiration.",
+  openGraph: {
+    title: "StyleGuideAI — AI Art Community & Tools",
+    description: "A 1,000+ member community for AI artists. Explore our prompt generators, Virtual Museum of art history, and daily art inspiration.",
+    images: [{ url: "/images/og/og-default.png", width: 1672, height: 941, alt: "StyleGuideAI — AI Art Community & Tools" }],
+  },
+  twitter: { card: "summary_large_image", images: ["/images/og/og-default.png"] },
 };
 
 export const revalidate = 300; // re-fetch every 5 minutes

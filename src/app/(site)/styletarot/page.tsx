@@ -6,6 +6,12 @@ export const metadata: Metadata = {
   title: "StyleTarot",
   description:
     "Draw five StyleTarot cards — movements, artists, media, subjects, and inspirations — and generate a detailed AI art prompt from your hand.",
+  openGraph: {
+    title: "StyleTarot — Art Inspiration Card Game",
+    description: "Draw five StyleTarot cards — movements, artists, media, subjects, and inspirations — and generate a detailed AI art prompt from your hand.",
+    images: [{ url: "/images/og/og-styletarot.png", width: 1672, height: 941, alt: "StyleTarot — Art Inspiration Card Game" }],
+  },
+  twitter: { card: "summary_large_image", images: ["/images/og/og-styletarot.png"] },
 };
 
 export default function StyleTarotPage() {

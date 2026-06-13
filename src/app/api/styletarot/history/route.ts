@@ -16,7 +16,7 @@ export async function GET() {
     .from(styletarotHistory)
     .where(eq(styletarotHistory.userId, session.user.id))
     .orderBy(desc(styletarotHistory.createdAt))
-    .limit(50);
+    .limit(200);
 
   return NextResponse.json({ history: rows });
 }
