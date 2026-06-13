@@ -1,0 +1,29 @@
+{
+  "id": "land-art",
+  "name": "Land Art",
+  "startYear": 1967,
+  "endYear": 1995,
+  "color": "#7A9B6E",
+  "description": "What if the gallery was a desert, a salt lake, a windswept coastline? Smithson's Spiral Jetty, Long's stone circles, Goldsworthy's ice arches — art you may never reach in person, but whose photographs haunt galleries anyway. The earth itself as medium, time as collaborator.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Land_art",
+  "influences": [],
+  "influencedBy": [
+    "minimalism"
+  ],
+  "keyArtists": [
+    "robert-smithson",
+    "richard-long",
+    "andy-goldsworthy"
+  ],
+  "region": [
+    "USA",
+    "United Kingdom"
+  ],
+  "tags": [
+    "environment",
+    "site-specific",
+    "sculpture",
+    "earth",
+    "impermanence"
+  ]
+}

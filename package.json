@@ -12,6 +12,7 @@
     "db:push": "node --env-file=.env.local ./node_modules/.bin/drizzle-kit push",
     "db:seed": "node --env-file=.env.local ./node_modules/.bin/tsx scripts/seed-museum.ts",
     "db:import-medium": "node --env-file=.env.local ./node_modules/.bin/tsx scripts/import-medium.ts",
+    "db:backfill-movements": "node --env-file=.env.local ./node_modules/.bin/tsx scripts/backfill-movements.ts",
     "db:studio": "node --env-file=.env.local ./node_modules/.bin/drizzle-kit studio"
   },
   "dependencies": {

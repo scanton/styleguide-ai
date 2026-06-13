@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import type {
@@ -12,6 +12,13 @@ import type {
 import { prefersReducedMotion } from "@/lib/motion";
 import { formatYear } from "@/lib/timeline-scale";
 import { useWikiThumb } from "@/lib/wiki-thumb";
+
+interface ArticleLink {
+  title: string;
+  slug: string;
+  mediumUrl: string;
+  publishedAt: string | null;
+}
 
 export type TimelineSelection =
   | { type: "artist"; id: string }
@@ -176,6 +183,25 @@ export default function TimelineInfoCard({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [animateClose]);
+
+  const [relatedArticles, setRelatedArticles] = useState<ArticleLink[]>([]);
+
+  useEffect(() => {
+    if (selection.type !== "movement") {
+      setRelatedArticles([]);
+      return;
+    }
+    let cancelled = false;
+    fetch(`/api/museum/movement-articles?movementId=${encodeURIComponent(selection.id)}`)
+      .then((r) => r.json())
+      .then((data: { articles?: ArticleLink[] }) => {
+        if (!cancelled) setRelatedArticles(data.articles ?? []);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [selection]);
 
   const artistBonds = artist
     ? connections
@@ -394,6 +420,29 @@ export default function TimelineInfoCard({
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Movement → related articles */}
+          {movement && relatedArticles.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Related Articles
+              </h3>
+              <ul className="space-y-1">
+                {relatedArticles.map((a) => (
+                  <li key={a.slug}>
+                    <a
+                      href={a.mediumUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex min-h-[36px] items-center text-sm text-primary hover:underline"
+                    >
+                      <span className="line-clamp-2">{a.title} ↗</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 

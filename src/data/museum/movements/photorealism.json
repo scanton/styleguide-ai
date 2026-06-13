@@ -1,0 +1,28 @@
+{
+  "id": "photorealism",
+  "name": "Photorealism",
+  "startYear": 1967,
+  "endYear": null,
+  "color": "#8BA5B8",
+  "description": "Painting indistinguishable from photography — but stranger. The hyper-detailed diner reflections, oversized faces, and chrome-plated streets reveal something the camera flattens. Ordinary American life rendered with the patience of a surgeon.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Photorealism",
+  "influences": [],
+  "influencedBy": [
+    "realism",
+    "pop-art"
+  ],
+  "keyArtists": [
+    "chuck-close",
+    "richard-estes",
+    "audrey-flack"
+  ],
+  "region": [
+    "USA"
+  ],
+  "tags": [
+    "realism",
+    "photography",
+    "hyper-detail",
+    "technique"
+  ]
+}

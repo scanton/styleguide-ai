@@ -1,0 +1,28 @@
+{
+  "id": "pointillism",
+  "name": "Pointillism",
+  "startYear": 1886,
+  "endYear": 1910,
+  "color": "#D4A843",
+  "description": "Put down the brush. Seurat's radical proposal: tiny dots of pure unmixed color, applied side by side so the eye blends them into luminous, vibrating light. Science made monumental — and as still as a held breath.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Pointillism",
+  "influences": [],
+  "influencedBy": [
+    "impressionism",
+    "post-impressionism"
+  ],
+  "keyArtists": [
+    "georges-seurat",
+    "paul-signac"
+  ],
+  "region": [
+    "France"
+  ],
+  "tags": [
+    "color theory",
+    "dots",
+    "light",
+    "divisionism",
+    "science"
+  ]
+}

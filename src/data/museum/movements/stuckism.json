@@ -1,0 +1,28 @@
+{
+  "id": "stuckism",
+  "name": "Stuckism",
+  "startYear": 1999,
+  "endYear": null,
+  "color": "#D4715A",
+  "description": "Painted protest against the art world's emperor's-new-clothes moment. Billy Childish and Charles Thomson founded the movement in 1999 — the name taken from an insult by Tracey Emin — demanding emotional sincerity, figurative painting, and artists willing to put themselves into the work.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Stuckism",
+  "influences": [],
+  "influencedBy": [
+    "expressionism",
+    "realism"
+  ],
+  "keyArtists": [
+    "billy-childish",
+    "charles-thomson"
+  ],
+  "region": [
+    "United Kingdom"
+  ],
+  "tags": [
+    "figurative",
+    "anti-conceptual",
+    "expressionism",
+    "contemporary",
+    "sincerity"
+  ]
+}
