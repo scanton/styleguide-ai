@@ -38,7 +38,7 @@ interface TimelineInfoCardProps {
 
 function yearsLabel(start: number, end: number | null): string {
   return end === null
-    ? `${formatYear(start)} – today`
+    ? `${formatYear(start)} – present`
     : `${formatYear(start)} – ${formatYear(end)}`;
 }
 

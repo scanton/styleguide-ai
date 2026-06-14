@@ -721,7 +721,7 @@ export default function MuseumTimeline({
                 onFocus={() => hoverMovement(m.id)(true)}
                 onBlur={() => hoverMovement(m.id)(false)}
                 aria-label={`${m.name}, ${formatYear(m.startYear)} to ${
-                  m.endYear === null ? "today" : formatYear(m.endYear)
+                  m.endYear === null ? "present" : formatYear(m.endYear)
                 }`}
                 className="absolute flex items-center overflow-hidden rounded-full px-4 text-left shadow-sm transition-[filter,box-shadow,opacity] duration-200 hover:shadow-md hover:brightness-110 focus-visible:brightness-110"
                 style={{

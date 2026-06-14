@@ -153,5 +153,25 @@
     "a": "jean-michel-basquiat",
     "b": "keith-haring",
     "label": "downtown New York brothers"
+  },
+  {
+    "a": "lady-pink",
+    "b": "jean-michel-basquiat",
+    "label": "NYC subway graffiti scene; both in Wild Style"
+  },
+  {
+    "a": "lady-pink",
+    "b": "keith-haring",
+    "label": "downtown NYC contemporaries"
+  },
+  {
+    "a": "mark-ryden",
+    "b": "todd-schorr",
+    "label": "co-founders of the Lowbrow movement"
+  },
+  {
+    "a": "mark-ryden",
+    "b": "greg-craola-simkins",
+    "label": "Lowbrow / Pop Surrealism scene"
   }
 ]
