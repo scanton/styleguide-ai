@@ -37,10 +37,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
 
-  const { type, id, sceneDetails } = body as {
+  const { type, id, sceneDetails, aspectRatio } = body as {
     type: "artist" | "movement";
     id: string;
     sceneDetails?: string;
+    aspectRatio?: string;
   };
 
   if (!type || !id) {
@@ -64,11 +65,12 @@ export async function POST(request: Request) {
 
     systemMessage = `You are an expert AI art prompt engineer. Generate a richly detailed, imaginative art prompt inspired by the style of a specific artist. Your prompt should evoke their signature aesthetic: their medium, technique, color palette, subject matter, mood, and compositional choices. Make the scene vivid and specific — invent a compelling subject that feels true to this artist's world. Return ONLY the prompt itself — no preamble, no explanation, no labels, no quotation marks. Output 120–220 words of pure visual description.`;
 
+    const artistAspectSuffix = aspectRatio ? `\n\nEnd the prompt with: ${aspectRatio} aspect ratio` : "";
     userMessage = `Generate an AI art prompt in the style of ${artist.name} (${yearsLabel}), associated with ${movementsLabel}.
 
 About this artist: ${artist.description}${sceneDetails ? `\n\nSpecific scene details to incorporate: ${sceneDetails}` : ""}
 
-Create a prompt that captures ${artist.name}'s distinctive visual language — their typical subjects, color sensibility, technique, and emotional register.`;
+Create a prompt that captures ${artist.name}'s distinctive visual language — their typical subjects, color sensibility, technique, and emotional register.${artistAspectSuffix}`;
   } else {
     const movements = getMovements();
     const movement = movements.find((m) => m.id === id);
@@ -81,11 +83,12 @@ Create a prompt that captures ${artist.name}'s distinctive visual language — t
 
     systemMessage = `You are an expert AI art prompt engineer. Generate a richly detailed, imaginative art prompt in the style of a specific art movement. Your prompt should evoke the movement's defining aesthetic: its typical media, techniques, color palettes, subject matter, mood, and compositional philosophy. Invent a compelling, specific scene that feels authentically rooted in that movement. Return ONLY the prompt itself — no preamble, no explanation, no labels, no quotation marks. Output 120–220 words of pure visual description.`;
 
+    const movementAspectSuffix = aspectRatio ? `\n\nEnd the prompt with: ${aspectRatio} aspect ratio` : "";
     userMessage = `Generate an AI art prompt in the style of the ${movement.name} art movement (${yearsLabel}).
 
 About this movement: ${movement.description}${sceneDetails ? `\n\nSpecific scene details to incorporate: ${sceneDetails}` : ""}
 
-Create a prompt that authentically captures the ${movement.name} aesthetic — its characteristic techniques, color sensibility, subject matter, and emotional tone.`;
+Create a prompt that authentically captures the ${movement.name} aesthetic — its characteristic techniques, color sensibility, subject matter, and emotional tone.${movementAspectSuffix}`;
   }
 
   try {

@@ -16,7 +16,20 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
   const [prompt, setPrompt] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [preferredAspectRatio, setPreferredAspectRatio] = useState<string | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!session?.user) return;
+    fetch("/api/account/profile")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.user?.preferredAspectRatio) {
+          setPreferredAspectRatio(data.user.preferredAspectRatio);
+        }
+      })
+      .catch(() => {});
+  }, [session?.user]);
 
   // Close on backdrop click
   const handleBackdropClick = useCallback(
@@ -42,7 +55,12 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
       const res = await fetch("/api/museum/generate-prompt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type, id, sceneDetails: sceneDetails.trim() || undefined }),
+        body: JSON.stringify({
+          type,
+          id,
+          sceneDetails: sceneDetails.trim() || undefined,
+          aspectRatio: preferredAspectRatio || undefined,
+        }),
       });
       const data = await res.json();
       const generated: string = data.prompt ?? data.error ?? "No response";
@@ -64,7 +82,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
     } finally {
       setGenerating(false);
     }
-  }, [type, id, sceneDetails, session, name]);
+  }, [type, id, sceneDetails, preferredAspectRatio, session, name]);
 
   const handleCopy = useCallback(async () => {
     if (!prompt) return;
@@ -93,7 +111,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
       aria-modal="true"
       aria-labelledby="museum-prompt-modal-title"
     >
-      <div className="w-full max-w-lg rounded-2xl border border-border bg-card shadow-2xl p-6 space-y-5">
+      <div className="w-full max-w-lg rounded-2xl border border-border bg-card shadow-2xl p-6 space-y-5 max-h-[88vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -148,7 +166,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
         {/* Output */}
         {prompt && (
           <div className="space-y-3">
-            <div className="rounded-lg border border-border bg-muted/40 p-4">
+            <div className="rounded-lg border border-border bg-muted/40 p-4 max-h-56 overflow-y-auto">
               <p className="text-sm leading-relaxed whitespace-pre-wrap">{prompt}</p>
             </div>
             <div className="flex gap-3">
