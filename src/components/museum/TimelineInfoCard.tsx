@@ -42,6 +42,12 @@ function yearsLabel(start: number, end: number | null): string {
     : `${formatYear(start)} – ${formatYear(end)}`;
 }
 
+function artistYearsLabel(birth: number, death: number | null | undefined): string {
+  return death == null
+    ? `${formatYear(birth)} – present`
+    : `${formatYear(birth)} – ${formatYear(death)}`;
+}
+
 function ArtistThumbChip({
   artist,
   onClick,
@@ -250,7 +256,7 @@ export default function TimelineInfoCard({
                 {heading}
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                {artist && yearsLabel(artist.birthYear, artist.deathYear)}
+                {artist && artistYearsLabel(artist.birthYear, artist.deathYear)}
                 {artist && artist.nationality.length > 0 && (
                   <> · {artist.nationality.join(", ")}</>
                 )}
