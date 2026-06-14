@@ -154,14 +154,21 @@ export default function StyleBearClient() {
 
       // Save to history for authenticated users (non-fatal)
       if (session?.user && data.content) {
-        const inputSummary = [
-          ...selectedMovements.filter(Boolean).map((m) => `Movement: ${m}`),
-          ...selectedMedia.filter(Boolean).map((m) => `Media: ${m}`),
-        ].join(", ") || "Randomized inputs";
+        const allOptionDefs = [...checkboxOptions, ...cultureKeys];
+        const inputs = JSON.stringify({
+          source: "stylebear",
+          promptStyle: promptType,
+          aspectRatio: aspectRatio || undefined,
+          movements: selectedMovements.filter(Boolean),
+          media: selectedMedia.filter(Boolean),
+          options: [...checkedOptions]
+            .map((key) => allOptionDefs.find((o) => o.key === key)?.label as string | undefined)
+            .filter((l): l is string => typeof l === "string"),
+        });
         fetch("/api/stylebear/history", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: data.content, inputs: inputSummary }),
+          body: JSON.stringify({ prompt: data.content, inputs }),
         }).catch(() => {});
       }
     } catch {

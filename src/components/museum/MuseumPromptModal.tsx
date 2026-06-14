@@ -73,7 +73,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             prompt: data.prompt,
-            inputs: `Museum: ${type === "artist" ? "Artist" : "Movement"} — ${name}`,
+            inputs: JSON.stringify({ source: "museum", entityType: type, name }),
           }),
         }).catch(() => {});
       }

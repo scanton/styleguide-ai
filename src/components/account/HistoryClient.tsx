@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { TAROT_CARDS, CARD_TYPE_COLORS } from "@/data/styletarot/cards";
+import { promptTypes } from "@/data/stylebear/config";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -38,6 +39,106 @@ const DICE_COLORS = [
 ];
 
 const PAGE_SIZE = 10;
+
+// ── StyleBear inputs parsing ──────────────────────────────────────────────────
+
+const PROMPT_STYLE_LABELS = new Map(promptTypes.map((p) => [p.value as string, p.label as string]));
+
+type BearInputsStyleBear = {
+  source: "stylebear";
+  promptStyle?: string;
+  aspectRatio?: string;
+  movements?: string[];
+  media?: string[];
+  options?: string[];
+};
+
+type BearInputsMuseum = {
+  source: "museum";
+  entityType?: "artist" | "movement";
+  name?: string;
+};
+
+type BearInputsParsed = BearInputsStyleBear | BearInputsMuseum;
+
+function parseBearInputs(raw: string): BearInputsParsed | null {
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object" && "source" in parsed) return parsed as BearInputsParsed;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function BearTags({ inputs }: { inputs: string }) {
+  const parsed = parseBearInputs(inputs);
+  if (!parsed) return null;
+
+  if (parsed.source === "museum") {
+    const entityLabel = parsed.entityType === "artist" ? "Artist" : parsed.entityType === "movement" ? "Movement" : "Museum";
+    return (
+      <div className="flex flex-wrap gap-2">
+        <span
+          className="inline-flex flex-col text-xs rounded-lg px-2.5 py-1.5 text-white leading-tight"
+          style={{ backgroundColor: "oklch(0.50 0.14 60)" }}
+        >
+          <span className="opacity-70 text-[10px] uppercase tracking-wide font-semibold">Source</span>
+          <span className="font-medium mt-0.5">Virtual Museum</span>
+        </span>
+        {parsed.name && (
+          <span
+            className="inline-flex flex-col text-xs rounded-lg px-2.5 py-1.5 text-white leading-tight"
+            style={{ backgroundColor: "oklch(0.42 0.13 55)" }}
+          >
+            <span className="opacity-70 text-[10px] uppercase tracking-wide font-semibold">{entityLabel}</span>
+            <span className="font-medium mt-0.5">{parsed.name}</span>
+          </span>
+        )}
+      </div>
+    );
+  }
+
+  // stylebear source
+  const tags: { category: string; value: string; color: string }[] = [];
+
+  if (parsed.promptStyle) {
+    tags.push({
+      category: "Prompt Style",
+      value: PROMPT_STYLE_LABELS.get(parsed.promptStyle) ?? parsed.promptStyle,
+      color: "oklch(0.42 0.22 285)",
+    });
+  }
+  if (parsed.aspectRatio) {
+    tags.push({ category: "Aspect Ratio", value: parsed.aspectRatio, color: "oklch(0.35 0.12 255)" });
+  }
+  for (const m of parsed.movements ?? []) {
+    tags.push({ category: "Movement", value: m, color: "oklch(0.55 0.13 195)" });
+  }
+  for (const m of parsed.media ?? []) {
+    tags.push({ category: "Media", value: m, color: "oklch(0.60 0.14 30)" });
+  }
+  for (const o of parsed.options ?? []) {
+    tags.push({ category: "Option", value: o, color: "oklch(0.46 0.10 160)" });
+  }
+
+  if (tags.length === 0) return null;
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {tags.map((tag, i) => (
+        <span
+          key={i}
+          className="inline-flex flex-col text-xs rounded-lg px-2.5 py-1.5 text-white leading-tight"
+          style={{ backgroundColor: tag.color }}
+        >
+          <span className="opacity-70 text-[10px] uppercase tracking-wide font-semibold">{tag.category}</span>
+          <span className="font-medium mt-0.5">{tag.value}</span>
+        </span>
+      ))}
+    </div>
+  );
+}
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", {
@@ -161,13 +262,17 @@ function BearHistoryTab() {
                 Delete
               </button>
             </div>
-            <p className="text-sm text-foreground leading-relaxed">{entry.prompt}</p>
-            <button
-              onClick={() => handleCopy(entry.prompt, entry.id)}
-              className="text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:underline"
-            >
-              {copied === entry.id ? "Copied!" : "Copy"}
-            </button>
+            <BearTags inputs={entry.inputs} />
+            <div className="rounded-xl bg-muted/60 p-3 space-y-2">
+              <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Generated prompt</p>
+              <p className="text-sm text-foreground leading-relaxed">{entry.prompt}</p>
+              <button
+                onClick={() => handleCopy(entry.prompt, entry.id)}
+                className="text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:underline"
+              >
+                {copied === entry.id ? "Copied!" : "Copy"}
+              </button>
+            </div>
           </li>
         ))}
       </ul>
