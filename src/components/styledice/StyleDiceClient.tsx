@@ -181,7 +181,7 @@ export default function StyleDiceClient() {
 
 Create a detailed, imaginative prompt that weaves all six elements into a vivid, cohesive scene. Describe the art style in depth: medium, technique, color palette, lighting, mood, and atmosphere. Be inventive — go beyond the obvious.${aspectSuffix}`;
 
-    const systemMessage = `You are an expert AI art prompt engineer. Generate richly detailed, imaginative prompts for modern AI image models (Flux, Midjourney v6, DALL·E 3, Stable Diffusion XL). Invent specific, vivid subjects and scenes, describe the art style in depth, and make every image feel like a deliberate authored artwork. Return ONLY the prompt itself — no preamble, no explanation, no labels, no quotation marks.`;
+    const systemMessage = `You are an expert AI art prompt engineer. Generate richly detailed, imaginative prompts for modern AI image models (Flux, Midjourney v6, DALL·E 3, Stable Diffusion XL). You MUST explicitly name every provided creative element — the art movement, artist, media type, technique, pop culture reference, and genre — within the prompt text itself. Never describe a style anonymously; always name it. Invent specific, vivid subjects and scenes, describe the art style in depth, and make every image feel like a deliberate authored artwork. Return ONLY the prompt itself — no preamble, no explanation, no labels, no quotation marks.`;
 
     let prompt: string | null = null;
 

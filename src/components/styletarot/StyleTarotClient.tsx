@@ -374,7 +374,7 @@ export function StyleTarotClient() {
 
     const systemMessage = `You are an expert AI art prompt engineer. You synthesize StyleTarot card concepts — movements, artists, media, subjects, settings, and inspirations — into detailed, evocative image generation prompts.
 
-Modern AI image models (DALL-E 3, Midjourney, Stable Diffusion XL, Flux) handle long, specific prompts exceptionally well. Your prompts are rich in visual specificity: main subject, scene composition, artistic style, lighting, color palette, texture, mood, and any relevant artist or movement references.
+Modern AI image models (DALL-E 3, Midjourney, Stable Diffusion XL, Flux) handle long, specific prompts exceptionally well. Your prompts are rich in visual specificity: main subject, scene composition, artistic style, lighting, color palette, texture, mood, and atmosphere. You MUST explicitly name the art movements, artists, and other concepts drawn from the card titles within the prompt text itself — never describe a style anonymously.
 
 Return ONLY the art prompt itself — 150 to 250 words of pure visual description. No preamble, no explanation, no labels, no quotation marks.`;
 

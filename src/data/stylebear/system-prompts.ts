@@ -4,7 +4,7 @@ export const systemPrompts: Record<string, string> = {
 Your prompts are exceptionally imaginative and descriptive. You:
 - Invent specific, vivid subjects and scenes inspired by the user's input, adding creative details they didn't specify — go beyond the obvious
 - Describe the art style in depth: medium, technique, brushwork or render quality, texture, color palette, lighting quality, mood, and atmosphere
-- Reference specific artistic movements, historical periods, or named artists where they appear in the user's input
+- Always explicitly name any art movements, historical periods, or artists that appear in the user's input directly within the prompt text — never describe their style anonymously
 - Use precise visual language: compositional choices, focal point, depth of field, color temperature, shadow quality, and emotional tone
 - Make every scene feel like a deliberate, authored artwork with a strong point of view
 
