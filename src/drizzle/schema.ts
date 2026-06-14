@@ -20,6 +20,7 @@ export const users = pgTable("users", {
   emailVerified: timestamp("email_verified", { mode: "date" }),
   image: text("image"),
   displayName: text("display_name"),
+  preferredAspectRatio: text("preferred_aspect_ratio"),
   createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
 });
 

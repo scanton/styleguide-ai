@@ -15,6 +15,13 @@
       "when": 1781312515260,
       "tag": "0001_regular_red_ghost",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1750000000000,
+      "tag": "0002_preferred_aspect_ratio",
+      "breakpoints": true
     }
   ]
 }

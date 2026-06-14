@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { gsap } from "gsap";
 import { prefersReducedMotion as shouldReduceMotion } from "@/lib/motion";
@@ -68,9 +68,22 @@ export default function StyleDiceClient() {
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [savedEntryId, setSavedEntryId] = useState<string | null>(null);
+  const [preferredAspectRatio, setPreferredAspectRatio] = useState<string | null>(null);
 
   const dieRefs = useRef<(HTMLDivElement | null)[]>([]);
   const promptRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!session?.user) return;
+    fetch("/api/account/profile")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.user?.preferredAspectRatio) {
+          setPreferredAspectRatio(data.user.preferredAspectRatio);
+        }
+      })
+      .catch(() => {});
+  }, [session?.user]);
 
   const animateDice = useCallback((indices: number[]) => {
     if (shouldReduceMotion()) return;
@@ -155,6 +168,9 @@ export default function StyleDiceClient() {
     setGeneratedPrompt(null);
 
     const [movement, artist, media, technique, popCulture, genre] = values;
+    const aspectSuffix = preferredAspectRatio
+      ? `\n\nEnd the prompt with: ${preferredAspectRatio} aspect ratio`
+      : "";
     const userMessage = `Generate an AI art prompt inspired by these six creative elements:
 - Art Movement: ${movement}
 - Famous Artist: ${artist}
@@ -163,7 +179,9 @@ export default function StyleDiceClient() {
 - Pop Culture Reference: ${popCulture}
 - Genre: ${genre}
 
-Create a detailed, ready-to-use Flux image generation prompt that weaves all six elements together naturally.`;
+Create a detailed, imaginative prompt that weaves all six elements into a vivid, cohesive scene. Describe the art style in depth: medium, technique, color palette, lighting, mood, and atmosphere. Be inventive — go beyond the obvious.${aspectSuffix}`;
+
+    const systemMessage = `You are an expert AI art prompt engineer. Generate richly detailed, imaginative prompts for modern AI image models (Flux, Midjourney v6, DALL·E 3, Stable Diffusion XL). Invent specific, vivid subjects and scenes, describe the art style in depth, and make every image feel like a deliberate authored artwork. Return ONLY the prompt itself — no preamble, no explanation, no labels, no quotation marks.`;
 
     let prompt: string | null = null;
 
@@ -172,7 +190,10 @@ Create a detailed, ready-to-use Flux image generation prompt that weaves all six
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: [{ role: "user", content: userMessage }],
+          messages: [
+            { role: "system", content: systemMessage },
+            { role: "user", content: userMessage },
+          ],
           maxTokens: 512,
         }),
       });

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
+import { ASPECT_RATIOS } from "@/lib/aspect-ratios";
 
 interface UserProfile {
   id: string;
@@ -10,6 +11,7 @@ interface UserProfile {
   email: string | null;
   image: string | null;
   displayName: string | null;
+  preferredAspectRatio: string | null;
   createdAt: string | null;
 }
 
@@ -17,6 +19,7 @@ export function ProfileClient() {
   const { data: session } = useSession();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [displayName, setDisplayName] = useState("");
+  const [preferredAspectRatio, setPreferredAspectRatio] = useState<string>("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -28,6 +31,7 @@ export function ProfileClient() {
         if (data.user) {
           setProfile(data.user);
           setDisplayName(data.user.displayName ?? data.user.name ?? "");
+          setPreferredAspectRatio(data.user.preferredAspectRatio ?? "");
         }
       })
       .finally(() => setLoading(false));
@@ -39,14 +43,14 @@ export function ProfileClient() {
       await fetch("/api/account/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ displayName }),
+        body: JSON.stringify({ displayName, preferredAspectRatio: preferredAspectRatio || null }),
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } finally {
       setSaving(false);
     }
-  }, [displayName]);
+  }, [displayName, preferredAspectRatio]);
 
   if (!session?.user) {
     return (
@@ -103,6 +107,30 @@ export function ProfileClient() {
             className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label="Display name"
           />
+          <Button onClick={handleSave} disabled={saving} size="sm">
+            {saved ? "Saved!" : saving ? "Saving…" : "Save"}
+          </Button>
+        </div>
+      </div>
+
+      {/* Preferred Aspect Ratio */}
+      <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+        <h2 className="font-semibold text-foreground">Preferred Aspect Ratio</h2>
+        <p className="text-sm text-muted-foreground">
+          StyleBear, StyleDice, and StyleTarot will include your preferred aspect ratio in generated prompts when you&apos;re signed in.
+        </p>
+        <div className="flex gap-3 items-end">
+          <select
+            value={preferredAspectRatio}
+            onChange={(e) => setPreferredAspectRatio(e.target.value)}
+            className="flex-1 h-11 rounded-lg border border-border bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label="Preferred aspect ratio"
+          >
+            <option value="">No preference</option>
+            {ASPECT_RATIOS.map((ar) => (
+              <option key={ar.value} value={ar.value}>{ar.label}</option>
+            ))}
+          </select>
           <Button onClick={handleSave} disabled={saving} size="sm">
             {saved ? "Saved!" : saving ? "Saving…" : "Save"}
           </Button>

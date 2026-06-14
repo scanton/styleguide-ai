@@ -232,6 +232,7 @@ export function StyleTarotClient() {
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [savedEntryId, setSavedEntryId] = useState<string | null>(null);
+  const [preferredAspectRatio, setPreferredAspectRatio] = useState<string | null>(null);
 
   // Refs for GSAP
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -244,6 +245,19 @@ export function StyleTarotClient() {
 
   // Animation trigger for redraw (set before setState, consumed by useEffect after render)
   const pendingRedrawAnim = useRef<number[] | null>(null);
+
+  // ── Fetch preferred aspect ratio ───────────────────────────────────────────
+  useEffect(() => {
+    if (!session?.user) return;
+    fetch("/api/account/profile")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.user?.preferredAspectRatio) {
+          setPreferredAspectRatio(data.user.preferredAspectRatio);
+        }
+      })
+      .catch(() => {});
+  }, [session?.user]);
 
   // ── GSAP hold animation ────────────────────────────────────────────────────
 
@@ -364,11 +378,14 @@ Modern AI image models (DALL-E 3, Midjourney, Stable Diffusion XL, Flux) handle 
 
 Return ONLY the art prompt itself — 150 to 250 words of pure visual description. No preamble, no explanation, no labels, no quotation marks.`;
 
+    const aspectSuffix = preferredAspectRatio
+      ? `\n\nEnd the prompt with: ${preferredAspectRatio} aspect ratio`
+      : "";
     const userMessage = `I drew these 5 StyleTarot cards as creative inspiration:
 
 ${cardList}
 
-Create a single, unified AI art prompt that weaves all five cards into one cohesive, visually stunning artwork. Draw from the card descriptions for specific visual elements, style cues, subject matter, setting, and mood. The result should feel like a natural, intentional artwork — not a random mashup. Be specific: name colors, lighting conditions, compositional choices, textures, and emotional tone.`;
+Create a single, unified AI art prompt that weaves all five cards into one cohesive, visually stunning artwork. Draw from the card descriptions for specific visual elements, style cues, subject matter, setting, and mood. The result should feel like a natural, intentional artwork — not a random mashup. Be specific: name colors, lighting conditions, compositional choices, textures, and emotional tone.${aspectSuffix}`;
 
     let prompt: string | null = null;
 
@@ -419,7 +436,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
     requestAnimationFrame(() => {
       promptRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     });
-  }, [getActiveCards, session, savedEntryId]);
+  }, [getActiveCards, session, savedEntryId, preferredAspectRatio]);
 
   const handleCopy = useCallback(() => {
     if (!generatedPrompt) return;

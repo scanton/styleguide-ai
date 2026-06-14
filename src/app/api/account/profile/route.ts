@@ -18,6 +18,7 @@ export async function GET() {
       email: users.email,
       image: users.image,
       displayName: users.displayName,
+      preferredAspectRatio: users.preferredAspectRatio,
       createdAt: users.createdAt,
     })
     .from(users)
@@ -44,18 +45,32 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  const { displayName } = body as { displayName?: string };
+  const { displayName, preferredAspectRatio } = body as {
+    displayName?: string;
+    preferredAspectRatio?: string | null;
+  };
   if (typeof displayName !== "string") {
     return NextResponse.json({ error: "displayName must be a string" }, { status: 422 });
   }
 
   const trimmed = displayName.trim().slice(0, 60);
+  const aspectRatio = typeof preferredAspectRatio === "string" ? preferredAspectRatio || null : undefined;
+
+  const updates: Partial<{ displayName: string | null; preferredAspectRatio: string | null }> = {
+    displayName: trimmed || null,
+  };
+  if (aspectRatio !== undefined) {
+    updates.preferredAspectRatio = aspectRatio;
+  }
 
   const [updated] = await db
     .update(users)
-    .set({ displayName: trimmed || null })
+    .set(updates)
     .where(eq(users.id, session.user.id))
-    .returning({ displayName: users.displayName });
+    .returning({ displayName: users.displayName, preferredAspectRatio: users.preferredAspectRatio });
 
-  return NextResponse.json({ displayName: updated?.displayName ?? null });
+  return NextResponse.json({
+    displayName: updated?.displayName ?? null,
+    preferredAspectRatio: updated?.preferredAspectRatio ?? null,
+  });
 }

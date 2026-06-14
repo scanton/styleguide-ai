@@ -1,4 +1,5 @@
 export const promptTypes = [
+  { label: 'Modern / Detailed', value: 'modern' },
   { label: 'Flux', value: 'flux' },
   { label: 'SDXL / SD1.5', value: 'sdxl' },
   { label: 'Midjourney', value: 'midjourney' },

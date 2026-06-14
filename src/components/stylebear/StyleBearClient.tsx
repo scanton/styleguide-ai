@@ -8,6 +8,7 @@ import { artMovements } from "@/data/stylebear/art-movements";
 import { mediaTypes } from "@/data/stylebear/media-types";
 import { promptData, cultureKeys, checkboxOptions } from "@/data/stylebear/prompt-data";
 import { promptTypes, TRIPLE_COUNT } from "@/data/stylebear/config";
+import { ASPECT_RATIOS, DEFAULT_STYLEBEAR_ASPECT_RATIO } from "@/lib/aspect-ratios";
 import { processWildcards } from "@/lib/wildcards";
 
 const STYLEBEAR_MODEL = "openrouter/free";
@@ -90,6 +91,7 @@ export default function StyleBearClient() {
   );
   const [showCultures, setShowCultures] = useState(false);
   const [promptType, setPromptType] = useState<string>(promptTypes[0].value);
+  const [aspectRatio, setAspectRatio] = useState<string>(DEFAULT_STYLEBEAR_ASPECT_RATIO);
   const [output, setOutput] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -113,7 +115,10 @@ export default function StyleBearClient() {
   const handleGenerate = useCallback(async () => {
     const subject = subjectRef.current?.value ?? "";
     const footer = footerRef.current?.value ?? "";
-    const rawPrompt = buildPrompt(subject, footer, selectedMovements, selectedMedia, checkedOptions);
+    const basePrompt = buildPrompt(subject, footer, selectedMovements, selectedMedia, checkedOptions);
+    const rawPrompt = aspectRatio
+      ? `${basePrompt}\n\nEnd the prompt with: ${aspectRatio} aspect ratio`
+      : basePrompt;
 
     setHasGenerated(true);
     setLoading(true);
@@ -151,7 +156,7 @@ export default function StyleBearClient() {
     } finally {
       setLoading(false);
     }
-  }, [selectedMovements, selectedMedia, checkedOptions, promptType, session]);
+  }, [selectedMovements, selectedMedia, checkedOptions, promptType, aspectRatio, session]);
 
   const handleRandomize = useCallback(() => {
     const randMovements = Array.from({ length: TRIPLE_COUNT }, (_, i) => {
@@ -235,6 +240,24 @@ export default function StyleBearClient() {
             {promptTypes.map((pt) => (
               <option key={pt.value} value={pt.value}>
                 {pt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex-1 min-w-[140px] space-y-1">
+          <label htmlFor="aspect-ratio" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            Aspect Ratio
+          </label>
+          <select
+            id="aspect-ratio"
+            value={aspectRatio}
+            onChange={(e) => setAspectRatio(e.target.value)}
+            className="w-full h-11 rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-2 focus-visible:outline-ring"
+          >
+            {ASPECT_RATIOS.map((ar) => (
+              <option key={ar.value} value={ar.value}>
+                {ar.label}
               </option>
             ))}
           </select>

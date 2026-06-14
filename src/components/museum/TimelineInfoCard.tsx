@@ -12,6 +12,7 @@ import type {
 import { prefersReducedMotion } from "@/lib/motion";
 import { formatYear } from "@/lib/timeline-scale";
 import { useWikiThumb } from "@/lib/wiki-thumb";
+import { MuseumPromptModal } from "@/components/museum/MuseumPromptModal";
 
 interface ArticleLink {
   title: string;
@@ -143,6 +144,7 @@ export default function TimelineInfoCard({
 }: TimelineInfoCardProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
+  const [showPromptModal, setShowPromptModal] = useState(false);
 
   const artist = selection.type === "artist" ? artists.get(selection.id) : undefined;
   const movement = selection.type === "movement" ? movements.get(selection.id) : undefined;
@@ -235,6 +237,7 @@ export default function TimelineInfoCard({
     (event ? "var(--brand-gold)" : "var(--primary)");
 
   return (
+    <>
     <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={heading}>
       {/* Backdrop */}
       <div
@@ -517,6 +520,15 @@ export default function TimelineInfoCard({
                 }
               />
             )}
+            {(artist || movement) && (
+              <button
+                type="button"
+                onClick={() => setShowPromptModal(true)}
+                className="block w-full rounded-md bg-primary/10 border border-primary/30 px-4 py-3 text-center text-sm text-primary font-medium hover:bg-primary/20 transition-colors min-h-[44px]"
+              >
+                Generate Prompt with StyleBear
+              </button>
+            )}
             {(artist?.wikipediaUrl ?? movement?.wikipediaUrl) && (
               <a
                 href={artist?.wikipediaUrl ?? movement?.wikipediaUrl}
@@ -531,5 +543,15 @@ export default function TimelineInfoCard({
         </div>
       </div>
     </div>
+
+    {showPromptModal && (artist || movement) && (
+      <MuseumPromptModal
+        type={artist ? "artist" : "movement"}
+        id={selection.id}
+        name={artist?.name ?? movement?.name ?? ""}
+        onClose={() => setShowPromptModal(false)}
+      />
+    )}
+    </>
   );
 }
