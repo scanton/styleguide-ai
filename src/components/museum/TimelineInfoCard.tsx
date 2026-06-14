@@ -193,12 +193,21 @@ export default function TimelineInfoCard({
   const [relatedArticles, setRelatedArticles] = useState<ArticleLink[]>([]);
 
   useEffect(() => {
-    if (selection.type !== "movement") {
+    let cancelled = false;
+    let url: string | null = null;
+
+    if (selection.type === "movement") {
+      url = `/api/museum/movement-articles?movementId=${encodeURIComponent(selection.id)}`;
+    } else if (selection.type === "artist") {
+      url = `/api/museum/artist-articles?artistId=${encodeURIComponent(selection.id)}`;
+    }
+
+    if (!url) {
       setRelatedArticles([]);
       return;
     }
-    let cancelled = false;
-    fetch(`/api/museum/movement-articles?movementId=${encodeURIComponent(selection.id)}`)
+
+    fetch(url)
       .then((r) => r.json())
       .then((data: { articles?: ArticleLink[] }) => {
         if (!cancelled) setRelatedArticles(data.articles ?? []);
@@ -355,6 +364,29 @@ export default function TimelineInfoCard({
                     <span className="min-w-0 flex-1 text-xs italic leading-snug text-muted-foreground">
                       {bond.label}
                     </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Artist → related articles */}
+          {artist && relatedArticles.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Related Articles
+              </h3>
+              <ul className="space-y-1">
+                {relatedArticles.map((a) => (
+                  <li key={a.slug}>
+                    <a
+                      href={a.mediumUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex min-h-[36px] items-center text-sm text-primary hover:underline"
+                    >
+                      <span className="line-clamp-2">{a.title} ↗</span>
+                    </a>
                   </li>
                 ))}
               </ul>
