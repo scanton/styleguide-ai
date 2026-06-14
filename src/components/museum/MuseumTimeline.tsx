@@ -80,7 +80,8 @@ function ArtistNode({
   onClick: () => void;
   onHover: (on: boolean) => void;
 }) {
-  const thumb = useWikiThumb(artist.wikipediaUrl, visible);
+  const wikiThumb = useWikiThumb(artist.wikipediaUrl, visible);
+  const thumb = artist.portraitUrl || wikiThumb;
   const initials = artist.name
     .split(" ")
     .map((w) => w[0])
