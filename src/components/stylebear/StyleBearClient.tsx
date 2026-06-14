@@ -96,6 +96,19 @@ export default function StyleBearClient() {
   const [loading, setLoading] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
 
+  // Seed aspect ratio from user's profile preference once session loads
+  useEffect(() => {
+    if (!session?.user) return;
+    fetch("/api/account/profile")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.user?.preferredAspectRatio) {
+          setAspectRatio(data.user.preferredAspectRatio);
+        }
+      })
+      .catch(() => {});
+  }, [session?.user]);
+
   const [hasGenerated, setHasGenerated] = useState(false);
   const subjectRef = useRef<HTMLTextAreaElement>(null);
   const footerRef = useRef<HTMLTextAreaElement>(null);
