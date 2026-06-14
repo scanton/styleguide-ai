@@ -281,10 +281,10 @@ export default function TimelineInfoCard({
           {/* Artist portrait */}
           {artist && (
             <div className="flex justify-center">
-              {portraitThumb ? (
+              {(artist.portraitUrl || portraitThumb) ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={portraitThumb}
+                  src={artist.portraitUrl || portraitThumb!}
                   alt={`Portrait of ${artist.name}`}
                   className="h-36 w-36 rounded-full border-4 object-cover shadow-md md:h-44 md:w-44"
                   style={{ borderColor: bandColor }}

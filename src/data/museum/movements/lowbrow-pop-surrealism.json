@@ -1,0 +1,32 @@
+{
+  "id": "lowbrow-pop-surrealism",
+  "name": "Lowbrow / Pop Surrealism",
+  "startYear": 1970,
+  "endYear": null,
+  "color": "#D81B60",
+  "description": "Candy-colored nightmares and childhood wonder gone strange — Lowbrow emerged from LA hot rod culture, underground comics, and carnival art, then merged with fine-art surrealism to produce the hyper-detailed, pop-saturated canvases of the Juxtapoz generation. Technically meticulous, culturally subversive.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Lowbrow_(art_movement)",
+  "influences": [],
+  "influencedBy": [
+    "surrealism",
+    "pop-art",
+    "cartoon-animation",
+    "street-art"
+  ],
+  "keyArtists": [
+    "mark-ryden",
+    "todd-schorr",
+    "camille-rose-garcia",
+    "audrey-kawasaki",
+    "greg-craola-simkins"
+  ],
+  "region": [
+    "USA"
+  ],
+  "tags": [
+    "lowbrow",
+    "pop surrealism",
+    "illustration",
+    "subversive"
+  ]
+}
