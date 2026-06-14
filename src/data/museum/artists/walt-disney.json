@@ -1,0 +1,13 @@
+{
+  "id": "walt-disney",
+  "name": "Walt Disney",
+  "birthYear": 1901,
+  "deathYear": 1966,
+  "nationality": ["American"],
+  "movements": ["cartoon-animation"],
+  "description": "Walt Disney co-founded the studio that invented modern animation. He created Mickey Mouse in 1928 with Steamboat Willie — the first synchronized sound cartoon — and produced Snow White and the Seven Dwarfs in 1937, the world's first full-length animated feature film. Disney pioneered the multiplane camera, Technicolor animation, and the theme park as narrative space.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Walt_Disney",
+  "portraitUrl": "",
+  "artworkIds": [],
+  "timelineYear": 1937
+}

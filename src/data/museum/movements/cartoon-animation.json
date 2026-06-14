@@ -1,0 +1,30 @@
+{
+  "id": "cartoon-animation",
+  "name": "Cartoon & Animation",
+  "startYear": 1920,
+  "endYear": null,
+  "color": "#F5A623",
+  "description": "Rubber-hose limbs, talking mice, and impossible physics — animation turned illustration into time-based art. From Disney's hand-drawn golden age to today's digital studios, the cartoon frame distills character and emotion into pure graphic gesture.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Animation",
+  "influences": [
+    "digital-art",
+    "pop-art"
+  ],
+  "influencedBy": [
+    "expressionism"
+  ],
+  "keyArtists": [
+    "walt-disney",
+    "pascal-campion"
+  ],
+  "region": [
+    "USA",
+    "Global"
+  ],
+  "tags": [
+    "animation",
+    "illustration",
+    "character design",
+    "storytelling"
+  ]
+}

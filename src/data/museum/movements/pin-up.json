@@ -1,0 +1,30 @@
+{
+  "id": "pin-up",
+  "name": "Pin-Up Art",
+  "startYear": 1890,
+  "endYear": 1975,
+  "color": "#C84B78",
+  "description": "Sunburned cheeks, polished nails, and a knowing wink — pin-up turned idealized glamour into commercial art gold. From Gibson Girls to Varga girls to dark neo-noir, these illustrations defined American fantasy across magazines, calendars, and nose art.",
+  "wikipediaUrl": "https://en.wikipedia.org/wiki/Pin-up_model",
+  "influences": [
+    "pop-art"
+  ],
+  "influencedBy": [
+    "art-nouveau",
+    "art-deco",
+    "realism"
+  ],
+  "keyArtists": [
+    "patrick-nagel",
+    "brian-viveros"
+  ],
+  "region": [
+    "USA"
+  ],
+  "tags": [
+    "glamour",
+    "illustration",
+    "commercial art",
+    "feminine"
+  ]
+}
