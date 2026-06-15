@@ -1165,7 +1165,7 @@ export const TAROT_CARDS: TarotCard[] = [
     title: "Paul Cézanne",
     description: "Paul Cézanne was a pioneering post-impressionist painter whose work laid the foundation for modern art. Known for his unique brushwork and use of color, Cézanne's art explores form, light, and perspective, influencing generations of artists.",
     type: "artist",
-    imageFilename: "Paul_Cézanne.jpg",
+    imageFilename: "Paul_Cezanne.jpg",
   },
   {
     index: 144,
