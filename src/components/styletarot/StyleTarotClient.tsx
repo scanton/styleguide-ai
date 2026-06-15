@@ -447,14 +447,11 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
   }, [generatedPrompt]);
 
   const handleNewHand = useCallback(() => {
-    setDrawPhase("start");
-    setHand([]);
-    setHeld(Array(HAND_SIZE).fill(false));
-    setRedrawsLeft(MAX_REDRAWS);
     setGeneratedPrompt(null);
     setSavedEntryId(null);
     setCopied(false);
-  }, []);
+    handleDeal();
+  }, [handleDeal]);
 
   // Fire deal animation after React commits card DOM elements.
   // Uses dealCount so Strict Mode's second run skips (lastAnimatedDeal already matches).
