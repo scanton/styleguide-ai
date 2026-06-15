@@ -345,16 +345,26 @@ function TarotHistoryTab() {
                   Delete
                 </button>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-5 gap-2">
                 {cards.map((card, i) => (
-                  <span
+                  <div
                     key={i}
-                    className="inline-flex flex-col text-xs rounded-lg px-2.5 py-1.5 text-white leading-tight"
+                    className="rounded-xl overflow-hidden text-white text-xs leading-tight min-w-0"
                     style={{ backgroundColor: CARD_TYPE_COLORS[card!.type] ?? "oklch(0.42 0.22 285)" }}
                   >
-                    <span className="opacity-70 text-[10px] uppercase tracking-wide font-semibold">{card!.type}</span>
-                    <span className="font-medium mt-0.5">{card!.title}</span>
-                  </span>
+                    <div className="aspect-[2/3] overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={`/images/styletarot/${card!.imageFilename}`}
+                        alt={card!.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="p-1.5">
+                      <div className="opacity-70 text-[9px] uppercase tracking-wide font-semibold">{card!.type}</div>
+                      <div className="font-medium text-[11px] leading-tight mt-0.5 line-clamp-2">{card!.title}</div>
+                    </div>
+                  </div>
                 ))}
               </div>
               {entry.generatedPrompt && (
