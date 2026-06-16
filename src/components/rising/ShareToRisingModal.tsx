@@ -8,6 +8,7 @@ interface Props {
   toolOrigin: string;
   toolContext?: string;
   onClose: () => void;
+  onUploaded?: () => void;
 }
 
 type AspectRatioClass = "portrait" | "square" | "landscape";
@@ -19,7 +20,7 @@ function classifyAspectRatio(w: number, h: number): AspectRatioClass {
   return "square";
 }
 
-export function ShareToRisingModal({ prompt, toolOrigin, toolContext, onClose }: Props) {
+export function ShareToRisingModal({ prompt, toolOrigin, toolContext, onClose, onUploaded }: Props) {
   const { data: session } = useSession();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -104,6 +105,7 @@ export function ShareToRisingModal({ prompt, toolOrigin, toolContext, onClose }:
       const data = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok) throw new Error(data.error ?? "Upload failed");
       setSuccess(true);
+      onUploaded?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {

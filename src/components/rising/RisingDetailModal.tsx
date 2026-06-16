@@ -176,8 +176,11 @@ export function RisingDetailModal({ post, onClose, onVote }: Props) {
           {/* StyleTarot cards */}
           {post.toolOrigin === "styletarot" && (() => {
             try {
-              const cards: TarotCardMini[] = JSON.parse(post.toolContext ?? "");
-              if (!Array.isArray(cards) || cards.length === 0) return null;
+              const parsed = JSON.parse(post.toolContext ?? "");
+              const cards: TarotCardMini[] = Array.isArray(parsed)
+                ? parsed
+                : (Array.isArray(parsed?.cards) ? parsed.cards : []);
+              if (cards.length === 0) return null;
               return (
                 <div className="space-y-2">
                   <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Cards used</p>

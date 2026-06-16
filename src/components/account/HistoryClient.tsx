@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { TAROT_CARDS, CARD_TYPE_COLORS } from "@/data/styletarot/cards";
 import { promptTypes } from "@/data/stylebear/config";
+import { ShareToRisingModal } from "@/components/rising/ShareToRisingModal";
+import Link from "next/link";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -26,6 +28,20 @@ interface BearEntry {
   prompt: string;
   inputs: string;
   createdAt: string;
+}
+
+interface HistoryRender {
+  id: string;
+  imageUrl: string;
+  thumbnailUrl: string | null;
+  siteLikes: number;
+  rawEngagement: number;
+}
+
+interface ShareEntry {
+  prompt: string;
+  toolOrigin: string;
+  toolContext: string;
 }
 
 const DICE_CATEGORIES = ["Art Movement", "Famous Artist", "Media Type", "Art Technique", "Pop Culture", "Genre"];
@@ -146,6 +162,65 @@ function formatDate(iso: string) {
   });
 }
 
+// ── Rising renders strip ──────────────────────────────────────────────────────
+
+function RisingRendersStrip({ renders }: { renders: HistoryRender[] }) {
+  if (!renders.length) return null;
+  return (
+    <div className="space-y-2">
+      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+        Your Rising renders ({renders.length})
+      </p>
+      <div className="flex gap-2 flex-wrap">
+        {renders.map((r) => (
+          <Link
+            key={r.id}
+            href={`/rising/${r.id}`}
+            target="_blank"
+            className="relative group block rounded-lg overflow-hidden bg-muted w-20 h-20 shrink-0"
+          >
+            <img
+              src={r.thumbnailUrl ?? r.imageUrl}
+              alt="Your Rising render"
+              className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+            <p className="absolute bottom-1 left-1 right-1 text-white text-[9px] font-medium opacity-0 group-hover:opacity-100 transition-opacity text-center">
+              ♥ {(r.siteLikes ?? 0) + (r.rawEngagement ?? 0)}
+            </p>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Shared rising uploads hook ────────────────────────────────────────────────
+
+function useRisingUploads(ids: string[]) {
+  const [byId, setById] = useState<Record<string, HistoryRender[]>>({});
+  const key = ids.join(",");
+
+  useEffect(() => {
+    if (!key) return;
+    fetch(`/api/rising/by-history?ids=${key}`)
+      .then((r) => r.json())
+      .then((d) => setById(d.byId ?? {}))
+      .catch(() => {});
+  }, [key]);
+
+  const refetch = useCallback(() => {
+    if (!key) return;
+    fetch(`/api/rising/by-history?ids=${key}`)
+      .then((r) => r.json())
+      .then((d) => setById(d.byId ?? {}))
+      .catch(() => {});
+  }, [key]);
+
+  return { byId, refetch };
+}
+
 // ── Pagination helpers ────────────────────────────────────────────────────────
 
 function getPaginationItems(current: number, total: number): (number | "…")[] {
@@ -211,6 +286,7 @@ function BearHistoryTab() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [shareEntry, setShareEntry] = useState<ShareEntry | null>(null);
 
   useEffect(() => {
     fetch("/api/stylebear/history")
@@ -218,6 +294,9 @@ function BearHistoryTab() {
       .then((d) => setEntries(d.history ?? []))
       .finally(() => setLoading(false));
   }, []);
+
+  const allIds = entries.map((e) => e.id);
+  const { byId: uploads, refetch: refetchUploads } = useRisingUploads(allIds);
 
   const handleDelete = useCallback(async (id: string) => {
     await fetch(`/api/stylebear/history?id=${id}`, { method: "DELETE" });
@@ -248,36 +327,63 @@ function BearHistoryTab() {
   const pageEntries = entries.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
-    <div className="space-y-4">
-      <ul className="space-y-4">
-        {pageEntries.map((entry) => (
-          <li key={entry.id} className="rounded-2xl border border-border bg-card p-5 space-y-3">
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-xs text-muted-foreground">{formatDate(entry.createdAt)}</span>
-              <button
-                onClick={() => handleDelete(entry.id)}
-                className="text-xs text-muted-foreground hover:text-destructive transition-colors focus-visible:outline-none focus-visible:underline"
-                aria-label="Delete this prompt"
-              >
-                Delete
-              </button>
-            </div>
-            <BearTags inputs={entry.inputs} />
-            <div className="rounded-xl bg-muted/60 p-3 space-y-2">
-              <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Generated prompt</p>
-              <p className="text-sm text-foreground leading-relaxed">{entry.prompt}</p>
-              <button
-                onClick={() => handleCopy(entry.prompt, entry.id)}
-                className="text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:underline"
-              >
-                {copied === entry.id ? "Copied!" : "Copy"}
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-      <Pagination page={page} totalPages={totalPages} onPage={setPage} />
-    </div>
+    <>
+      <div className="space-y-4">
+        <ul className="space-y-4">
+          {pageEntries.map((entry) => (
+            <li key={entry.id} className="rounded-2xl border border-border bg-card p-5 space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-xs text-muted-foreground">{formatDate(entry.createdAt)}</span>
+                <button
+                  onClick={() => handleDelete(entry.id)}
+                  className="text-xs text-muted-foreground hover:text-destructive transition-colors focus-visible:outline-none focus-visible:underline"
+                  aria-label="Delete this prompt"
+                >
+                  Delete
+                </button>
+              </div>
+              <BearTags inputs={entry.inputs} />
+              <div className="rounded-xl bg-muted/60 p-3 space-y-2">
+                <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Generated prompt</p>
+                <p className="text-sm text-foreground leading-relaxed">{entry.prompt}</p>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleCopy(entry.prompt, entry.id)}
+                    className="text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:underline"
+                  >
+                    {copied === entry.id ? "Copied!" : "Copy"}
+                  </button>
+                  <button
+                    onClick={() =>
+                      setShareEntry({
+                        prompt: entry.prompt,
+                        toolOrigin: "stylebear",
+                        toolContext: JSON.stringify({ historyEntryId: entry.id, historyTable: "stylebear" }),
+                      })
+                    }
+                    className="text-xs font-medium text-[oklch(0.42_0.22_285)] hover:underline focus-visible:outline-none focus-visible:underline"
+                  >
+                    Share to Rising ↗
+                  </button>
+                </div>
+              </div>
+              <RisingRendersStrip renders={uploads[entry.id] ?? []} />
+            </li>
+          ))}
+        </ul>
+        <Pagination page={page} totalPages={totalPages} onPage={setPage} />
+      </div>
+
+      {shareEntry && (
+        <ShareToRisingModal
+          prompt={shareEntry.prompt}
+          toolOrigin={shareEntry.toolOrigin}
+          toolContext={shareEntry.toolContext}
+          onClose={() => setShareEntry(null)}
+          onUploaded={refetchUploads}
+        />
+      )}
+    </>
   );
 }
 
@@ -290,6 +396,7 @@ function TarotHistoryTab() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [shareEntry, setShareEntry] = useState<ShareEntry | null>(null);
 
   useEffect(() => {
     fetch("/api/styletarot/history")
@@ -297,6 +404,9 @@ function TarotHistoryTab() {
       .then((d) => setEntries(d.history ?? []))
       .finally(() => setLoading(false));
   }, []);
+
+  const allIds = entries.map((e) => e.id);
+  const { byId: uploads, refetch: refetchUploads } = useRisingUploads(allIds);
 
   const handleDelete = useCallback(async (id: string) => {
     await fetch(`/api/styletarot/history?id=${id}`, { method: "DELETE" });
@@ -327,64 +437,103 @@ function TarotHistoryTab() {
   const pageEntries = entries.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
-    <div className="space-y-4">
-      <ul className="space-y-4">
-        {pageEntries.map((entry) => {
-          let indices: number[] = [];
-          try { indices = JSON.parse(entry.cardIndices); } catch { /* noop */ }
-          const cards = indices.map((i) => TAROT_BY_INDEX.get(i)).filter(Boolean);
-          return (
-            <li key={entry.id} className="rounded-2xl border border-border bg-card p-5 space-y-3">
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-xs text-muted-foreground">{formatDate(entry.createdAt)}</span>
-                <button
-                  onClick={() => handleDelete(entry.id)}
-                  className="text-xs text-muted-foreground hover:text-destructive transition-colors focus-visible:outline-none focus-visible:underline"
-                  aria-label="Delete this hand"
-                >
-                  Delete
-                </button>
-              </div>
-              <div className="grid grid-cols-5 gap-2">
-                {cards.map((card, i) => (
-                  <div
-                    key={i}
-                    className="rounded-xl overflow-hidden text-white text-xs leading-tight min-w-0"
-                    style={{ backgroundColor: CARD_TYPE_COLORS[card!.type] ?? "oklch(0.42 0.22 285)" }}
-                  >
-                    <div className="aspect-[2/3] overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={`/images/styletarot/${card!.imageFilename}`}
-                        alt={card!.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="p-1.5">
-                      <div className="opacity-70 text-[9px] uppercase tracking-wide font-semibold">{card!.type}</div>
-                      <div className="font-medium text-[11px] leading-tight mt-0.5 line-clamp-2">{card!.title}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              {entry.generatedPrompt && (
-                <div className="rounded-xl bg-muted/60 p-3 space-y-2">
-                  <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Generated prompt</p>
-                  <p className="text-sm text-foreground leading-relaxed">{entry.generatedPrompt}</p>
+    <>
+      <div className="space-y-4">
+        <ul className="space-y-4">
+          {pageEntries.map((entry) => {
+            let indices: number[] = [];
+            try { indices = JSON.parse(entry.cardIndices); } catch { /* noop */ }
+            const cards = indices.map((i) => TAROT_BY_INDEX.get(i)).filter(Boolean);
+
+            const tarotToolContext = JSON.stringify({
+              historyEntryId: entry.id,
+              historyTable: "styletarot",
+              cards: cards.map((c) => ({
+                index: c!.index,
+                title: c!.title,
+                type: c!.type,
+                imageFilename: c!.imageFilename,
+              })),
+            });
+
+            return (
+              <li key={entry.id} className="rounded-2xl border border-border bg-card p-5 space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-xs text-muted-foreground">{formatDate(entry.createdAt)}</span>
                   <button
-                    onClick={() => handleCopy(entry.generatedPrompt!, entry.id)}
-                    className="text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:underline"
+                    onClick={() => handleDelete(entry.id)}
+                    className="text-xs text-muted-foreground hover:text-destructive transition-colors focus-visible:outline-none focus-visible:underline"
+                    aria-label="Delete this hand"
                   >
-                    {copied === entry.id ? "Copied!" : "Copy"}
+                    Delete
                   </button>
                 </div>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-      <Pagination page={page} totalPages={totalPages} onPage={setPage} />
-    </div>
+                <div className="grid grid-cols-5 gap-2">
+                  {cards.map((card, i) => (
+                    <div
+                      key={i}
+                      className="rounded-xl overflow-hidden text-white text-xs leading-tight min-w-0"
+                      style={{ backgroundColor: CARD_TYPE_COLORS[card!.type] ?? "oklch(0.42 0.22 285)" }}
+                    >
+                      <div className="aspect-[2/3] overflow-hidden">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={`/images/styletarot/${card!.imageFilename}`}
+                          alt={card!.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="p-1.5">
+                        <div className="opacity-70 text-[9px] uppercase tracking-wide font-semibold">{card!.type}</div>
+                        <div className="font-medium text-[11px] leading-tight mt-0.5 line-clamp-2">{card!.title}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {entry.generatedPrompt && (
+                  <div className="rounded-xl bg-muted/60 p-3 space-y-2">
+                    <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Generated prompt</p>
+                    <p className="text-sm text-foreground leading-relaxed">{entry.generatedPrompt}</p>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => handleCopy(entry.generatedPrompt!, entry.id)}
+                        className="text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:underline"
+                      >
+                        {copied === entry.id ? "Copied!" : "Copy"}
+                      </button>
+                      <button
+                        onClick={() =>
+                          setShareEntry({
+                            prompt: entry.generatedPrompt!,
+                            toolOrigin: "styletarot",
+                            toolContext: tarotToolContext,
+                          })
+                        }
+                        className="text-xs font-medium text-[oklch(0.42_0.22_285)] hover:underline focus-visible:outline-none focus-visible:underline"
+                      >
+                        Share to Rising ↗
+                      </button>
+                    </div>
+                  </div>
+                )}
+                <RisingRendersStrip renders={uploads[entry.id] ?? []} />
+              </li>
+            );
+          })}
+        </ul>
+        <Pagination page={page} totalPages={totalPages} onPage={setPage} />
+      </div>
+
+      {shareEntry && (
+        <ShareToRisingModal
+          prompt={shareEntry.prompt}
+          toolOrigin={shareEntry.toolOrigin}
+          toolContext={shareEntry.toolContext}
+          onClose={() => setShareEntry(null)}
+          onUploaded={refetchUploads}
+        />
+      )}
+    </>
   );
 }
 
@@ -395,6 +544,7 @@ function DiceHistoryTab() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [shareEntry, setShareEntry] = useState<ShareEntry | null>(null);
 
   useEffect(() => {
     fetch("/api/styledice/history")
@@ -402,6 +552,9 @@ function DiceHistoryTab() {
       .then((d) => setEntries(d.history ?? []))
       .finally(() => setLoading(false));
   }, []);
+
+  const allIds = entries.map((e) => e.id);
+  const { byId: uploads, refetch: refetchUploads } = useRisingUploads(allIds);
 
   const handleDelete = useCallback(async (id: string) => {
     await fetch(`/api/styledice/history?id=${id}`, { method: "DELETE" });
@@ -432,53 +585,80 @@ function DiceHistoryTab() {
   const pageEntries = entries.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
-    <div className="space-y-4">
-      <ul className="space-y-4">
-        {pageEntries.map((entry) => {
-          let values: string[] = [];
-          try { values = JSON.parse(entry.diceValues); } catch { /* noop */ }
-          return (
-            <li key={entry.id} className="rounded-2xl border border-border bg-card p-5 space-y-3">
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-xs text-muted-foreground">{formatDate(entry.createdAt)}</span>
-                <button
-                  onClick={() => handleDelete(entry.id)}
-                  className="text-xs text-muted-foreground hover:text-destructive transition-colors focus-visible:outline-none focus-visible:underline"
-                  aria-label="Delete this roll"
-                >
-                  Delete
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {values.map((val, i) => (
-                  <span
-                    key={i}
-                    className="inline-flex flex-col text-xs rounded-lg px-2.5 py-1.5 text-white leading-tight"
-                    style={{ backgroundColor: DICE_COLORS[i] }}
-                  >
-                    <span className="opacity-70 text-[10px] uppercase tracking-wide font-semibold">{DICE_CATEGORIES[i]}</span>
-                    <span className="font-medium mt-0.5">{val}</span>
-                  </span>
-                ))}
-              </div>
-              {entry.generatedPrompt && (
-                <div className="rounded-xl bg-muted/60 p-3 space-y-2">
-                  <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Generated prompt</p>
-                  <p className="text-sm text-foreground leading-relaxed">{entry.generatedPrompt}</p>
+    <>
+      <div className="space-y-4">
+        <ul className="space-y-4">
+          {pageEntries.map((entry) => {
+            let values: string[] = [];
+            try { values = JSON.parse(entry.diceValues); } catch { /* noop */ }
+            return (
+              <li key={entry.id} className="rounded-2xl border border-border bg-card p-5 space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-xs text-muted-foreground">{formatDate(entry.createdAt)}</span>
                   <button
-                    onClick={() => handleCopy(entry.generatedPrompt!, entry.id)}
-                    className="text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:underline"
+                    onClick={() => handleDelete(entry.id)}
+                    className="text-xs text-muted-foreground hover:text-destructive transition-colors focus-visible:outline-none focus-visible:underline"
+                    aria-label="Delete this roll"
                   >
-                    {copied === entry.id ? "Copied!" : "Copy"}
+                    Delete
                   </button>
                 </div>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-      <Pagination page={page} totalPages={totalPages} onPage={setPage} />
-    </div>
+                <div className="flex flex-wrap gap-2">
+                  {values.map((val, i) => (
+                    <span
+                      key={i}
+                      className="inline-flex flex-col text-xs rounded-lg px-2.5 py-1.5 text-white leading-tight"
+                      style={{ backgroundColor: DICE_COLORS[i] }}
+                    >
+                      <span className="opacity-70 text-[10px] uppercase tracking-wide font-semibold">{DICE_CATEGORIES[i]}</span>
+                      <span className="font-medium mt-0.5">{val}</span>
+                    </span>
+                  ))}
+                </div>
+                {entry.generatedPrompt && (
+                  <div className="rounded-xl bg-muted/60 p-3 space-y-2">
+                    <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Generated prompt</p>
+                    <p className="text-sm text-foreground leading-relaxed">{entry.generatedPrompt}</p>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => handleCopy(entry.generatedPrompt!, entry.id)}
+                        className="text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:underline"
+                      >
+                        {copied === entry.id ? "Copied!" : "Copy"}
+                      </button>
+                      <button
+                        onClick={() =>
+                          setShareEntry({
+                            prompt: entry.generatedPrompt!,
+                            toolOrigin: "styledice",
+                            toolContext: JSON.stringify({ historyEntryId: entry.id, historyTable: "styledice" }),
+                          })
+                        }
+                        className="text-xs font-medium text-[oklch(0.42_0.22_285)] hover:underline focus-visible:outline-none focus-visible:underline"
+                      >
+                        Share to Rising ↗
+                      </button>
+                    </div>
+                  </div>
+                )}
+                <RisingRendersStrip renders={uploads[entry.id] ?? []} />
+              </li>
+            );
+          })}
+        </ul>
+        <Pagination page={page} totalPages={totalPages} onPage={setPage} />
+      </div>
+
+      {shareEntry && (
+        <ShareToRisingModal
+          prompt={shareEntry.prompt}
+          toolOrigin={shareEntry.toolOrigin}
+          toolContext={shareEntry.toolContext}
+          onClose={() => setShareEntry(null)}
+          onUploaded={refetchUploads}
+        />
+      )}
+    </>
   );
 }
 
