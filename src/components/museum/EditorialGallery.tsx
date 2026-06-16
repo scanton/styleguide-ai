@@ -172,33 +172,56 @@ export default function EditorialGallery({
             >
               ← Back to the Timeline
             </Link>
-            <button
-              type="button"
-              onClick={() => setShow3D(true)}
-              className="rounded-md px-5 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 min-h-[44px]"
-              style={{ backgroundColor: accentColor }}
-            >
-              Step Inside → <span className="text-[10px] uppercase opacity-80">3D</span>
-            </button>
+            {works.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setShow3D(true)}
+                className="rounded-md px-5 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 min-h-[44px]"
+                style={{ backgroundColor: accentColor }}
+              >
+                Step Inside → <span className="text-[10px] uppercase opacity-80">3D</span>
+              </button>
+            )}
           </div>
-          <p className="pt-6 text-xs text-muted-foreground" aria-hidden="true">
-            Scroll to begin · {works.length} works
-          </p>
-          <div className="flex justify-center" aria-hidden="true">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              className="animate-bounce text-muted-foreground motion-reduce:animate-none"
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </div>
+          {works.length > 0 && (
+            <>
+              <p className="pt-6 text-xs text-muted-foreground" aria-hidden="true">
+                Scroll to begin · {works.length} works
+              </p>
+              <div className="flex justify-center" aria-hidden="true">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="animate-bounce text-muted-foreground motion-reduce:animate-none"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </>
+          )}
         </div>
       </header>
+
+      {/* Empty state — no curated artworks yet, community renders load below */}
+      {works.length === 0 && (
+        <section className="flex min-h-[40dvh] flex-col items-center justify-center gap-4 px-5 py-20 text-center">
+          <p
+            className="text-xs font-bold uppercase tracking-[0.25em]"
+            style={{ color: accentColor }}
+          >
+            Gallery in progress
+          </p>
+          <p className="max-w-md text-sm text-muted-foreground">
+            We haven&apos;t added curated historical artworks for this gallery yet — but you can
+            help build it. Generate a prompt with StyleBear below, render an image with your
+            favourite AI tool, and share it to Rising. Your render will appear here automatically.
+          </p>
+        </section>
+      )}
 
       {/* Works */}
       {works.map((work, i) => (
@@ -289,19 +312,25 @@ export default function EditorialGallery({
 
       {/* Outro */}
       <footer className="flex min-h-[60dvh] flex-col items-center justify-center gap-6 px-5 py-20 text-center">
-        <h2 className="font-heading text-3xl md:text-4xl">The end of this room.</h2>
+        <h2 className="font-heading text-3xl md:text-4xl">
+          {works.length > 0 ? "The end of this room." : "Help us build this gallery."}
+        </h2>
         <p className="max-w-md text-sm text-muted-foreground">
-          Walk these works in 3D, or head back — the timeline holds 40,000 years more.
+          {works.length > 0
+            ? "Walk these works in 3D, or head back — the timeline holds 40,000 years more."
+            : "Generate a prompt, render an image, and share it to Rising — your work appears here automatically."}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
-          <button
-            type="button"
-            onClick={() => setShow3D(true)}
-            className="rounded-md px-6 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 min-h-[44px]"
-            style={{ backgroundColor: accentColor }}
-          >
-            Step Inside →
-          </button>
+          {works.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setShow3D(true)}
+              className="rounded-md px-6 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 min-h-[44px]"
+              style={{ backgroundColor: accentColor }}
+            >
+              Step Inside →
+            </button>
+          )}
           <Link
             href="/museum"
             className="rounded-md border border-border px-6 py-3 text-sm transition-colors hover:bg-muted min-h-[44px]"

@@ -10,7 +10,9 @@ import EditorialGallery, {
   type GalleryWork,
 } from "@/components/museum/EditorialGallery";
 
-export const dynamic = "force-static";
+// ISR: revalidate hourly so community-activated galleries go live within an hour.
+// Unknown paths (no static artworks) render on-demand and are cached.
+export const revalidate = 3600;
 
 interface GalleryParams {
   kind: string;
@@ -25,12 +27,11 @@ function buildGallery(kind: string, id: string) {
 
   if (kind === "artist") {
     const artist = artistById.get(id);
-    if (!artist) return null;
+    if (!artist) return null; // truly unknown ID → 404
     const works = artworks
       .filter((w) => w.artistId === id)
       .sort((a, b) => (a.year ?? 0) - (b.year ?? 0));
-    if (works.length === 0) return null;
-    const movement = movements.find((m) => m.id === artist.movements[0]);
+    const movement = movements.find((m) => m.id === artist.movements?.[0]);
     return {
       eyebrow: "Editorial Gallery",
       title: artist.name,
@@ -61,7 +62,7 @@ function buildGallery(kind: string, id: string) {
 
   if (kind === "movement") {
     const movement = movements.find((m) => m.id === id);
-    if (!movement) return null;
+    if (!movement) return null; // truly unknown ID → 404
     const memberIds = new Set(movement.keyArtists);
     const works = artworks
       .filter(
@@ -69,7 +70,6 @@ function buildGallery(kind: string, id: string) {
           w.movementId === id || (w.artistId !== null && memberIds.has(w.artistId))
       )
       .sort((a, b) => (a.year ?? 0) - (b.year ?? 0));
-    if (works.length === 0) return null;
     return {
       eyebrow: "Editorial Gallery",
       title: movement.name,
@@ -98,6 +98,7 @@ function buildGallery(kind: string, id: string) {
   return null;
 }
 
+// Pre-build galleries that already have curated artworks; all others render on-demand.
 export function generateStaticParams(): GalleryParams[] {
   return getGalleryKeys().map((key) => {
     const [kind, id] = key.split(":");
@@ -126,6 +127,7 @@ export default async function GalleryPage({
 }) {
   const { kind, id } = await params;
   const gallery = buildGallery(kind, id);
+  // Only 404 when the movement/artist ID is entirely unknown — empty works are OK
   if (!gallery) notFound();
 
   return <EditorialGallery {...gallery} galleryKind={kind} galleryId={id} />;
