@@ -21,6 +21,7 @@
     "@gsap/react": "^2.1.2",
     "@neondatabase/serverless": "^1.1.0",
     "@radix-ui/react-slot": "^1.2.5",
+    "@vercel/blob": "^2.4.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",

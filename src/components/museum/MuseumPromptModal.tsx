@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { ShareToRisingModal } from "@/components/rising/ShareToRisingModal";
 
 interface MuseumPromptModalProps {
   type: "artist" | "movement";
@@ -16,6 +17,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
   const [prompt, setPrompt] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [preferredAspectRatio, setPreferredAspectRatio] = useState<string | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -103,6 +105,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
   const typeLabel = type === "artist" ? "Artist" : "Movement";
 
   return (
+    <>
     <div
       ref={overlayRef}
       onClick={handleBackdropClick}
@@ -177,6 +180,13 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
               >
                 {copied ? "Copied!" : "Copy Prompt"}
               </button>
+              <button
+                type="button"
+                onClick={() => setShowShareModal(true)}
+                className="flex-1 h-10 rounded-lg border border-primary text-primary text-sm hover:bg-primary/10 transition-colors"
+              >
+                Share to Rising ↗
+              </button>
             </div>
             {session?.user && (
               <p className="text-xs text-muted-foreground text-center">
@@ -187,5 +197,15 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
         )}
       </div>
     </div>
+
+      {showShareModal && prompt && (
+        <ShareToRisingModal
+          prompt={prompt}
+          toolOrigin="museum"
+          toolContext={JSON.stringify({ entityType: type, name })}
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
+    </>
   );
 }

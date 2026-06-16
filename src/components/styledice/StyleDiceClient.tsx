@@ -10,6 +10,7 @@ import { mediaTypeFaces } from "@/data/styledice/media-types";
 import { artTechniqueFaces } from "@/data/styledice/art-techniques";
 import { popCultureFaces } from "@/data/styledice/pop-culture";
 import { genreFaces } from "@/data/styledice/genres";
+import { ShareToRisingModal } from "@/components/rising/ShareToRisingModal";
 
 const MAX_REROLLS = 2;
 
@@ -67,6 +68,7 @@ export default function StyleDiceClient() {
   const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [savedEntryId, setSavedEntryId] = useState<string | null>(null);
   const [preferredAspectRatio, setPreferredAspectRatio] = useState<string | null>(null);
 
@@ -277,6 +279,7 @@ Create a detailed, imaginative prompt that weaves all six elements into a vivid,
   }
 
   return (
+    <>
     <div className="flex flex-col items-center gap-8 py-8 px-4">
       {/* Instructions */}
       <div className="text-center text-sm text-foreground/60 max-w-md">
@@ -409,12 +412,20 @@ Create a detailed, imaginative prompt that weaves all six elements into a vivid,
             >
               Generated Prompt
             </span>
-            <button
-              onClick={handleCopy}
-              className="text-xs font-semibold px-3 py-1.5 rounded-full border border-black/10 hover:bg-black/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-            >
-              {copied ? "Copied!" : "Copy"}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleCopy}
+                className="text-xs font-semibold px-3 py-1.5 rounded-full border border-black/10 hover:bg-black/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+              >
+                {copied ? "Copied!" : "Copy"}
+              </button>
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="text-xs font-semibold px-3 py-1.5 rounded-full border border-[oklch(0.42_0.22_285)] text-[oklch(0.42_0.22_285)] hover:bg-purple-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+              >
+                Share to Rising ↗
+              </button>
+            </div>
           </div>
           <p className="text-sm leading-relaxed text-foreground">{generatedPrompt}</p>
           {session?.user && (
@@ -423,5 +434,14 @@ Create a detailed, imaginative prompt that weaves all six elements into a vivid,
         </div>
       )}
     </div>
+
+      {showShareModal && generatedPrompt && (
+        <ShareToRisingModal
+          prompt={generatedPrompt}
+          toolOrigin="styledice"
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
+    </>
   );
 }

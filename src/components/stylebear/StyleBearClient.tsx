@@ -10,6 +10,7 @@ import { promptData, cultureKeys, checkboxOptions } from "@/data/stylebear/promp
 import { promptTypes, TRIPLE_COUNT } from "@/data/stylebear/config";
 import { ASPECT_RATIOS, DEFAULT_STYLEBEAR_ASPECT_RATIO } from "@/lib/aspect-ratios";
 import { processWildcards } from "@/lib/wildcards";
+import { ShareToRisingModal } from "@/components/rising/ShareToRisingModal";
 
 const STYLEBEAR_MODEL = "openrouter/free";
 
@@ -110,6 +111,7 @@ export default function StyleBearClient() {
   }, [session?.user]);
 
   const [hasGenerated, setHasGenerated] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const subjectRef = useRef<HTMLTextAreaElement>(null);
   const footerRef = useRef<HTMLTextAreaElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
@@ -227,6 +229,7 @@ export default function StyleBearClient() {
   }, []);
 
   return (
+    <>
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
 
       {/* Header */}
@@ -327,13 +330,22 @@ export default function StyleBearClient() {
             ) : (
               <>
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{output}</p>
-                <button
-                  type="button"
-                  onClick={handleCopy}
-                  className="px-4 py-2 text-sm rounded-md bg-primary text-primary-foreground hover:opacity-90 transition-opacity min-h-[44px]"
-                >
-                  {copySuccess ? "Copied!" : "Copy Prompt"}
-                </button>
+                <div className="flex gap-2 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className="px-4 py-2 text-sm rounded-md bg-primary text-primary-foreground hover:opacity-90 transition-opacity min-h-[44px]"
+                  >
+                    {copySuccess ? "Copied!" : "Copy Prompt"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowShareModal(true)}
+                    className="px-4 py-2 text-sm rounded-md border border-primary text-primary hover:bg-primary/10 transition-colors min-h-[44px]"
+                  >
+                    Share to Rising ↗
+                  </button>
+                </div>
               </>
             )}
           </section>
@@ -456,5 +468,14 @@ export default function StyleBearClient() {
       </section>
 
     </div>
+
+      {showShareModal && output && (
+        <ShareToRisingModal
+          prompt={output}
+          toolOrigin="stylebear"
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
+    </>
   );
 }

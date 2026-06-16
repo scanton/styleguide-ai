@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { gsap } from "gsap";
 import { prefersReducedMotion as shouldReduceMotion } from "@/lib/motion";
 import { TAROT_CARDS, CARD_TYPE_COLORS, type TarotCard } from "@/data/styletarot/cards";
+import { ShareToRisingModal } from "@/components/rising/ShareToRisingModal";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -232,6 +233,7 @@ export function StyleTarotClient() {
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [savedEntryId, setSavedEntryId] = useState<string | null>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [preferredAspectRatio, setPreferredAspectRatio] = useState<string | null>(null);
 
   // Refs for GSAP
@@ -518,6 +520,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
+    <>
     <div className="space-y-8">
       {/* Mode tabs */}
       <div className="flex justify-center">
@@ -739,12 +742,20 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
             >
               Generated Art Prompt
             </span>
-            <button
-              onClick={handleCopy}
-              className="text-xs font-semibold px-3 py-1.5 rounded-full border border-black/10 hover:bg-black/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
-            >
-              {copied ? "Copied!" : "Copy"}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleCopy}
+                className="text-xs font-semibold px-3 py-1.5 rounded-full border border-black/10 hover:bg-black/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+              >
+                {copied ? "Copied!" : "Copy"}
+              </button>
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="text-xs font-semibold px-3 py-1.5 rounded-full border border-[oklch(0.42_0.22_285)] text-[oklch(0.42_0.22_285)] hover:bg-purple-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+              >
+                Share to Rising ↗
+              </button>
+            </div>
           </div>
           <p className="text-sm leading-relaxed text-foreground">{generatedPrompt}</p>
 
@@ -773,5 +784,14 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
         </div>
       )}
     </div>
+
+      {showShareModal && generatedPrompt && (
+        <ShareToRisingModal
+          prompt={generatedPrompt}
+          toolOrigin="styletarot"
+          onClose={() => setShowShareModal(false)}
+        />
+      )}
+    </>
   );
 }
