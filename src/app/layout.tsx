@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import Script from "next/script";
+import { PendingShareHandler } from "@/components/rising/PendingShareHandler";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -74,7 +75,10 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <SessionProvider>{children}</SessionProvider>
+        <SessionProvider>
+          <PendingShareHandler />
+          {children}
+        </SessionProvider>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-3317TYL03E"
           strategy="afterInteractive"

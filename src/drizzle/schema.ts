@@ -310,6 +310,26 @@ export const risingReports = pgTable(
   ]
 );
 
+// ─── Museum prompt history ─────────────────────────────────────────────────────
+export const museumHistory = pgTable(
+  "museum_history",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    entityType: text("entity_type").notNull(),
+    entityId: text("entity_id").notNull(),
+    entityName: text("entity_name").notNull(),
+    sceneDetails: text("scene_details"),
+    prompt: text("prompt").notNull(),
+    createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
+  },
+  (t) => [index("museum_history_user_idx").on(t.userId)]
+);
+
 // ─── StyleBear prompt history ─────────────────────────────────────────────────
 
 export const stylebearHistory = pgTable(

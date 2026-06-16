@@ -6,6 +6,7 @@ import { gsap } from "gsap";
 import { prefersReducedMotion as shouldReduceMotion } from "@/lib/motion";
 import { TAROT_CARDS, CARD_TYPE_COLORS, type TarotCard } from "@/data/styletarot/cards";
 import { ShareToRisingModal } from "@/components/rising/ShareToRisingModal";
+import { SignInPromptModal } from "@/components/rising/SignInPromptModal";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -234,6 +235,7 @@ export function StyleTarotClient() {
   const [copied, setCopied] = useState(false);
   const [savedEntryId, setSavedEntryId] = useState<string | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
   const [preferredAspectRatio, setPreferredAspectRatio] = useState<string | null>(null);
 
   // Refs for GSAP
@@ -750,7 +752,10 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
                 {copied ? "Copied!" : "Copy"}
               </button>
               <button
-                onClick={() => setShowShareModal(true)}
+                onClick={() => {
+                  if (!session?.user) { setShowSignInModal(true); return; }
+                  setShowShareModal(true);
+                }}
                 className="text-xs font-semibold px-3 py-1.5 rounded-full border border-[oklch(0.42_0.22_285)] text-[oklch(0.42_0.22_285)] hover:bg-purple-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
               >
                 Share to Rising ↗
@@ -798,6 +803,25 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
             }))
           )}
           onClose={() => setShowShareModal(false)}
+        />
+      )}
+
+      {showSignInModal && generatedPrompt && (
+        <SignInPromptModal
+          pendingShare={{
+            tool: "styletarot",
+            prompt: generatedPrompt,
+            toolOrigin: "styletarot",
+            toolContext: JSON.stringify(
+              activeCards.map((c) => ({
+                index: c.index,
+                title: c.title,
+                type: c.type,
+                imageFilename: c.imageFilename,
+              }))
+            ),
+          }}
+          onClose={() => setShowSignInModal(false)}
         />
       )}
     </>

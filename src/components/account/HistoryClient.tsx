@@ -9,6 +9,16 @@ import Link from "next/link";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
+interface MuseumEntry {
+  id: string;
+  entityType: string;
+  entityId: string;
+  entityName: string;
+  sceneDetails: string | null;
+  prompt: string;
+  createdAt: string;
+}
+
 interface TarotEntry {
   id: string;
   cardIndices: string; // JSON array of 5 numbers
@@ -662,14 +672,131 @@ function DiceHistoryTab() {
   );
 }
 
+// ── Museum tab ────────────────────────────────────────────────────────────────
+
+function MuseumHistoryTab() {
+  const [entries, setEntries] = useState<MuseumEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [shareEntry, setShareEntry] = useState<ShareEntry | null>(null);
+
+  useEffect(() => {
+    fetch("/api/history/museum")
+      .then((r) => r.json())
+      .then((d) => setEntries(d.entries ?? []))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const allIds = entries.map((e) => e.id);
+  const { byId: uploads, refetch: refetchUploads } = useRisingUploads(allIds);
+
+  const handleCopy = useCallback((text: string, id: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(id);
+      setTimeout(() => setCopied(null), 2000);
+    });
+  }, []);
+
+  if (loading) return <p className="text-sm text-muted-foreground animate-pulse py-8 text-center">Loading…</p>;
+  if (!entries.length) return (
+    <div className="text-center py-12 space-y-2">
+      <p className="text-muted-foreground">No Museum prompts yet.</p>
+      <a href="/museum" className="text-sm text-primary hover:underline">Explore the Virtual Museum →</a>
+    </div>
+  );
+
+  const totalPages = Math.ceil(entries.length / PAGE_SIZE);
+  const pageEntries = entries.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  return (
+    <>
+      <div className="space-y-4">
+        <ul className="space-y-4">
+          {pageEntries.map((entry) => (
+            <li key={entry.id} className="rounded-2xl border border-border bg-card p-5 space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-xs text-muted-foreground">{formatDate(entry.createdAt)}</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <span
+                  className="inline-flex flex-col text-xs rounded-lg px-2.5 py-1.5 text-white leading-tight"
+                  style={{ backgroundColor: "oklch(0.50 0.14 60)" }}
+                >
+                  <span className="opacity-70 text-[10px] uppercase tracking-wide font-semibold">
+                    {entry.entityType === "artist" ? "Artist" : "Movement"}
+                  </span>
+                  <span className="font-medium mt-0.5">{entry.entityName}</span>
+                </span>
+                {entry.sceneDetails && (
+                  <span
+                    className="inline-flex flex-col text-xs rounded-lg px-2.5 py-1.5 text-white leading-tight"
+                    style={{ backgroundColor: "oklch(0.42 0.13 55)" }}
+                  >
+                    <span className="opacity-70 text-[10px] uppercase tracking-wide font-semibold">Scene</span>
+                    <span className="font-medium mt-0.5 line-clamp-1">{entry.sceneDetails}</span>
+                  </span>
+                )}
+              </div>
+              <div className="rounded-xl bg-muted/60 p-3 space-y-2">
+                <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Generated prompt</p>
+                <p className="text-sm text-foreground leading-relaxed">{entry.prompt}</p>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleCopy(entry.prompt, entry.id)}
+                    className="text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:underline"
+                  >
+                    {copied === entry.id ? "Copied!" : "Copy"}
+                  </button>
+                  <button
+                    onClick={() =>
+                      setShareEntry({
+                        prompt: entry.prompt,
+                        toolOrigin: "museum",
+                        toolContext: JSON.stringify({
+                          historyEntryId: entry.id,
+                          historyTable: "museum",
+                          entityType: entry.entityType,
+                          id: entry.entityId,
+                          name: entry.entityName,
+                        }),
+                      })
+                    }
+                    className="text-xs font-medium text-[oklch(0.42_0.22_285)] hover:underline focus-visible:outline-none focus-visible:underline"
+                  >
+                    Share to Rising ↗
+                  </button>
+                </div>
+              </div>
+              <RisingRendersStrip renders={uploads[entry.id] ?? []} />
+            </li>
+          ))}
+        </ul>
+        <Pagination page={page} totalPages={totalPages} onPage={setPage} />
+      </div>
+
+      {shareEntry && (
+        <ShareToRisingModal
+          prompt={shareEntry.prompt}
+          toolOrigin={shareEntry.toolOrigin}
+          toolContext={shareEntry.toolContext}
+          onClose={() => setShareEntry(null)}
+          onUploaded={refetchUploads}
+        />
+      )}
+    </>
+  );
+}
+
 // ── Main HistoryClient ────────────────────────────────────────────────────────
 
-type Tab = "bear" | "tarot" | "dice";
+type Tab = "bear" | "tarot" | "dice" | "museum";
 
 const TAB_LABELS: Record<Tab, string> = {
   bear: "🐻‍❄️ StyleBear",
   tarot: "🃏 StyleTarot",
   dice: "🎲 StyleDice",
+  museum: "🏛️ Museum",
 };
 
 export function HistoryClient() {
@@ -688,7 +815,7 @@ export function HistoryClient() {
     <div className="space-y-6">
       {/* Tabs */}
       <div className="flex gap-1 border border-border rounded-xl p-1 w-fit flex-wrap">
-        {(["bear", "tarot", "dice"] as Tab[]).map((t) => (
+        {(["bear", "tarot", "dice", "museum"] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -704,7 +831,7 @@ export function HistoryClient() {
         ))}
       </div>
 
-      {tab === "bear" ? <BearHistoryTab /> : tab === "tarot" ? <TarotHistoryTab /> : <DiceHistoryTab />}
+      {tab === "bear" ? <BearHistoryTab /> : tab === "tarot" ? <TarotHistoryTab /> : tab === "dice" ? <DiceHistoryTab /> : <MuseumHistoryTab />}
     </div>
   );
 }

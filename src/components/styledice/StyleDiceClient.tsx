@@ -11,6 +11,7 @@ import { artTechniqueFaces } from "@/data/styledice/art-techniques";
 import { popCultureFaces } from "@/data/styledice/pop-culture";
 import { genreFaces } from "@/data/styledice/genres";
 import { ShareToRisingModal } from "@/components/rising/ShareToRisingModal";
+import { SignInPromptModal } from "@/components/rising/SignInPromptModal";
 
 const MAX_REROLLS = 2;
 
@@ -69,6 +70,7 @@ export default function StyleDiceClient() {
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
   const [savedEntryId, setSavedEntryId] = useState<string | null>(null);
   const [preferredAspectRatio, setPreferredAspectRatio] = useState<string | null>(null);
 
@@ -420,7 +422,10 @@ Create a detailed, imaginative prompt that weaves all six elements into a vivid,
                 {copied ? "Copied!" : "Copy"}
               </button>
               <button
-                onClick={() => setShowShareModal(true)}
+                onClick={() => {
+                  if (!session?.user) { setShowSignInModal(true); return; }
+                  setShowShareModal(true);
+                }}
                 className="text-xs font-semibold px-3 py-1.5 rounded-full border border-[oklch(0.42_0.22_285)] text-[oklch(0.42_0.22_285)] hover:bg-purple-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
               >
                 Share to Rising ↗
@@ -440,6 +445,13 @@ Create a detailed, imaginative prompt that weaves all six elements into a vivid,
           prompt={generatedPrompt}
           toolOrigin="styledice"
           onClose={() => setShowShareModal(false)}
+        />
+      )}
+
+      {showSignInModal && generatedPrompt && (
+        <SignInPromptModal
+          pendingShare={{ tool: "styledice", prompt: generatedPrompt, toolOrigin: "styledice" }}
+          onClose={() => setShowSignInModal(false)}
         />
       )}
     </>

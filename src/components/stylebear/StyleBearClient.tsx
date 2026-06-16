@@ -11,6 +11,7 @@ import { promptTypes, TRIPLE_COUNT } from "@/data/stylebear/config";
 import { ASPECT_RATIOS, DEFAULT_STYLEBEAR_ASPECT_RATIO } from "@/lib/aspect-ratios";
 import { processWildcards } from "@/lib/wildcards";
 import { ShareToRisingModal } from "@/components/rising/ShareToRisingModal";
+import { SignInPromptModal } from "@/components/rising/SignInPromptModal";
 
 const STYLEBEAR_MODEL = "openrouter/free";
 
@@ -112,6 +113,7 @@ export default function StyleBearClient() {
 
   const [hasGenerated, setHasGenerated] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
   const subjectRef = useRef<HTMLTextAreaElement>(null);
   const footerRef = useRef<HTMLTextAreaElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
@@ -340,7 +342,10 @@ export default function StyleBearClient() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setShowShareModal(true)}
+                    onClick={() => {
+                      if (!session?.user) { setShowSignInModal(true); return; }
+                      setShowShareModal(true);
+                    }}
                     className="px-4 py-2 text-sm rounded-md border border-primary text-primary hover:bg-primary/10 transition-colors min-h-[44px]"
                   >
                     Share to Rising ↗
@@ -474,6 +479,13 @@ export default function StyleBearClient() {
           prompt={output}
           toolOrigin="stylebear"
           onClose={() => setShowShareModal(false)}
+        />
+      )}
+
+      {showSignInModal && output && (
+        <SignInPromptModal
+          pendingShare={{ tool: "stylebear", prompt: output, toolOrigin: "stylebear" }}
+          onClose={() => setShowSignInModal(false)}
         />
       )}
     </>

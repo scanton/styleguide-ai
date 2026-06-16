@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { ShareToRisingModal } from "@/components/rising/ShareToRisingModal";
+import { SignInPromptModal } from "@/components/rising/SignInPromptModal";
 
 interface MuseumPromptModalProps {
   type: "artist" | "movement";
@@ -18,6 +19,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
   const [preferredAspectRatio, setPreferredAspectRatio] = useState<string | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -68,14 +70,16 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
       const generated: string = data.prompt ?? data.error ?? "No response";
       setPrompt(generated);
 
-      // Save to StyleBear history for logged-in users
       if (session?.user && data.prompt) {
-        fetch("/api/stylebear/history", {
+        fetch("/api/history/museum", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            entityType: type,
+            entityId: id,
+            entityName: name,
+            sceneDetails: sceneDetails.trim() || null,
             prompt: data.prompt,
-            inputs: JSON.stringify({ source: "museum", entityType: type, name }),
           }),
         }).catch(() => {});
       }
@@ -182,7 +186,10 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
               </button>
               <button
                 type="button"
-                onClick={() => setShowShareModal(true)}
+                onClick={() => {
+                  if (!session?.user) { setShowSignInModal(true); return; }
+                  setShowShareModal(true);
+                }}
                 className="flex-1 h-10 rounded-lg border border-primary text-primary text-sm hover:bg-primary/10 transition-colors"
               >
                 Share to Rising ↗
@@ -190,7 +197,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
             </div>
             {session?.user && (
               <p className="text-xs text-muted-foreground text-center">
-                Saved to your StyleBear history.
+                Saved to your Museum history.
               </p>
             )}
           </div>
@@ -204,6 +211,13 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
           toolOrigin="museum"
           toolContext={JSON.stringify({ entityType: type, id, name })}
           onClose={() => setShowShareModal(false)}
+        />
+      )}
+
+      {showSignInModal && prompt && (
+        <SignInPromptModal
+          pendingShare={{ tool: "museum", prompt, toolOrigin: "museum", toolContext: JSON.stringify({ entityType: type, id, name }) }}
+          onClose={() => setShowSignInModal(false)}
         />
       )}
     </>
