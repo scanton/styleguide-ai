@@ -6,6 +6,7 @@ import {
   boolean,
   primaryKey,
   index,
+  real,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
@@ -241,6 +242,54 @@ export const styletarotHistory = pgTable(
     createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
   },
   (t) => [index("styletarot_history_user_idx").on(t.userId)]
+);
+
+// ─── Rising community gallery ─────────────────────────────────────────────────
+
+export const risingPosts = pgTable(
+  "rising_posts",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    source: text("source", { enum: ["deviantart", "discord", "site"] }).notNull(),
+    sourceId: text("source_id"),
+    imageUrl: text("image_url").notNull(),
+    thumbnailUrl: text("thumbnail_url"),
+    title: text("title"),
+    caption: text("caption"),
+    creatorName: text("creator_name").notNull(),
+    creatorUrl: text("creator_url"),
+    toolOrigin: text("tool_origin"),
+    toolContext: text("tool_context"),
+    rawEngagement: integer("raw_engagement").default(0).notNull(),
+    siteLikes: integer("site_likes").default(0).notNull(),
+    risingScore: real("rising_score").default(0).notNull(),
+    aspectRatioClass: text("aspect_ratio_class", {
+      enum: ["portrait", "square", "landscape"],
+    })
+      .default("square")
+      .notNull(),
+    createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
+    expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
+    sourceUrl: text("source_url"),
+  },
+  (t) => [
+    index("rising_posts_expires_score_idx").on(t.expiresAt, t.risingScore),
+    index("rising_posts_source_idx").on(t.source, t.expiresAt),
+  ]
+);
+
+export const risingVotes = pgTable(
+  "rising_votes",
+  {
+    postId: text("post_id")
+      .notNull()
+      .references(() => risingPosts.id, { onDelete: "cascade" }),
+    voterId: text("voter_id").notNull(),
+    votedAt: timestamp("voted_at", { mode: "date" }).default(sql`now()`),
+  },
+  (t) => [primaryKey({ columns: [t.postId, t.voterId] })]
 );
 
 // ─── StyleBear prompt history ─────────────────────────────────────────────────
