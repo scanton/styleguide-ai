@@ -484,7 +484,20 @@ export default function StyleBearClient() {
 
       {showSignInModal && output && (
         <SignInPromptModal
-          pendingShare={{ tool: "stylebear", prompt: output, toolOrigin: "stylebear" }}
+          pendingShare={{
+            tool: "stylebear",
+            prompt: output,
+            toolOrigin: "stylebear",
+            historyPayload: {
+              inputs: JSON.stringify({
+                movements: selectedMovements.filter(Boolean),
+                media: selectedMedia.filter(Boolean),
+                options: [...checkedOptions],
+                promptType,
+                aspectRatio,
+              }),
+            },
+          }}
           onClose={() => setShowSignInModal(false)}
         />
       )}

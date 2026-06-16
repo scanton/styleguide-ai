@@ -11,7 +11,8 @@ interface Props {
 export function SignInPromptModal({ pendingShare, onClose }: Props) {
   function handleSignIn() {
     savePendingShare(pendingShare);
-    signIn("google", { callbackUrl: window.location.href });
+    // pathname only — full URLs are rejected by Auth.js as open-redirect protection
+    signIn("google", { callbackUrl: window.location.pathname });
   }
 
   return (

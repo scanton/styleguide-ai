@@ -6,6 +6,8 @@ export interface PendingShare {
   prompt: string;
   toolOrigin: string;
   toolContext?: string;
+  // Tool-specific data needed to save history after login restore
+  historyPayload?: Record<string, unknown>;
 }
 
 export function savePendingShare(data: PendingShare) {

@@ -450,7 +450,12 @@ Create a detailed, imaginative prompt that weaves all six elements into a vivid,
 
       {showSignInModal && generatedPrompt && (
         <SignInPromptModal
-          pendingShare={{ tool: "styledice", prompt: generatedPrompt, toolOrigin: "styledice" }}
+          pendingShare={{
+            tool: "styledice",
+            prompt: generatedPrompt,
+            toolOrigin: "styledice",
+            historyPayload: { diceValues: JSON.stringify(values) },
+          }}
           onClose={() => setShowSignInModal(false)}
         />
       )}

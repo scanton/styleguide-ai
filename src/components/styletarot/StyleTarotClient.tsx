@@ -820,6 +820,9 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
                 imageFilename: c.imageFilename,
               }))
             ),
+            historyPayload: {
+              cardIndices: JSON.stringify(activeCards.map((c) => c.index)),
+            },
           }}
           onClose={() => setShowSignInModal(false)}
         />

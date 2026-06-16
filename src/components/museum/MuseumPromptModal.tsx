@@ -216,7 +216,18 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
 
       {showSignInModal && prompt && (
         <SignInPromptModal
-          pendingShare={{ tool: "museum", prompt, toolOrigin: "museum", toolContext: JSON.stringify({ entityType: type, id, name }) }}
+          pendingShare={{
+            tool: "museum",
+            prompt,
+            toolOrigin: "museum",
+            toolContext: JSON.stringify({ entityType: type, id, name }),
+            historyPayload: {
+              entityType: type,
+              entityId: id,
+              entityName: name,
+              sceneDetails: sceneDetails.trim() || null,
+            },
+          }}
           onClose={() => setShowSignInModal(false)}
         />
       )}
