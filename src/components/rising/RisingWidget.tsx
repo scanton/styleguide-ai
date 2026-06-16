@@ -66,7 +66,7 @@ function ImageStrip({
     <div>
       <div className="flex items-end justify-between mb-4">
         <div>
-          <p className="text-[11px] uppercase tracking-widest text-[oklch(0.42_0.22_285)] font-semibold mb-0.5">
+          <p className="text-[11px] uppercase tracking-widest text-purple-400 font-semibold mb-0.5">
             {subheading}
           </p>
           <h2 className="font-heading text-xl md:text-2xl text-white">{heading}</h2>

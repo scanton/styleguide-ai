@@ -294,6 +294,21 @@ export const risingVotes = pgTable(
   (t) => [primaryKey({ columns: [t.postId, t.voterId] })]
 );
 
+export const risingReports = pgTable(
+  "rising_reports",
+  {
+    postId: text("post_id")
+      .notNull()
+      .references(() => risingPosts.id, { onDelete: "cascade" }),
+    reporterId: text("reporter_id").notNull(),
+    createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
+  },
+  (t) => [
+    primaryKey({ columns: [t.postId, t.reporterId] }),
+    index("rising_reports_post_idx").on(t.postId),
+  ]
+);
+
 // ─── StyleBear prompt history ─────────────────────────────────────────────────
 
 export const stylebearHistory = pgTable(

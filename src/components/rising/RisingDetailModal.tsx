@@ -1,8 +1,7 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { RisingPost } from "@/app/api/rising/posts/route";
-import { X, ExternalLink, Heart } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { X, ExternalLink, Heart, Flag } from "lucide-react";
 
 const SOURCE_LABELS: Record<string, string> = {
   deviantart: "DeviantArt",
@@ -25,6 +24,17 @@ interface Props {
 
 export function RisingDetailModal({ post, onClose, onVote }: Props) {
   const totalLikes = post.siteLikes + post.rawEngagement;
+  const [reported, setReported] = useState(false);
+
+  async function handleReport() {
+    if (reported) return;
+    await fetch("/api/rising/report", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ postId: post.id }),
+    });
+    setReported(true);
+  }
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -124,6 +134,23 @@ export function RisingDetailModal({ post, onClose, onVote }: Props) {
           {post.title && (
             <p className="text-stone-400 text-sm italic">{post.title}</p>
           )}
+
+          {/* Report */}
+          <div className="pt-2 border-t border-stone-800 flex justify-end">
+            <button
+              onClick={handleReport}
+              disabled={reported}
+              className={`flex items-center gap-1 text-xs transition-colors ${
+                reported
+                  ? "text-stone-600 cursor-default"
+                  : "text-stone-600 hover:text-stone-400"
+              }`}
+              aria-label="Report this post"
+            >
+              <Flag size={12} />
+              {reported ? "Reported" : "Report"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
