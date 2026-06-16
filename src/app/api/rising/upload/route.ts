@@ -8,8 +8,8 @@ import { auth } from "@/auth";
 // while staying well under Vercel's 4.5 MB serverless body limit.
 const MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-// Site uploads get a 30-day expiry — they appear in Site Uploads / From Our Tools tabs indefinitely
-const SITE_EXPIRY_DAYS = 30;
+// 24-hour expiry matches all other Rising posts; the blob itself is permanent
+const SITE_EXPIRY_HOURS = 24;
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     });
 
     const now = new Date();
-    const expiresAt = new Date(now.getTime() + SITE_EXPIRY_DAYS * 24 * 60 * 60 * 1000);
+    const expiresAt = new Date(now.getTime() + SITE_EXPIRY_HOURS * 60 * 60 * 1000);
 
     const displayName =
       session.user.name?.trim() ||
