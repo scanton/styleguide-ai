@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { risingPosts } from "@/drizzle/schema";
-import { gt, lt, and, sql } from "drizzle-orm";
+import { gt, lt, and, sql, eq } from "drizzle-orm";
 import Link from "next/link";
 
 async function getTopRising() {
@@ -14,7 +14,7 @@ async function getTopRising() {
       rawEngagement: risingPosts.rawEngagement,
     })
     .from(risingPosts)
-    .where(gt(risingPosts.expiresAt, new Date()))
+    .where(and(gt(risingPosts.expiresAt, new Date()), eq(risingPosts.hidden, false)))
     .orderBy(
       sql`(${risingPosts.rawEngagement} + ${risingPosts.siteLikes})::float /
           POWER(EXTRACT(EPOCH FROM (NOW() - ${risingPosts.createdAt})) / 3600.0 + 2, 1.5) DESC`
@@ -37,6 +37,7 @@ async function getTopOfWeek() {
     .from(risingPosts)
     .where(
       and(
+        eq(risingPosts.hidden, false),
         gt(risingPosts.createdAt, weekAgo),
         lt(risingPosts.expiresAt, new Date()) // already expired = past the 24h window
       )

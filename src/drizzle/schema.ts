@@ -275,6 +275,7 @@ export const risingPosts = pgTable(
     createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
     expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
     sourceUrl: text("source_url"),
+    hidden: boolean("hidden").default(false).notNull(),
   },
   (t) => [
     index("rising_posts_expires_score_idx").on(t.expiresAt, t.risingScore),

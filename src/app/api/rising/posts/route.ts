@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { risingPosts, risingVotes } from "@/drizzle/schema";
-import { and, gt, eq, sql, inArray } from "drizzle-orm";
+import { and, gt, eq, sql, inArray, ne } from "drizzle-orm";
 import { auth } from "@/auth";
 import crypto from "crypto";
 
@@ -48,13 +48,15 @@ export async function GET(request: Request) {
 
   const now = new Date();
 
+  const notHidden = eq(risingPosts.hidden, false);
+
   // Site uploads and tool-originated posts draw from the last 100 regardless of age —
   // these tabs are for showcasing our tools, not the time-windowed Rising feed.
   const isHistoricalTab = source === "site" || source === "tools";
 
   let posts;
   if (isHistoricalTab) {
-    const whereClause =
+    const tabFilter =
       source === "tools"
         ? sql`${risingPosts.toolOrigin} IS NOT NULL`
         : eq(risingPosts.source, "site");
@@ -62,7 +64,7 @@ export async function GET(request: Request) {
     posts = await db
       .select()
       .from(risingPosts)
-      .where(whereClause)
+      .where(and(notHidden, tabFilter))
       .orderBy(sql`${risingPosts.createdAt} DESC`)
       .limit(100);
   } else {
@@ -73,8 +75,8 @@ export async function GET(request: Request) {
         : undefined;
 
     const whereClause = sourceFilter
-      ? and(gt(risingPosts.expiresAt, now), sourceFilter)
-      : gt(risingPosts.expiresAt, now);
+      ? and(notHidden, gt(risingPosts.expiresAt, now), sourceFilter)
+      : and(notHidden, gt(risingPosts.expiresAt, now));
 
     posts = await db
       .select()
