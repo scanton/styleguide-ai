@@ -17,60 +17,66 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Sign in to share to Rising" }, { status: 401 });
   }
 
-  const formData = await request.formData();
-  const file = formData.get("file") as File | null;
-  const caption = (formData.get("caption") as string | null)?.trim() || null;
-  const toolOrigin = (formData.get("toolOrigin") as string | null) || null;
-  const toolContext = (formData.get("toolContext") as string | null) || null;
-  const aspectRatioClass =
-    (formData.get("aspectRatioClass") as "portrait" | "square" | "landscape" | null) ?? "square";
+  try {
+    const formData = await request.formData();
+    const file = formData.get("file") as File | null;
+    const caption = (formData.get("caption") as string | null)?.trim() || null;
+    const toolOrigin = (formData.get("toolOrigin") as string | null) || null;
+    const toolContext = (formData.get("toolContext") as string | null) || null;
+    const aspectRatioClass =
+      (formData.get("aspectRatioClass") as "portrait" | "square" | "landscape" | null) ?? "square";
 
-  if (!file) return NextResponse.json({ error: "No file provided" }, { status: 400 });
-  if (!ALLOWED_TYPES.includes(file.type)) {
-    return NextResponse.json({ error: "Only JPEG, PNG, WebP, or GIF allowed" }, { status: 400 });
+    if (!file) return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return NextResponse.json({ error: "Only JPEG, PNG, WebP, or GIF allowed" }, { status: 400 });
+    }
+    if (file.size > MAX_BYTES) {
+      return NextResponse.json({ error: "Image must be under 5 MB" }, { status: 400 });
+    }
+
+    const ext = file.type.split("/")[1].replace("jpeg", "jpg");
+    const pathname = `rising/${session.user.id}/${Date.now()}.${ext}`;
+
+    const blob = await put(pathname, file, {
+      access: "public",
+      contentType: file.type,
+    });
+
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + SITE_EXPIRY_DAYS * 24 * 60 * 60 * 1000);
+
+    const displayName =
+      session.user.name?.trim() ||
+      session.user.email?.split("@")[0] ||
+      "Anonymous";
+
+    const [post] = await db
+      .insert(risingPosts)
+      .values({
+        source: "site",
+        sourceId: null,
+        imageUrl: blob.url,
+        thumbnailUrl: null,
+        title: null,
+        caption,
+        creatorName: displayName,
+        creatorUrl: null,
+        toolOrigin,
+        toolContext,
+        rawEngagement: 0,
+        siteLikes: 0,
+        risingScore: 0,
+        aspectRatioClass,
+        createdAt: now,
+        expiresAt,
+        sourceUrl: null,
+      })
+      .returning({ id: risingPosts.id });
+
+    return NextResponse.json({ ok: true, postId: post.id, imageUrl: blob.url });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[rising/upload]", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
-  if (file.size > MAX_BYTES) {
-    return NextResponse.json({ error: "Image must be under 5 MB" }, { status: 400 });
-  }
-
-  const ext = file.type.split("/")[1].replace("jpeg", "jpg");
-  const pathname = `rising/${session.user.id}/${Date.now()}.${ext}`;
-
-  const blob = await put(pathname, file, {
-    access: "public",
-    contentType: file.type,
-  });
-
-  const now = new Date();
-  const expiresAt = new Date(now.getTime() + SITE_EXPIRY_DAYS * 24 * 60 * 60 * 1000);
-
-  const displayName =
-    session.user.name?.trim() ||
-    session.user.email?.split("@")[0] ||
-    "Anonymous";
-
-  const [post] = await db
-    .insert(risingPosts)
-    .values({
-      source: "site",
-      sourceId: null,
-      imageUrl: blob.url,
-      thumbnailUrl: null,
-      title: null,
-      caption,
-      creatorName: displayName,
-      creatorUrl: null,
-      toolOrigin,
-      toolContext,
-      rawEngagement: 0,
-      siteLikes: 0,
-      risingScore: 0,
-      aspectRatioClass,
-      createdAt: now,
-      expiresAt,
-      sourceUrl: null,
-    })
-    .returning({ id: risingPosts.id });
-
-  return NextResponse.json({ ok: true, postId: post.id, imageUrl: blob.url });
 }
