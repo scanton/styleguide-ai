@@ -10,6 +10,7 @@ import { SearchButton } from "./SearchButton";
 import { UserMenu } from "./UserMenu";
 
 const NAV_LINKS = [
+  { href: "/rising", label: "Rising" },
   { href: "/museum", label: "Virtual Museum" },
   { href: "/articles", label: "Articles" },
   { href: "/styletarot", label: "StyleTarot" },

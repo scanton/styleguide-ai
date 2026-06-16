@@ -5,6 +5,22 @@ export const metadata: Metadata = {
   title: "Rising | StyleGuideAI",
   description: "Community art gallery — the most-loved images from the past 24 hours, pulled from DeviantArt, Discord, and direct uploads.",
   robots: { index: false, follow: false },
+  openGraph: {
+    title: "Rising | StyleGuideAI",
+    description: "The most-loved AI art from our community in the past 24 hours.",
+    images: [
+      {
+        url: "/images/og/og-rising.png",
+        width: 1456,
+        height: 816,
+        alt: "Rising — StyleGuideAI Community Gallery",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/images/og/og-rising.png"],
+  },
 };
 
 export default function RisingPage() {
