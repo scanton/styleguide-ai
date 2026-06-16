@@ -37,6 +37,7 @@ interface MuseumRender {
   creatorName: string;
   siteLikes: number;
   rawEngagement: number;
+  createdAt: string | null;
 }
 
 interface EditorialGalleryProps {
@@ -142,6 +143,8 @@ export default function EditorialGallery({
     { scope: rootRef }
   );
 
+  const has3D = works.length > 0 || communityRenders.length > 0;
+
   return (
     <div ref={rootRef} className="dark bg-background text-foreground">
       {/* Scroll progress */}
@@ -153,7 +156,7 @@ export default function EditorialGallery({
         />
       </div>
 
-      {/* Hero */}
+      {/* Hero — same layout for all gallery types */}
       <header className="relative flex min-h-[100dvh] items-center justify-center px-5">
         <div data-hero className="max-w-2xl space-y-5 text-center">
           <p
@@ -167,41 +170,15 @@ export default function EditorialGallery({
           <p className="mx-auto max-w-xl text-sm leading-relaxed text-foreground/85 md:text-base">
             {description}
           </p>
-          {works.length === 0 ? (
-            /* Community-powered gallery — no curated artworks yet */
-            <div className="pt-4 space-y-4">
-              <p className="font-heading text-2xl md:text-3xl">Help us build this gallery.</p>
-              <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                Generate a prompt, render an image with your favourite AI tool, and share it to Rising.
-                Your render will appear here automatically.
-              </p>
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowPromptModal(true)}
-                  className="rounded-md px-5 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 min-h-[44px]"
-                  style={{ backgroundColor: accentColor }}
-                >
-                  Generate Prompt with StyleBear
-                </button>
-                <Link
-                  href="/museum"
-                  className="rounded-md border border-border px-4 py-3 text-sm hover:bg-muted transition-colors min-h-[44px]"
-                >
-                  ← Back to the Timeline
-                </Link>
-              </div>
-            </div>
-          ) : (
-            /* Curated gallery — normal scroll CTA */
-            <div className="space-y-3 pt-2">
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <Link
-                  href="/museum"
-                  className="rounded-md border border-border px-4 py-3 text-sm hover:bg-muted transition-colors min-h-[44px]"
-                >
-                  ← Back to the Timeline
-                </Link>
+          <div className="space-y-3 pt-2">
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href="/museum"
+                className="rounded-md border border-border px-4 py-3 text-sm hover:bg-muted transition-colors min-h-[44px]"
+              >
+                ← Back to the Timeline
+              </Link>
+              {has3D && (
                 <button
                   type="button"
                   onClick={() => setShow3D(true)}
@@ -210,25 +187,29 @@ export default function EditorialGallery({
                 >
                   Step Inside → <span className="text-[10px] uppercase opacity-80">3D</span>
                 </button>
-              </div>
-              <p className="pt-4 text-xs text-muted-foreground" aria-hidden="true">
-                Scroll to begin · {works.length} works
-              </p>
-              <div className="flex justify-center" aria-hidden="true">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  className="animate-bounce text-muted-foreground motion-reduce:animate-none"
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </div>
+              )}
             </div>
-          )}
+            {works.length > 0 && (
+              <>
+                <p className="pt-4 text-xs text-muted-foreground" aria-hidden="true">
+                  Scroll to begin · {works.length} works
+                </p>
+                <div className="flex justify-center" aria-hidden="true">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="animate-bounce text-muted-foreground motion-reduce:animate-none"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </header>
 
@@ -320,49 +301,42 @@ export default function EditorialGallery({
       )}
 
       {/* Outro */}
-      {(() => {
-        const has3D = works.length > 0 || communityRenders.length > 0;
-        return (
-          <footer className="flex min-h-[60dvh] flex-col items-center justify-center gap-6 px-5 py-20 text-center">
-            <h2 className="font-heading text-3xl md:text-4xl">
-              {works.length > 0 ? "The end of this room." : "Share your renders here."}
-            </h2>
+      <footer className="flex min-h-[60dvh] flex-col items-center justify-center gap-6 px-5 py-20 text-center">
+        {works.length === 0 ? (
+          <>
+            <h2 className="font-heading text-3xl md:text-4xl">Help us build this gallery.</h2>
             <p className="max-w-md text-sm text-muted-foreground">
-              {has3D
-                ? "Walk these works in 3D, or head back — the timeline holds 40,000 years more."
-                : "Generate a prompt, render an image, and share it to Rising — your work appears here automatically."}
+              Generate a prompt, render an image with your favourite AI tool, and share it to Rising.
+              Your render will appear here automatically.
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              {has3D && (
-                <button
-                  type="button"
-                  onClick={() => setShow3D(true)}
-                  className="rounded-md px-6 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 min-h-[44px]"
-                  style={{ backgroundColor: accentColor }}
-                >
-                  Step Inside → <span className="text-[10px] uppercase opacity-80">3D</span>
-                </button>
-              )}
-              {works.length === 0 && (
-                <button
-                  type="button"
-                  onClick={() => setShowPromptModal(true)}
-                  className="rounded-md border px-6 py-3 text-sm font-medium transition-colors hover:bg-muted min-h-[44px]"
-                  style={{ borderColor: accentColor, color: accentColor }}
-                >
-                  Generate Prompt
-                </button>
-              )}
-              <Link
-                href="/museum"
-                className="rounded-md border border-border px-6 py-3 text-sm transition-colors hover:bg-muted min-h-[44px]"
-              >
-                Return to the Timeline
-              </Link>
-            </div>
-          </footer>
-        );
-      })()}
+          </>
+        ) : (
+          <>
+            <h2 className="font-heading text-3xl md:text-4xl">The end of this room.</h2>
+            <p className="max-w-md text-sm text-muted-foreground">
+              Head back to the timeline — 40,000 years of art history await.
+            </p>
+          </>
+        )}
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          {works.length === 0 && (
+            <button
+              type="button"
+              onClick={() => setShowPromptModal(true)}
+              className="rounded-md px-6 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 min-h-[44px]"
+              style={{ backgroundColor: accentColor }}
+            >
+              Generate Prompt with StyleBear
+            </button>
+          )}
+          <Link
+            href="/museum"
+            className="rounded-md border border-border px-6 py-3 text-sm transition-colors hover:bg-muted min-h-[44px]"
+          >
+            Return to the Timeline
+          </Link>
+        </div>
+      </footer>
 
       {/* 3D gallery overlay — includes community renders when no curated works */}
       {show3D && (
@@ -374,7 +348,7 @@ export default function EditorialGallery({
             ...communityRenders.map((r) => ({
               id: r.id,
               title: `AI Render by ${r.creatorName}`,
-              year: null,
+              year: r.createdAt ? new Date(r.createdAt).getFullYear() : new Date().getFullYear(),
               imageUrl: r.imageUrl,
               width: 1024,
               height: 683,

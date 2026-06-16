@@ -11,6 +11,7 @@ export interface MuseumRender {
   creatorName: string;
   siteLikes: number;
   rawEngagement: number;
+  createdAt: string | null;
 }
 
 export async function GET(req: NextRequest) {
@@ -31,6 +32,7 @@ export async function GET(req: NextRequest) {
         creatorName: risingPosts.creatorName,
         siteLikes: risingPosts.siteLikes,
         rawEngagement: risingPosts.rawEngagement,
+        createdAt: risingPosts.createdAt,
       })
       .from(risingPosts)
       .where(
