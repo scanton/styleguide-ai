@@ -513,11 +513,7 @@ export default function TimelineInfoCard({
           <div className="space-y-3 pt-1">
             {!event && (
               <EnterGalleryButton
-                href={
-                  galleryKeys.has(`${selection.type}:${selection.id}`)
-                    ? `/museum/gallery/${selection.type}/${selection.id}`
-                    : null
-                }
+                href={`/museum/gallery/${selection.type}/${selection.id}`}
               />
             )}
             {(artist || movement) && (
