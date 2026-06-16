@@ -4,7 +4,9 @@ import { db } from "@/lib/db";
 import { risingPosts } from "@/drizzle/schema";
 import { auth } from "@/auth";
 
-const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
+// Client compresses to ≤3.5 MB; 5 MB server cap keeps a safety margin
+// while staying well under Vercel's 4.5 MB serverless body limit.
+const MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 // Site uploads get a 30-day expiry — they appear in Site Uploads / From Our Tools tabs indefinitely
 const SITE_EXPIRY_DAYS = 30;
@@ -28,7 +30,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Only JPEG, PNG, WebP, or GIF allowed" }, { status: 400 });
   }
   if (file.size > MAX_BYTES) {
-    return NextResponse.json({ error: "Image must be under 10 MB" }, { status: 400 });
+    return NextResponse.json({ error: "Image must be under 5 MB" }, { status: 400 });
   }
 
   const ext = file.type.split("/")[1].replace("jpeg", "jpg");

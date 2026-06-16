@@ -20,7 +20,9 @@ function classifyAspectRatio(w: number, h: number): AspectRatioClass {
   return "square";
 }
 
-const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10 MB server limit
+// Vercel serverless functions cap request bodies at 4.5 MB regardless of plan.
+// We target 3.5 MB to leave headroom for multipart framing + other fields.
+const MAX_UPLOAD_BYTES = 3.5 * 1024 * 1024;
 const MAX_DIM = 2400; // px — preserves AI render detail while compressing
 
 // Compress an image file to fit under maxBytes using Canvas.
@@ -169,8 +171,9 @@ export function ShareToRisingModal({ prompt, toolOrigin, toolContext, onClose, o
 
     try {
       const res = await fetch("/api/rising/upload", { method: "POST", body: form });
-      const data = (await res.json()) as { ok?: boolean; error?: string };
-      if (!res.ok) throw new Error(data.error ?? "Upload failed");
+      let data: { ok?: boolean; error?: string } = {};
+      try { data = await res.json(); } catch { /* empty or non-JSON body */ }
+      if (!res.ok) throw new Error(data.error ?? `Upload failed (${res.status})`);
       setSuccess(true);
       onUploaded?.();
     } catch (err) {
