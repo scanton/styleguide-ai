@@ -7,7 +7,7 @@ import { and, eq, gt, sql } from "drizzle-orm";
 const DA_BASE = "https://www.deviantart.com/api/v1/oauth2";
 const DA_TOKEN_URL = "https://www.deviantart.com/oauth2/token";
 const GROUP_NAME = "styleguideai";
-const RISING_WINDOW_HOURS = 12;
+const RISING_WINDOW_HOURS = 24;
 
 interface DATokenResponse {
   access_token: string;
@@ -100,10 +100,12 @@ export async function GET(request: Request) {
   }
   const { results: folders } = (await foldersRes.json()) as DAFoldersResponse;
 
-  // Sync from Featured + the current month's theme gallery (top non-featured folder)
+  // Sync from Featured + top 2 theme galleries (current month + previous/next for month boundaries)
   const featured = folders.find((f) => f.name.toLowerCase() === "featured");
-  const themeFolder = folders.filter((f) => f.name.toLowerCase() !== "featured")[0];
-  const targetFolders = [featured, themeFolder].filter(Boolean) as DAFolder[];
+  const themeFolders = folders
+    .filter((f) => f.name.toLowerCase() !== "featured")
+    .slice(0, 2);
+  const targetFolders = [featured, ...themeFolders].filter(Boolean) as DAFolder[];
 
   let synced = 0;
   let updated = 0;

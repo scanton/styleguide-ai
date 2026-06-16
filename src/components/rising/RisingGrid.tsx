@@ -14,7 +14,7 @@ export function RisingGrid({ posts, onVote, onCardClick }: Props) {
       <div className="flex flex-col items-center justify-center py-24 text-stone-400 text-center">
         <p className="text-lg font-medium mb-2">Nothing here yet</p>
         <p className="text-sm max-w-xs">
-          The gallery refreshes every 12 hours. Check back soon — or be the first
+          The gallery refreshes every 24 hours. Check back soon — or be the first
           to share something.
         </p>
       </div>

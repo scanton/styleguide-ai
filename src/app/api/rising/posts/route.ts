@@ -46,28 +46,44 @@ export async function GET(request: Request) {
 
   const now = new Date();
 
-  // Build source filter
-  let sourceFilter;
-  if (source === "deviantart" || source === "discord" || source === "site") {
-    sourceFilter = eq(risingPosts.source, source);
-  } else if (source === "tools") {
-    sourceFilter = sql`${risingPosts.toolOrigin} IS NOT NULL`;
+  // Site uploads and tool-originated posts draw from the last 100 regardless of age —
+  // these tabs are for showcasing our tools, not the time-windowed Rising feed.
+  const isHistoricalTab = source === "site" || source === "tools";
+
+  let posts;
+  if (isHistoricalTab) {
+    const whereClause =
+      source === "tools"
+        ? sql`${risingPosts.toolOrigin} IS NOT NULL`
+        : eq(risingPosts.source, "site");
+
+    posts = await db
+      .select()
+      .from(risingPosts)
+      .where(whereClause)
+      .orderBy(sql`${risingPosts.createdAt} DESC`)
+      .limit(100);
+  } else {
+    // "all", "deviantart", "discord" — respect the 24h expiry window
+    const sourceFilter =
+      source === "deviantart" || source === "discord"
+        ? eq(risingPosts.source, source)
+        : undefined;
+
+    const whereClause = sourceFilter
+      ? and(gt(risingPosts.expiresAt, now), sourceFilter)
+      : gt(risingPosts.expiresAt, now);
+
+    posts = await db
+      .select()
+      .from(risingPosts)
+      .where(whereClause)
+      .orderBy(
+        sql`(${risingPosts.rawEngagement} + ${risingPosts.siteLikes})::float /
+            POWER(EXTRACT(EPOCH FROM (NOW() - ${risingPosts.createdAt})) / 3600.0 + 2, 1.5) DESC`
+      )
+      .limit(200);
   }
-  // "all" or null → no filter
-
-  const whereClause = sourceFilter
-    ? and(gt(risingPosts.expiresAt, now), sourceFilter)
-    : gt(risingPosts.expiresAt, now);
-
-  const posts = await db
-    .select()
-    .from(risingPosts)
-    .where(whereClause)
-    .orderBy(
-      sql`(${risingPosts.rawEngagement} + ${risingPosts.siteLikes})::float /
-          POWER(EXTRACT(EPOCH FROM (NOW() - ${risingPosts.createdAt})) / 3600.0 + 2, 1.5) DESC`
-    )
-    .limit(200);
 
   // Fetch this visitor's votes on the returned post IDs
   const postIds = posts.map((p) => p.id);
