@@ -1,17 +1,34 @@
+"use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function Footer() {
+  const pathname = usePathname();
+  const isDark = pathname === "/rising";
+
   return (
-    <footer className="border-t bg-card mt-16">
+    <footer
+      className={`border-t transition-colors duration-700 ${
+        isDark ? "bg-stone-950 border-stone-800" : "bg-card mt-16"
+      }`}
+    >
       <div className="mx-auto max-w-7xl px-4 py-10 md:px-6">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="space-y-3">
-            <div className="flex items-center gap-2 font-heading font-bold text-primary">
+            <div
+              className={`flex items-center gap-2 font-heading font-bold transition-colors duration-700 ${
+                isDark ? "text-purple-400" : "text-primary"
+              }`}
+            >
               <span className="text-xl" aria-hidden="true">✦</span>
               <span>StyleGuideAI</span>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p
+              className={`text-sm leading-relaxed transition-colors duration-700 ${
+                isDark ? "text-stone-400" : "text-muted-foreground"
+              }`}
+            >
               A 1,000+ member community for AI artists and art enthusiasts.
             </p>
             <div className="flex gap-3 pt-1">
@@ -19,7 +36,9 @@ export function Footer() {
                 href="https://discord.gg/3QK2B3zhGb"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-medium text-primary hover:underline focus-visible:outline-ring rounded"
+                className={`text-sm font-medium hover:underline focus-visible:outline-ring rounded transition-colors duration-700 ${
+                  isDark ? "text-purple-400" : "text-primary"
+                }`}
                 aria-label="Join our Discord (opens in new tab)"
               >
                 Discord
@@ -28,7 +47,9 @@ export function Footer() {
                 href="https://www.deviantart.com/styleguideai"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-medium text-primary hover:underline focus-visible:outline-ring rounded"
+                className={`text-sm font-medium hover:underline focus-visible:outline-ring rounded transition-colors duration-700 ${
+                  isDark ? "text-purple-400" : "text-primary"
+                }`}
                 aria-label="StyleGuideAI on DeviantArt (opens in new tab)"
               >
                 DeviantArt
@@ -38,17 +59,30 @@ export function Footer() {
 
           {/* Tools */}
           <div className="space-y-3">
-            <h3 className="font-heading font-semibold text-sm uppercase tracking-wide text-foreground">
+            <h3
+              className={`font-heading font-semibold text-sm uppercase tracking-wide transition-colors duration-700 ${
+                isDark ? "text-stone-100" : "text-foreground"
+              }`}
+            >
               Tools
             </h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <ul
+              className={`space-y-2 text-sm transition-colors duration-700 ${
+                isDark ? "text-stone-400" : "text-muted-foreground"
+              }`}
+            >
               {[
                 { href: "/stylebear", label: "StyleBear" },
                 { href: "/styledice", label: "StyleDice" },
                 { href: "/styletarot", label: "StyleTarot" },
               ].map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="hover:text-primary focus-visible:outline-ring rounded transition-colors">
+                  <Link
+                    href={l.href}
+                    className={`focus-visible:outline-ring rounded transition-colors duration-700 ${
+                      isDark ? "hover:text-purple-400" : "hover:text-primary"
+                    }`}
+                  >
                     {l.label}
                   </Link>
                 </li>
@@ -56,12 +90,20 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Museum & Content */}
+          {/* Explore */}
           <div className="space-y-3">
-            <h3 className="font-heading font-semibold text-sm uppercase tracking-wide text-foreground">
+            <h3
+              className={`font-heading font-semibold text-sm uppercase tracking-wide transition-colors duration-700 ${
+                isDark ? "text-stone-100" : "text-foreground"
+              }`}
+            >
               Explore
             </h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <ul
+              className={`space-y-2 text-sm transition-colors duration-700 ${
+                isDark ? "text-stone-400" : "text-muted-foreground"
+              }`}
+            >
               {[
                 { href: "/museum", label: "Virtual Museum" },
                 { href: "/articles", label: "Articles" },
@@ -69,7 +111,12 @@ export function Footer() {
                 { href: "/about", label: "About" },
               ].map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="hover:text-primary focus-visible:outline-ring rounded transition-colors">
+                  <Link
+                    href={l.href}
+                    className={`focus-visible:outline-ring rounded transition-colors duration-700 ${
+                      isDark ? "hover:text-purple-400" : "hover:text-primary"
+                    }`}
+                  >
                     {l.label}
                   </Link>
                 </li>
@@ -79,16 +126,29 @@ export function Footer() {
 
           {/* Company */}
           <div className="space-y-3">
-            <h3 className="font-heading font-semibold text-sm uppercase tracking-wide text-foreground">
+            <h3
+              className={`font-heading font-semibold text-sm uppercase tracking-wide transition-colors duration-700 ${
+                isDark ? "text-stone-100" : "text-foreground"
+              }`}
+            >
               Company
             </h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <ul
+              className={`space-y-2 text-sm transition-colors duration-700 ${
+                isDark ? "text-stone-400" : "text-muted-foreground"
+              }`}
+            >
               {[
                 { href: "/consulting", label: "Consulting" },
                 { href: "/privacy", label: "Privacy Policy" },
               ].map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="hover:text-primary focus-visible:outline-ring rounded transition-colors">
+                  <Link
+                    href={l.href}
+                    className={`focus-visible:outline-ring rounded transition-colors duration-700 ${
+                      isDark ? "hover:text-purple-400" : "hover:text-primary"
+                    }`}
+                  >
                     {l.label}
                   </Link>
                 </li>
@@ -97,7 +157,13 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 border-t pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+        <div
+          className={`mt-10 border-t pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs transition-colors duration-700 ${
+            isDark
+              ? "border-stone-800 text-stone-500"
+              : "text-muted-foreground"
+          }`}
+        >
           <p>© {new Date().getFullYear()} StyleGuideAI. All rights reserved.</p>
           <p>
             Built by{" "}
@@ -105,7 +171,9 @@ export function Footer() {
               href="https://satoricanton.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline focus-visible:outline-ring rounded"
+              className={`hover:underline focus-visible:outline-ring rounded transition-colors duration-700 ${
+                isDark ? "text-purple-400" : "text-primary"
+              }`}
             >
               Satori Canton
             </a>

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import type { RisingPost, RisingSource } from "@/app/api/rising/posts/route";
-import { RisingGrid } from "./RisingGrid";
+import { MasonryGrid } from "./MasonryGrid";
 import { RisingDetailModal } from "./RisingDetailModal";
 
 type TabKey = "all" | RisingSource | "tools";
@@ -9,6 +9,7 @@ type TabKey = "all" | RisingSource | "tools";
 const TABS: { key: TabKey; label: string }[] = [
   { key: "all", label: "Rising" },
   { key: "deviantart", label: "DeviantArt" },
+  { key: "discord", label: "Discord" },
   { key: "site", label: "Site Uploads" },
   { key: "tools", label: "From Our Tools" },
 ];
@@ -86,7 +87,7 @@ export function RisingGallery() {
           ))}
         </div>
       ) : (
-        <RisingGrid
+        <MasonryGrid
           posts={posts}
           onVote={handleVote}
           onCardClick={setSelectedPost}

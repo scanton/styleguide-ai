@@ -24,6 +24,8 @@ export interface RisingPost {
   rawEngagement: number;
   risingScore: number;
   aspectRatioClass: AspectRatioClass;
+  imageWidth: number | null;
+  imageHeight: number | null;
   createdAt: Date | null;
   expiresAt: Date;
   sourceUrl: string | null;
@@ -116,6 +118,8 @@ export async function GET(request: Request) {
     rawEngagement: p.rawEngagement ?? 0,
     risingScore: p.risingScore ?? 0,
     aspectRatioClass: (p.aspectRatioClass ?? "square") as AspectRatioClass,
+    imageWidth: p.imageWidth ?? null,
+    imageHeight: p.imageHeight ?? null,
     createdAt: p.createdAt,
     expiresAt: p.expiresAt,
     sourceUrl: p.sourceUrl,

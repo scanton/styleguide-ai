@@ -9,11 +9,11 @@ export const metadata: Metadata = {
 
 export default function RisingPage() {
   return (
-    <main id="main-content" className="min-h-screen bg-stone-950 text-white">
+    <div className="min-h-screen bg-stone-950 text-white">
       <div className="max-w-7xl mx-auto px-4 py-10">
         {/* Header */}
         <div className="mb-8">
-          <p className="text-sm font-semibold uppercase tracking-widest text-[oklch(0.42_0.22_285)] mb-2">
+          <p className="text-sm font-semibold uppercase tracking-widest text-purple-400 mb-2">
             Community Gallery
           </p>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">Rising</h1>
@@ -26,6 +26,6 @@ export default function RisingPage() {
 
         <RisingGallery />
       </div>
-    </main>
+    </div>
   );
 }

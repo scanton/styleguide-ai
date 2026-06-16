@@ -19,6 +19,7 @@ const NAV_LINKS = [
 
 export function Header() {
   const pathname = usePathname();
+  const isDark = pathname === "/rising";
   const headerRef = useRef<HTMLElement>(null);
   const [scrolled, setScrolled] = useState(false);
 
@@ -43,8 +44,12 @@ export function Header() {
   return (
     <header
       ref={headerRef}
-      className={`sticky top-0 z-50 w-full transition-shadow duration-200 ${
-        scrolled
+      className={`sticky top-0 z-50 w-full transition-colors duration-700 ${
+        isDark
+          ? scrolled
+            ? "bg-stone-950/95 backdrop-blur-sm shadow-md shadow-black/40"
+            : "bg-stone-950"
+          : scrolled
           ? "bg-background/95 backdrop-blur-sm shadow-md"
           : "bg-background"
       }`}
@@ -53,7 +58,9 @@ export function Header() {
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 font-heading text-lg font-bold text-primary focus-visible:outline-ring"
+          className={`flex items-center gap-2 font-heading text-lg font-bold transition-colors duration-700 focus-visible:outline-ring ${
+            isDark ? "text-purple-400" : "text-primary"
+          }`}
           aria-label="StyleGuideAI — home"
         >
           <span className="text-2xl" aria-hidden="true">✦</span>
@@ -70,10 +77,14 @@ export function Header() {
               key={link.href}
               href={link.href}
               aria-current={pathname.startsWith(link.href) ? "page" : undefined}
-              className={`rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary focus-visible:outline-ring ${
-                pathname.startsWith(link.href)
+              className={`rounded-md px-3 py-2 text-sm font-medium transition-colors duration-700 focus-visible:outline-ring ${
+                isDark
+                  ? pathname.startsWith(link.href)
+                    ? "text-purple-400"
+                    : "text-stone-300 hover:text-purple-400"
+                  : pathname.startsWith(link.href)
                   ? "text-primary"
-                  : "text-foreground/70"
+                  : "text-foreground/70 hover:text-primary"
               }`}
             >
               {link.label}

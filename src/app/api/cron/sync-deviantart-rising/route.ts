@@ -109,26 +109,32 @@ export async function GET(request: Request) {
 
   let synced = 0;
   let updated = 0;
+  const errors: string[] = [];
 
   for (const folder of targetFolders) {
     const galleryRes = await fetch(
-      `${DA_BASE}/gallery/${folder.folderid}?${new URLSearchParams({ username: GROUP_NAME, limit: "50", mode: "newest" })}`,
+      `${DA_BASE}/gallery/${folder.folderid}?${new URLSearchParams({ username: GROUP_NAME, limit: "24", mode: "newest" })}`,
       { headers: authHeaders }
     );
-    if (!galleryRes.ok) continue;
+    if (!galleryRes.ok) {
+      errors.push(`Gallery fetch failed for folder "${folder.name}": ${galleryRes.status}`);
+      continue;
+    }
 
     const { results: deviations } = (await galleryRes.json()) as DAGalleryResponse;
 
     for (const dev of deviations) {
-      const publishedAt = dev.published_time ? new Date(dev.published_time * 1000) : null;
-      if (!publishedAt || publishedAt < cutoff) continue; // outside rising window
+      const publishedAt = dev.published_time ? new Date(Number(dev.published_time) * 1000) : null;
+      if (!publishedAt || publishedAt < cutoff) continue;
 
       const preview = dev.preview ?? dev.thumbs?.[dev.thumbs.length - 1] ?? null;
       if (!preview?.src) continue;
 
       const thumb = dev.thumbs?.[0] ?? null;
-      const aspectRatioClass = preview.width && preview.height
-        ? classifyAspectRatio(preview.width, preview.height)
+      const imageWidth = preview.width ?? null;
+      const imageHeight = preview.height ?? null;
+      const aspectRatioClass = imageWidth && imageHeight
+        ? classifyAspectRatio(imageWidth, imageHeight)
         : "square";
 
       const expiresAt = new Date(publishedAt.getTime() + RISING_WINDOW_HOURS * 60 * 60 * 1000);
@@ -149,10 +155,9 @@ export async function GET(request: Request) {
           .limit(1);
 
         if (existing) {
-          // Update engagement only
           await db
             .update(risingPosts)
-            .set({ rawEngagement })
+            .set({ rawEngagement, imageWidth, imageHeight })
             .where(eq(risingPosts.id, existing.id));
           updated++;
         } else {
@@ -171,6 +176,8 @@ export async function GET(request: Request) {
             siteLikes: 0,
             risingScore: 0,
             aspectRatioClass,
+            imageWidth,
+            imageHeight,
             createdAt: publishedAt,
             expiresAt,
             sourceUrl: dev.url,
@@ -178,10 +185,10 @@ export async function GET(request: Request) {
           synced++;
         }
       } catch (err) {
-        console.error("[sync-deviantart-rising] Upsert error:", err);
+        errors.push(`${dev.deviationid}: ${err instanceof Error ? err.message : String(err)}`);
       }
     }
   }
 
-  return NextResponse.json({ ok: true, synced, updated });
+  return NextResponse.json({ ok: true, synced, updated, ...(errors.length && { errors }) });
 }

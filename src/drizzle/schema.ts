@@ -270,6 +270,8 @@ export const risingPosts = pgTable(
     })
       .default("square")
       .notNull(),
+    imageWidth: integer("image_width"),
+    imageHeight: integer("image_height"),
     createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
     expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
     sourceUrl: text("source_url"),

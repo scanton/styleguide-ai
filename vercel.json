@@ -15,6 +15,10 @@
     {
       "path": "/api/cron/sync-deviantart-rising",
       "schedule": "*/30 * * * *"
+    },
+    {
+      "path": "/api/cron/sync-discord-rising",
+      "schedule": "*/15 * * * *"
     }
   ]
 }

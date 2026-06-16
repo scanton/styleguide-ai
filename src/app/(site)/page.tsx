@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { HeroSection } from "@/components/home/HeroSection";
 import { FeatureGrid } from "@/components/home/FeatureGrid";
+import { RisingWidget } from "@/components/rising/RisingWidget";
 import { CommunitySection } from "@/components/home/CommunitySection";
 import { ConsultingCTA } from "@/components/home/ConsultingCTA";
 import { db } from "@/lib/db";
@@ -65,6 +66,7 @@ export default async function HomePage() {
     <>
       <HeroSection theme={heroTheme ?? null} />
       <FeatureGrid />
+      <RisingWidget />
       <CommunitySection
         latestEventTitle={latestEvent?.title ?? null}
         latestEventUrl={latestEvent?.threadUrl ?? null}
