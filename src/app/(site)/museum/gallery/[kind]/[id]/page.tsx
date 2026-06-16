@@ -128,5 +128,5 @@ export default async function GalleryPage({
   const gallery = buildGallery(kind, id);
   if (!gallery) notFound();
 
-  return <EditorialGallery {...gallery} />;
+  return <EditorialGallery {...gallery} galleryKind={kind} galleryId={id} />;
 }

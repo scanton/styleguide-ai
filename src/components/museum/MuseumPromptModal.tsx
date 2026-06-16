@@ -202,7 +202,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
         <ShareToRisingModal
           prompt={prompt}
           toolOrigin="museum"
-          toolContext={JSON.stringify({ entityType: type, name })}
+          toolContext={JSON.stringify({ entityType: type, id, name })}
           onClose={() => setShowShareModal(false)}
         />
       )}

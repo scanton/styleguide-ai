@@ -1,6 +1,6 @@
 "use client";
-import { useState, useRef, useCallback } from "react";
-import { X, Upload, ImageIcon, ExternalLink } from "lucide-react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { X, Upload, ImageIcon, ExternalLink, Clipboard } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 interface Props {
@@ -29,6 +29,7 @@ export function ShareToRisingModal({ prompt, toolOrigin, toolContext, onClose }:
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [pasteFlash, setPasteFlash] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = useCallback((f: File) => {
@@ -64,6 +65,27 @@ export function ShareToRisingModal({ prompt, toolOrigin, toolContext, onClose }:
     },
     [handleFile]
   );
+
+  // Clipboard paste — Ctrl/Cmd+V anywhere while the modal is open
+  useEffect(() => {
+    function onPaste(e: ClipboardEvent) {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (const item of Array.from(items)) {
+        if (item.kind === "file" && item.type.startsWith("image/")) {
+          const f = item.getAsFile();
+          if (f) {
+            handleFile(f);
+            setPasteFlash(true);
+            setTimeout(() => setPasteFlash(false), 800);
+          }
+          break;
+        }
+      }
+    }
+    document.addEventListener("paste", onPaste);
+    return () => document.removeEventListener("paste", onPaste);
+  }, [handleFile]);
 
   async function handleSubmit() {
     if (!file) return;
@@ -153,7 +175,7 @@ export function ShareToRisingModal({ prompt, toolOrigin, toolContext, onClose }:
                 onDrop={handleDrop}
                 onClick={() => inputRef.current?.click()}
                 className={`relative cursor-pointer rounded-xl border-2 border-dashed transition-colors flex items-center justify-center overflow-hidden
-                  ${dragging ? "border-[oklch(0.42_0.22_285)] bg-purple-50" : "border-stone-200 hover:border-stone-400 bg-stone-50"}
+                  ${pasteFlash ? "border-[oklch(0.42_0.22_285)] bg-purple-50" : dragging ? "border-[oklch(0.42_0.22_285)] bg-purple-50" : "border-stone-200 hover:border-stone-400 bg-stone-50"}
                   ${preview ? "h-56" : "h-40"}`}
               >
                 {preview ? (
@@ -165,8 +187,12 @@ export function ShareToRisingModal({ prompt, toolOrigin, toolContext, onClose }:
                 ) : (
                   <div className="flex flex-col items-center gap-2 text-stone-400 pointer-events-none">
                     <ImageIcon size={28} />
-                    <p className="text-sm font-medium">Drop image here or click to browse</p>
+                    <p className="text-sm font-medium">Drop, click, or paste an image</p>
                     <p className="text-xs">JPEG, PNG, WebP, GIF — max 10 MB</p>
+                    <div className="flex items-center gap-1 mt-1 text-[11px] text-stone-300">
+                      <Clipboard size={11} />
+                      <span>Ctrl/Cmd+V to paste from clipboard</span>
+                    </div>
                   </div>
                 )}
                 {preview && (

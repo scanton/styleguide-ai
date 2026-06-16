@@ -16,6 +16,58 @@ const TOOL_LABELS: Record<string, string> = {
   museum: "Virtual Museum",
 };
 
+const CARD_TYPE_COLORS: Record<string, string> = {
+  movement: "oklch(0.42 0.22 285)",
+  subject: "oklch(0.55 0.18 35)",
+  media: "oklch(0.50 0.16 160)",
+  artist: "oklch(0.48 0.20 300)",
+  inspiration: "oklch(0.52 0.19 50)",
+  technique: "oklch(0.46 0.17 220)",
+  setting: "oklch(0.50 0.15 130)",
+  situation: "oklch(0.54 0.18 15)",
+  "pop culture": "oklch(0.50 0.22 10)",
+  location: "oklch(0.48 0.16 190)",
+};
+
+interface TarotCardMini {
+  index: number;
+  title: string;
+  type: string;
+  imageFilename: string;
+}
+
+function TarotCardMiniDisplay({ card }: { card: TarotCardMini }) {
+  const [imgError, setImgError] = useState(false);
+  const color = CARD_TYPE_COLORS[card.type] ?? "oklch(0.42 0.22 285)";
+  return (
+    <div className="flex flex-col rounded-xl overflow-hidden shadow-md" style={{ aspectRatio: "2/3" }}>
+      <div className="flex-1 relative bg-stone-700 min-h-0">
+        {!imgError ? (
+          <img
+            src={`/images/styletarot/${card.imageFilename}`}
+            alt={card.title}
+            className="absolute inset-0 w-full h-full object-cover"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center opacity-30">
+            <span className="text-2xl">🎴</span>
+          </div>
+        )}
+      </div>
+      <div className="flex-none p-1.5 bg-white space-y-0.5">
+        <span
+          className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full text-white"
+          style={{ backgroundColor: color }}
+        >
+          {card.type}
+        </span>
+        <p className="text-[10px] font-semibold text-stone-800 leading-tight line-clamp-2">{card.title}</p>
+      </div>
+    </div>
+  );
+}
+
 interface Props {
   post: RisingPost;
   onClose: () => void;
@@ -120,6 +172,26 @@ export function RisingDetailModal({ post, onClose, onVote }: Props) {
               </span>
             </div>
           )}
+
+          {/* StyleTarot cards */}
+          {post.toolOrigin === "styletarot" && (() => {
+            try {
+              const cards: TarotCardMini[] = JSON.parse(post.toolContext ?? "");
+              if (!Array.isArray(cards) || cards.length === 0) return null;
+              return (
+                <div className="space-y-2">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Cards used</p>
+                  <div className="grid grid-cols-5 gap-2">
+                    {cards.map((card) => (
+                      <TarotCardMiniDisplay key={card.index} card={card} />
+                    ))}
+                  </div>
+                </div>
+              );
+            } catch {
+              return null;
+            }
+          })()}
 
           {/* Prompt / caption */}
           {post.caption && (
