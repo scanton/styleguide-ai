@@ -20,6 +20,64 @@ function classifyAspectRatio(w: number, h: number): AspectRatioClass {
   return "square";
 }
 
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10 MB server limit
+const MAX_DIM = 2400; // px — preserves AI render detail while compressing
+
+// Compress an image file to fit under maxBytes using Canvas.
+// Tries quality 0.88, then 0.72, then shrinks dimensions if still too big.
+function compressImage(file: File): Promise<File> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("load")); };
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let w = img.naturalWidth;
+      let h = img.naturalHeight;
+
+      // Scale down if either dimension exceeds MAX_DIM
+      if (w > MAX_DIM || h > MAX_DIM) {
+        const scale = MAX_DIM / Math.max(w, h);
+        w = Math.round(w * scale);
+        h = Math.round(h * scale);
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { reject(new Error("canvas")); return; }
+      ctx.drawImage(img, 0, 0, w, h);
+
+      const outputName = file.name.replace(/\.[^.]+$/, ".jpg");
+
+      function tryQuality(quality: number, shrink: boolean) {
+        if (shrink) {
+          w = Math.round(w * 0.75);
+          h = Math.round(h * 0.75);
+          canvas.width = w;
+          canvas.height = h;
+          ctx!.drawImage(img, 0, 0, w, h);
+        }
+        canvas.toBlob((blob) => {
+          if (!blob) { reject(new Error("blob")); return; }
+          if (blob.size <= MAX_UPLOAD_BYTES) {
+            resolve(new File([blob], outputName, { type: "image/jpeg" }));
+          } else if (quality > 0.5) {
+            tryQuality(quality - 0.16, false);
+          } else {
+            // Shrink dimensions and retry
+            tryQuality(0.82, true);
+          }
+        }, "image/jpeg", quality);
+      }
+
+      tryQuality(0.88, false);
+    };
+    img.src = url;
+  });
+}
+
 export function ShareToRisingModal({ prompt, toolOrigin, toolContext, onClose, onUploaded }: Props) {
   const { data: session } = useSession();
   const [file, setFile] = useState<File | null>(null);
@@ -28,27 +86,36 @@ export function ShareToRisingModal({ prompt, toolOrigin, toolContext, onClose, o
   const [caption, setCaption] = useState(prompt);
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [compressing, setCompressing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [pasteFlash, setPasteFlash] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = useCallback((f: File) => {
+  const handleFile = useCallback(async (f: File) => {
     if (!f.type.startsWith("image/")) {
       setError("Please upload an image file (JPEG, PNG, WebP, or GIF).");
       return;
     }
-    if (f.size > 10 * 1024 * 1024) {
-      setError("Image must be under 10 MB.");
-      return;
-    }
     setError(null);
-    setFile(f);
 
-    const url = URL.createObjectURL(f);
+    let ready = f;
+    if (f.size > MAX_UPLOAD_BYTES) {
+      setCompressing(true);
+      try {
+        ready = await compressImage(f);
+      } catch {
+        setError("Could not process this image. Please try a different file.");
+        setCompressing(false);
+        return;
+      }
+      setCompressing(false);
+    }
+
+    setFile(ready);
+    const url = URL.createObjectURL(ready);
     setPreview(url);
 
-    // Measure dimensions for aspect ratio classification
     const img = new Image();
     img.onload = () => {
       setAspectRatioClass(classifyAspectRatio(img.naturalWidth, img.naturalHeight));
@@ -180,7 +247,12 @@ export function ShareToRisingModal({ prompt, toolOrigin, toolContext, onClose, o
                   ${pasteFlash ? "border-[oklch(0.42_0.22_285)] bg-purple-50" : dragging ? "border-[oklch(0.42_0.22_285)] bg-purple-50" : "border-stone-200 hover:border-stone-400 bg-stone-50"}
                   ${preview ? "h-56" : "h-40"}`}
               >
-                {preview ? (
+                {compressing ? (
+                  <div className="flex flex-col items-center gap-2 text-stone-400 pointer-events-none">
+                    <div className="w-6 h-6 border-2 border-stone-300 border-t-[oklch(0.42_0.22_285)] rounded-full animate-spin" />
+                    <p className="text-sm font-medium">Compressing image…</p>
+                  </div>
+                ) : preview ? (
                   <img
                     src={preview}
                     alt="Preview"
@@ -190,7 +262,7 @@ export function ShareToRisingModal({ prompt, toolOrigin, toolContext, onClose, o
                   <div className="flex flex-col items-center gap-2 text-stone-400 pointer-events-none">
                     <ImageIcon size={28} />
                     <p className="text-sm font-medium">Drop, click, or paste an image</p>
-                    <p className="text-xs">JPEG, PNG, WebP, GIF — max 10 MB</p>
+                    <p className="text-xs">JPEG, PNG, WebP, GIF — any size</p>
                     <div className="flex items-center gap-1 mt-1 text-[11px] text-stone-300">
                       <Clipboard size={11} />
                       <span>Ctrl/Cmd+V to paste from clipboard</span>
@@ -233,11 +305,11 @@ export function ShareToRisingModal({ prompt, toolOrigin, toolContext, onClose, o
 
               <button
                 onClick={handleSubmit}
-                disabled={!file || uploading}
+                disabled={!file || uploading || compressing}
                 className="w-full py-3 rounded-xl font-semibold text-white text-sm transition-opacity
                   bg-[oklch(0.42_0.22_285)] hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                {uploading ? "Uploading…" : "Share to Rising"}
+                {compressing ? "Processing…" : uploading ? "Uploading…" : "Share to Rising"}
               </button>
             </>
           )}
