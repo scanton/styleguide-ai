@@ -20,6 +20,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
   const [copied, setCopied] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const [savedEntryId, setSavedEntryId] = useState<string | null>(null);
   const [preferredAspectRatio, setPreferredAspectRatio] = useState<string | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -71,17 +72,21 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
       setPrompt(generated);
 
       if (session?.user && data.prompt) {
-        fetch("/api/history/museum", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            entityType: type,
-            entityId: id,
-            entityName: name,
-            sceneDetails: sceneDetails.trim() || null,
-            prompt: data.prompt,
-          }),
-        }).catch(() => {});
+        try {
+          const hr = await fetch("/api/history/museum", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              entityType: type,
+              entityId: id,
+              entityName: name,
+              sceneDetails: sceneDetails.trim() || null,
+              prompt: data.prompt,
+            }),
+          });
+          const hd = await hr.json();
+          if (hd.id) setSavedEntryId(hd.id);
+        } catch {}
       }
     } catch {
       setPrompt("Generation failed. Please try again.");
@@ -209,7 +214,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
         <ShareToRisingModal
           prompt={prompt}
           toolOrigin="museum"
-          toolContext={JSON.stringify({ entityType: type, id, name })}
+          toolContext={JSON.stringify({ entityType: type, id, name, ...(savedEntryId ? { historyEntryId: savedEntryId } : {}) })}
           onClose={() => setShowShareModal(false)}
         />
       )}
@@ -220,7 +225,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
             tool: "museum",
             prompt,
             toolOrigin: "museum",
-            toolContext: JSON.stringify({ entityType: type, id, name }),
+            toolContext: JSON.stringify({ entityType: type, id, name, ...(savedEntryId ? { historyEntryId: savedEntryId } : {}) }),
             historyPayload: {
               entityType: type,
               entityId: id,
