@@ -82,25 +82,32 @@ const commands = [
   },
 ];
 
-const url = `https://discord.com/api/v10/applications/${APP_ID}/commands`;
+async function main() {
+  const url = `https://discord.com/api/v10/applications/${APP_ID}/commands`;
 
-const res = await fetch(url, {
-  method: "PUT",
-  headers: {
-    Authorization: `Bot ${BOT_TOKEN}`,
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify(commands),
-});
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bot ${BOT_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(commands),
+  });
 
-if (res.ok) {
-  const data = await res.json();
-  console.log(`✅ Registered ${(data as unknown[]).length} command(s):`);
-  for (const cmd of data as { name: string; id: string }[]) {
-    console.log(`   /${cmd.name}  (id: ${cmd.id})`);
+  if (res.ok) {
+    const data = await res.json();
+    console.log(`✅ Registered ${(data as unknown[]).length} command(s):`);
+    for (const cmd of data as { name: string; id: string }[]) {
+      console.log(`   /${cmd.name}  (id: ${cmd.id})`);
+    }
+  } else {
+    const error = await res.text();
+    console.error(`❌ Registration failed (${res.status}):`, error);
+    process.exit(1);
   }
-} else {
-  const error = await res.text();
-  console.error(`❌ Registration failed (${res.status}):`, error);
-  process.exit(1);
 }
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
