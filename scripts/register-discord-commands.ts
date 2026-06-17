@@ -1,14 +1,15 @@
 /**
- * One-time script to register the /stylebear slash command with Discord.
+ * Registers the /stylebear slash command with Discord.
  *
  * Run with:
- *   npx tsx scripts/register-discord-commands.ts
+ *   npx tsx scripts/register-discord-commands.ts          # guild (instant)
+ *   npx tsx scripts/register-discord-commands.ts --global # global (up to 1h propagation)
  *
- * Requires DISCORD_BOT_TOKEN and DISCORD_APP_ID in .env.local
- * (or set them inline as shell env vars).
+ * Guild commands appear instantly in the server specified by DISCORD_GUILD_ID.
+ * Global commands eventually propagate to every server the bot is in.
+ * Register guild first to test, then global when ready to ship.
  *
- * Safe to re-run — Discord upserts commands by name, so re-registering
- * only updates the definition, it doesn't create duplicates.
+ * Safe to re-run — Discord upserts by name, no duplicates.
  */
 
 import { config } from "dotenv";
@@ -16,9 +17,16 @@ config({ path: ".env.local" });
 
 const APP_ID = process.env.DISCORD_APP_ID;
 const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
+const GUILD_ID = process.env.DISCORD_GUILD_ID;
+const isGlobal = process.argv.includes("--global");
 
 if (!APP_ID || !BOT_TOKEN) {
   console.error("Missing DISCORD_APP_ID or DISCORD_BOT_TOKEN in .env.local");
+  process.exit(1);
+}
+if (!isGlobal && !GUILD_ID) {
+  console.error("Missing DISCORD_GUILD_ID in .env.local (required for guild registration)");
+  console.error("Add it or use --global to register globally instead.");
   process.exit(1);
 }
 
@@ -83,7 +91,11 @@ const commands = [
 ];
 
 async function main() {
-  const url = `https://discord.com/api/v10/applications/${APP_ID}/commands`;
+  const url = isGlobal
+    ? `https://discord.com/api/v10/applications/${APP_ID}/commands`
+    : `https://discord.com/api/v10/applications/${APP_ID}/guilds/${GUILD_ID}/commands`;
+
+  console.log(isGlobal ? "Registering globally…" : `Registering to guild ${GUILD_ID}…`);
 
   const res = await fetch(url, {
     method: "PUT",
