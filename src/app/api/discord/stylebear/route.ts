@@ -152,53 +152,11 @@ export async function POST(request: Request) {
               {
                 type: 4,
                 custom_id: "scene",
-                label: "Describe your scene or idea",
+                label: "What do you want to create?",
                 style: 2, // paragraph
                 required: true,
-                placeholder: "A lone figure on a windswept cliff, fog rolling in from the sea…",
+                placeholder: "Describe your idea — StyleBear will build the full AI art prompt around it.",
                 max_length: 500,
-              },
-            ],
-          },
-          {
-            type: 1,
-            components: [
-              {
-                type: 4,
-                custom_id: "movement",
-                label: "Art movement (optional)",
-                style: 1, // short
-                required: false,
-                placeholder: "Impressionism, Bauhaus, Surrealism, Art Nouveau…",
-                max_length: 100,
-              },
-            ],
-          },
-          {
-            type: 1,
-            components: [
-              {
-                type: 4,
-                custom_id: "media",
-                label: "Media type (optional)",
-                style: 1,
-                required: false,
-                placeholder: "Watercolor, Oil Painting, Digital Art, Linocut…",
-                max_length: 100,
-              },
-            ],
-          },
-          {
-            type: 1,
-            components: [
-              {
-                type: 4,
-                custom_id: "style",
-                label: "Prompt format (optional)",
-                style: 1,
-                required: false,
-                placeholder: "modern, flux, midjourney, sdxl — leave blank for default",
-                max_length: 50,
               },
             ],
           },
