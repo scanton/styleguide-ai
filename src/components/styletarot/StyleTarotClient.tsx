@@ -794,14 +794,15 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
         <ShareToRisingModal
           prompt={generatedPrompt}
           toolOrigin="styletarot"
-          toolContext={JSON.stringify(
-            activeCards.map((c) => ({
+          toolContext={JSON.stringify({
+            cards: activeCards.map((c) => ({
               index: c.index,
               title: c.title,
               type: c.type,
               imageFilename: c.imageFilename,
-            }))
-          )}
+            })),
+            ...(savedEntryId ? { historyEntryId: savedEntryId } : {}),
+          })}
           onClose={() => setShowShareModal(false)}
         />
       )}

@@ -114,6 +114,7 @@ export default function StyleBearClient() {
   const [hasGenerated, setHasGenerated] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const [savedEntryId, setSavedEntryId] = useState<string | null>(null);
   const subjectRef = useRef<HTMLTextAreaElement>(null);
   const footerRef = useRef<HTMLTextAreaElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
@@ -169,11 +170,17 @@ export default function StyleBearClient() {
             .map((key) => allOptionDefs.find((o) => o.key === key)?.label as string | undefined)
             .filter((l): l is string => typeof l === "string"),
         });
-        fetch("/api/stylebear/history", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: data.content, inputs }),
-        }).catch(() => {});
+        try {
+          const saveRes = await fetch("/api/stylebear/history", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: data.content, inputs }),
+          });
+          const saved = await saveRes.json();
+          if (saved.entry?.id) setSavedEntryId(saved.entry.id);
+        } catch {
+          // Non-fatal
+        }
       }
     } catch {
       setOutput("Error generating prompt. Please try again.");
@@ -478,6 +485,7 @@ export default function StyleBearClient() {
         <ShareToRisingModal
           prompt={output}
           toolOrigin="stylebear"
+          toolContext={savedEntryId ? JSON.stringify({ historyEntryId: savedEntryId, historyTable: "stylebear" }) : undefined}
           onClose={() => setShowShareModal(false)}
         />
       )}

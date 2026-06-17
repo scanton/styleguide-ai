@@ -444,6 +444,7 @@ Create a detailed, imaginative prompt that weaves all six elements into a vivid,
         <ShareToRisingModal
           prompt={generatedPrompt}
           toolOrigin="styledice"
+          toolContext={savedEntryId ? JSON.stringify({ historyEntryId: savedEntryId, historyTable: "styledice" }) : undefined}
           onClose={() => setShowShareModal(false)}
         />
       )}
