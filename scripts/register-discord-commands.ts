@@ -33,60 +33,9 @@ if (!isGlobal && !GUILD_ID) {
 const commands = [
   {
     name: "stylebear",
-    description: "Generate an AI art prompt with StyleBear",
-    options: [
-      {
-        name: "movement",
-        description: "Art movement (e.g. Impressionism, Bauhaus, Surrealism)",
-        type: 3, // STRING
-        required: false,
-      },
-      {
-        name: "media",
-        description: "Media type (e.g. Watercolor, Oil Painting, Digital Art)",
-        type: 3, // STRING
-        required: false,
-      },
-      {
-        name: "scene",
-        description: "Subject or scene description (freeform)",
-        type: 3, // STRING
-        required: false,
-      },
-      {
-        name: "style",
-        description: "Prompt style format",
-        type: 3, // STRING
-        required: false,
-        choices: [
-          { name: "Modern / Detailed (default)", value: "modern" },
-          { name: "Flux", value: "flux" },
-          { name: "Midjourney", value: "midjourney" },
-          { name: "SDXL / SD1.5", value: "sdxl" },
-          { name: "Tag (Pony / Illustrious)", value: "tag" },
-        ],
-      },
-      {
-        name: "aspect",
-        description: "Aspect ratio",
-        type: 3, // STRING
-        required: false,
-        choices: [
-          { name: "16:9 (Landscape)", value: "16:9" },
-          { name: "1:1 (Square)", value: "1:1" },
-          { name: "9:16 (Portrait)", value: "9:16" },
-          { name: "4:3", value: "4:3" },
-          { name: "3:2", value: "3:2" },
-          { name: "2:3", value: "2:3" },
-        ],
-      },
-      {
-        name: "share",
-        description: "Post publicly to the channel (default: only you can see it)",
-        type: 5, // BOOLEAN
-        required: false,
-      },
-    ],
+    // No parameters — the bot opens a modal form instead.
+    // Fields (scene, movement, media, style) are collected via the form.
+    description: "Generate an AI art prompt — a form will appear to fill in your ideas",
   },
 ];
 

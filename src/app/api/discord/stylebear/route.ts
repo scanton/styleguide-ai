@@ -10,43 +10,54 @@ const DISCORD_API = "https://discord.com/api/v10";
 // Discord interaction types
 const PING = 1;
 const APPLICATION_COMMAND = 2;
+const MODAL_SUBMIT = 5;
 
 // Discord response types
 const PONG = 1;
 const DEFERRED_CHANNEL_MESSAGE = 5;
-
-// Discord message flags
-const EPHEMERAL = 64;
+const MODAL = 9;
 
 // Deep purple — matches StyleGuideAI brand
 const EMBED_COLOR = 0x6b21a8;
 
-interface DiscordOption {
-  name: string;
-  value: string | boolean;
+const MODAL_ID = "stylebear_modal";
+
+interface DiscordTextInput {
+  type: number;
+  custom_id: string;
+  value?: string;
+}
+
+interface DiscordActionRow {
+  type: number;
+  components: DiscordTextInput[];
 }
 
 interface DiscordInteraction {
   type: number;
   token: string;
   data?: {
-    options?: DiscordOption[];
+    // slash command options
+    options?: { name: string; value: string | boolean }[];
+    // modal submit
+    custom_id?: string;
+    components?: DiscordActionRow[];
   };
 }
 
-function parseOptions(raw: DiscordOption[]): Record<string, string> {
+function parseModalValues(rows: DiscordActionRow[]): Record<string, string> {
   const out: Record<string, string> = {};
-  for (const opt of raw) {
-    out[opt.name] = String(opt.value);
+  for (const row of rows) {
+    for (const comp of row.components) {
+      if (comp.custom_id && comp.value) {
+        out[comp.custom_id] = comp.value.trim();
+      }
+    }
   }
   return out;
 }
 
-async function sendFollowUp(
-  appId: string,
-  token: string,
-  content: object
-): Promise<void> {
+async function sendFollowUp(appId: string, token: string, content: object): Promise<void> {
   await fetch(`${DISCORD_API}/webhooks/${appId}/${token}/messages/@original`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
@@ -54,23 +65,17 @@ async function sendFollowUp(
   });
 }
 
-async function processCommand(
-  appId: string,
-  token: string,
-  opts: Record<string, string>
-): Promise<void> {
+async function processAndReply(appId: string, token: string, opts: Record<string, string>): Promise<void> {
   const userMessage = buildBotUserMessage({
     movement: opts.movement,
     media: opts.media,
     style: opts.style,
     scene: opts.scene,
-    aspect: opts.aspect,
   });
 
   const systemPrompt = getSystemPrompt(opts.style);
 
   let generatedPrompt: string;
-
   try {
     const result = await callLLM(
       [
@@ -82,18 +87,16 @@ async function processCommand(
     generatedPrompt = result.content.trim();
   } catch {
     await sendFollowUp(appId, token, {
-      content:
-        "Something went wrong generating your prompt — try again or visit <https://styleguideai.com/stylebear>.",
+      content: "Something went wrong generating your prompt — try again or visit <https://www.styleguideai.com/stylebear>.",
     });
     return;
   }
 
-  // Build tag fields from whichever options the user supplied
+  // Build tag fields for whichever inputs were provided
   const fields: { name: string; value: string; inline: boolean }[] = [];
   if (opts.movement) fields.push({ name: "Movement", value: opts.movement, inline: true });
   if (opts.media) fields.push({ name: "Media", value: opts.media, inline: true });
   if (opts.style) fields.push({ name: "Style", value: opts.style, inline: true });
-  if (opts.aspect) fields.push({ name: "Aspect", value: opts.aspect, inline: true });
 
   await sendFollowUp(appId, token, {
     embeds: [
@@ -103,9 +106,9 @@ async function processCommand(
         color: EMBED_COLOR,
         fields,
         footer: {
-          text: "Render this and share your image at styleguideai.com/rising",
+          text: "Render this and share your image at www.styleguideai.com/rising",
         },
-        url: "https://styleguideai.com/stylebear",
+        url: "https://www.styleguideai.com/stylebear",
       },
     ],
   });
@@ -119,7 +122,6 @@ export async function POST(request: Request) {
     return new Response("Bot not configured", { status: 503 });
   }
 
-  // Read raw body — signature verification requires the exact bytes Discord sent
   const rawBody = await request.text();
   const signature = request.headers.get("x-signature-ed25519") ?? "";
   const timestamp = request.headers.get("x-signature-timestamp") ?? "";
@@ -131,24 +133,89 @@ export async function POST(request: Request) {
 
   const body = JSON.parse(rawBody) as DiscordInteraction;
 
-  // Discord PING — required for endpoint verification in Developer Portal
+  // Discord PING — endpoint verification
   if (body.type === PING) {
     return Response.json({ type: PONG });
   }
 
+  // Slash command /stylebear — open the modal form
   if (body.type === APPLICATION_COMMAND) {
-    const opts = parseOptions(body.data?.options ?? []);
-    const isShare = opts.share === "true";
-
-    // Fire LLM + follow-up after the response is sent (next/server after())
-    after(() => processCommand(APP_ID, body.token, opts));
-
     return Response.json({
-      type: DEFERRED_CHANNEL_MESSAGE,
-      data: isShare ? {} : { flags: EPHEMERAL },
+      type: MODAL,
+      data: {
+        custom_id: MODAL_ID,
+        title: "StyleBear Prompt Generator",
+        components: [
+          {
+            type: 1,
+            components: [
+              {
+                type: 4,
+                custom_id: "scene",
+                label: "Describe your scene or idea",
+                style: 2, // paragraph
+                required: true,
+                placeholder: "A lone figure on a windswept cliff, fog rolling in from the sea…",
+                max_length: 500,
+              },
+            ],
+          },
+          {
+            type: 1,
+            components: [
+              {
+                type: 4,
+                custom_id: "movement",
+                label: "Art movement (optional)",
+                style: 1, // short
+                required: false,
+                placeholder: "Impressionism, Bauhaus, Surrealism, Art Nouveau…",
+                max_length: 100,
+              },
+            ],
+          },
+          {
+            type: 1,
+            components: [
+              {
+                type: 4,
+                custom_id: "media",
+                label: "Media type (optional)",
+                style: 1,
+                required: false,
+                placeholder: "Watercolor, Oil Painting, Digital Art, Linocut…",
+                max_length: 100,
+              },
+            ],
+          },
+          {
+            type: 1,
+            components: [
+              {
+                type: 4,
+                custom_id: "style",
+                label: "Prompt format (optional)",
+                style: 1,
+                required: false,
+                placeholder: "modern, flux, midjourney, sdxl — leave blank for default",
+                max_length: 50,
+              },
+            ],
+          },
+        ],
+      },
     });
   }
 
-  // Unknown interaction type — acknowledge gracefully
+  // Modal submitted — defer, generate, reply
+  if (body.type === MODAL_SUBMIT && body.data?.custom_id === MODAL_ID) {
+    const opts = parseModalValues(body.data.components ?? []);
+
+    after(() => processAndReply(APP_ID, body.token, opts));
+
+    // Public deferred response — no ephemeral flag
+    return Response.json({ type: DEFERRED_CHANNEL_MESSAGE });
+  }
+
   return Response.json({ type: PONG });
 }
