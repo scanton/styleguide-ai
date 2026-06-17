@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { after } from "next/server";
-import { verifyDiscordRequest } from "@/lib/discord-verify";
+import { verifyKey } from "discord-interactions";
 import { buildBotUserMessage, getSystemPrompt } from "@/lib/stylebear-server";
 import { callLLM } from "@/lib/openrouter";
 
@@ -124,7 +124,7 @@ export async function POST(request: Request) {
   const signature = request.headers.get("x-signature-ed25519") ?? "";
   const timestamp = request.headers.get("x-signature-timestamp") ?? "";
 
-  const isValid = await verifyDiscordRequest(signature, timestamp, rawBody, PUBLIC_KEY);
+  const isValid = verifyKey(rawBody, signature, timestamp, PUBLIC_KEY);
   if (!isValid) {
     return new Response("Invalid request signature", { status: 401 });
   }
