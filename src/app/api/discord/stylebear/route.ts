@@ -106,7 +106,7 @@ async function processAndReply(appId: string, token: string, opts: Record<string
         color: EMBED_COLOR,
         fields,
         footer: {
-          text: "Render this and share your image at www.styleguideai.com/rising",
+          text: "Render this for free at arena.ai/image · share in #⬆️-rising to showcase your creation on styleguideai.com/rising",
         },
         url: "https://www.styleguideai.com/stylebear",
       },
