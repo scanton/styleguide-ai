@@ -124,7 +124,7 @@ export async function POST(request: Request) {
   const signature = request.headers.get("x-signature-ed25519") ?? "";
   const timestamp = request.headers.get("x-signature-timestamp") ?? "";
 
-  const isValid = verifyKey(rawBody, signature, timestamp, PUBLIC_KEY);
+  const isValid = await verifyKey(rawBody, signature, timestamp, PUBLIC_KEY);
   if (!isValid) {
     return new Response("Invalid request signature", { status: 401 });
   }
