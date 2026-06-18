@@ -26,7 +26,7 @@ export async function callLLM(
       "X-Title": "StyleGuideAI",
     },
     body: JSON.stringify({
-      model: options?.model ?? "openrouter/auto",
+      model: options?.model ?? process.env.DEFAULT_MODEL ?? "openrouter/free",
       messages,
       max_tokens: options?.maxTokens ?? 1024,
     }),

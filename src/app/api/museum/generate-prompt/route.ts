@@ -17,7 +17,7 @@ async function callLLM(systemMessage: string, userMessage: string): Promise<stri
       "HTTP-Referer": process.env.NEXTAUTH_URL ?? "https://styleguideai.com",
     },
     body: JSON.stringify({
-      model: "openrouter/auto",
+      model: process.env.DEFAULT_MODEL ?? "openrouter/free",
       messages: [
         { role: "system", content: systemMessage },
         { role: "user", content: userMessage },
