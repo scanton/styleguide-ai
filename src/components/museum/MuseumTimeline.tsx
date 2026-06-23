@@ -497,7 +497,7 @@ export default function MuseumTimeline({
                   : "border-border bg-secondary text-secondary-foreground hover:bg-muted"
               }`}
             >
-              {era.label}
+              {t(`era${era.id.charAt(0).toUpperCase()}${era.id.slice(1)}` as Parameters<typeof t>[0])}
             </button>
           ))}
         </nav>
@@ -770,9 +770,7 @@ export default function MuseumTimeline({
 
       {/* Hint */}
       <p className="px-4 text-center text-xs text-muted-foreground md:px-8">
-        Scroll, swipe, or jump by era — 40,000 years of art. Hover or tap a movement
-        to trace its lineage; tap an artist to see who shaped them. Gold diamonds mark
-        world events that bent the course of art.
+        {t("timelineHint")}
       </p>
 
       {/* Info card */}

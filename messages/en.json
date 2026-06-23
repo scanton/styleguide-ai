@@ -354,7 +354,20 @@
     "jumpToEra": "Jump to era",
     "yearAtCenter": "Year at center of view",
     "influenceFlows": "Influence flows",
-    "artistBonds": "Artist bonds"
+    "artistBonds": "Artist bonds",
+    "timelineHint": "Scroll, swipe, or jump by era — 40,000 years of art. Hover or tap a movement to trace its lineage; tap an artist to see who shaped them. Gold diamonds mark world events that bent the course of art.",
+    "eraPrehistoric": "Prehistoric",
+    "eraAncient": "Ancient",
+    "eraClassical": "Classical",
+    "eraMedieval": "Medieval",
+    "eraRenaissance": "Renaissance",
+    "eraBaroque": "Baroque",
+    "eraRococo": "Rococo",
+    "eraRomantic": "Romantic",
+    "eraImpressionist": "Impressionist",
+    "eraModern": "Modern",
+    "eraPostwar": "Postwar",
+    "eraContemporary": "Contemporary"
   },
   "account": {
     "historyMetaTitle": "My History",
