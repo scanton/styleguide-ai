@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Add stylebearMovements and stylebearMedia translation namespaces to all locale files."""
+"""Add stylebearMovements and stylebearMedia translation namespaces to all locale files.
+
+Every locale gets EVERY key. Untranslated items fall back to the English name so
+no runtime fallback logic is needed in client components.
+"""
 import json, os
 
 BASE = os.path.join(os.path.dirname(__file__), "..", "messages")
@@ -66,11 +70,10 @@ MEDIA_EN = [
     "Wire Sculpture","Wood Sculpture","Woodblock Printing","Yarn",
 ]
 
-# ─── Translations ───────────────────────────────────────────────────────────
+# ─── Partial translations per locale ────────────────────────────────────────
+# Any key not listed here will use the English name.
 
-MOVEMENTS = {
-    "en": {k: k for k in MOVEMENTS_EN},
-
+MOVEMENTS_PARTIAL = {
     "ja": {
         "2D Cartoon": "2Dアニメ",
         "3D Cartoon": "3Dアニメ",
@@ -154,7 +157,6 @@ MOVEMENTS = {
         "Video Art": "ビデオアート",
         "Sōsaku Hanga": "創作版画",
     },
-
     "zh": {
         "2D Cartoon": "2D卡通",
         "3D Cartoon": "3D卡通",
@@ -222,7 +224,6 @@ MOVEMENTS = {
         "Vaporwave": "蒸汽波",
         "Video Art": "录像艺术",
     },
-
     "ru": {
         "Abstract": "Абстрактное искусство",
         "Abstract Expressionism": "Абстрактный экспрессионизм",
@@ -279,7 +280,6 @@ MOVEMENTS = {
         "Ukiyo-e": "Укиё-э",
         "Video Art": "Видеоарт",
     },
-
     "fr": {
         "Abstract": "Art abstrait",
         "Abstract Expressionism": "Expressionnisme abstrait",
@@ -288,6 +288,9 @@ MOVEMENTS = {
         "Art Nouveau": "Art nouveau",
         "Baroque": "Baroque",
         "Bauhaus": "Bauhaus",
+        "Cloisonnism": "Cloisonnisme",
+        "Color Field": "Color field",
+        "Conceptual Art": "Art conceptuel",
         "Constructivism": "Constructivisme",
         "Cubism": "Cubisme",
         "Dada": "Dadaïsme",
@@ -298,6 +301,8 @@ MOVEMENTS = {
         "Futurism": "Futurisme",
         "Gothic": "Gothique",
         "Impressionism": "Impressionnisme",
+        "Les Nabis": "Les Nabis",
+        "Mannerism": "Maniérisme",
         "Minimalism": "Minimalisme",
         "Modernism": "Modernisme",
         "Naturalism": "Naturalisme",
@@ -318,7 +323,6 @@ MOVEMENTS = {
         "Surrealism": "Surréalisme",
         "Symbolism": "Symbolisme",
     },
-
     "de": {
         "Abstract": "Abstrakte Kunst",
         "Abstract Expressionism": "Abstrakter Expressionismus",
@@ -326,19 +330,23 @@ MOVEMENTS = {
         "Art Nouveau": "Jugendstil",
         "Baroque": "Barock",
         "Bauhaus": "Bauhaus",
+        "Conceptual Art": "Konzeptkunst",
         "Constructivism": "Konstruktivismus",
         "Cubism": "Kubismus",
         "Dada": "Dadaismus",
+        "De Stijl": "De Stijl",
         "Expressionism": "Expressionismus",
         "Fauvism": "Fauvismus",
         "Folk Art": "Volkskunst",
         "Futurism": "Futurismus",
         "Gothic": "Gotik",
         "Impressionism": "Impressionismus",
+        "Mannerism": "Manierismus",
         "Minimalism": "Minimalismus",
         "Modernism": "Modernismus",
         "Naturalism": "Naturalismus",
         "Neoclassicism": "Neoklassizismus",
+        "New Objectivity": "Neue Sachlichkeit",
         "Op Art": "Op-Art",
         "Photorealism": "Fotorealismus",
         "Pointillism": "Pointillismus",
@@ -355,7 +363,6 @@ MOVEMENTS = {
         "Surrealism": "Surrealismus",
         "Symbolism": "Symbolismus",
     },
-
     "it": {
         "Abstract": "Arte astratta",
         "Abstract Expressionism": "Espressionismo astratto",
@@ -363,6 +370,7 @@ MOVEMENTS = {
         "Art Nouveau": "Liberty",
         "Baroque": "Barocco",
         "Bauhaus": "Bauhaus",
+        "Conceptual Art": "Arte concettuale",
         "Constructivism": "Costruttivismo",
         "Cubism": "Cubismo",
         "Dada": "Dadaismo",
@@ -372,6 +380,7 @@ MOVEMENTS = {
         "Futurism": "Futurismo",
         "Gothic": "Gotico",
         "Impressionism": "Impressionismo",
+        "Mannerism": "Manierismo",
         "Minimalism": "Minimalismo",
         "Modernism": "Modernismo",
         "Naturalism": "Naturalismo",
@@ -392,7 +401,6 @@ MOVEMENTS = {
         "Surrealism": "Surrealismo",
         "Symbolism": "Simbolismo",
     },
-
     "pt": {
         "Abstract": "Arte abstrata",
         "Abstract Expressionism": "Expressionismo abstrato",
@@ -400,6 +408,7 @@ MOVEMENTS = {
         "Art Nouveau": "Arte nova",
         "Baroque": "Barroco",
         "Bauhaus": "Bauhaus",
+        "Conceptual Art": "Arte conceitual",
         "Constructivism": "Construtivismo",
         "Cubism": "Cubismo",
         "Dada": "Dadaísmo",
@@ -409,6 +418,7 @@ MOVEMENTS = {
         "Futurism": "Futurismo",
         "Gothic": "Gótico",
         "Impressionism": "Impressionismo",
+        "Mannerism": "Maneirismo",
         "Minimalism": "Minimalismo",
         "Modernism": "Modernismo",
         "Naturalism": "Naturalismo",
@@ -428,7 +438,6 @@ MOVEMENTS = {
         "Surrealism": "Surrealismo",
         "Symbolism": "Simbolismo",
     },
-
     "es": {
         "Abstract": "Arte abstracto",
         "Abstract Expressionism": "Expresionismo abstracto",
@@ -436,6 +445,7 @@ MOVEMENTS = {
         "Art Nouveau": "Modernismo",
         "Baroque": "Barroco",
         "Bauhaus": "Bauhaus",
+        "Conceptual Art": "Arte conceptual",
         "Constructivism": "Constructivismo",
         "Cubism": "Cubismo",
         "Dada": "Dadaísmo",
@@ -445,6 +455,7 @@ MOVEMENTS = {
         "Futurism": "Futurismo",
         "Gothic": "Gótico",
         "Impressionism": "Impresionismo",
+        "Mannerism": "Manierismo",
         "Minimalism": "Minimalismo",
         "Modernism": "Modernismo",
         "Naturalism": "Naturalismo",
@@ -464,7 +475,6 @@ MOVEMENTS = {
         "Surrealism": "Surrealismo",
         "Symbolism": "Simbolismo",
     },
-
     "nl": {
         "Abstract": "Abstracte kunst",
         "Abstract Expressionism": "Abstract expressionisme",
@@ -472,6 +482,7 @@ MOVEMENTS = {
         "Art Nouveau": "Jugendstil",
         "Baroque": "Barok",
         "Bauhaus": "Bauhaus",
+        "Conceptual Art": "Conceptuele kunst",
         "Constructivism": "Constructivisme",
         "Cubism": "Kubisme",
         "Dada": "Dadaïsme",
@@ -482,6 +493,7 @@ MOVEMENTS = {
         "Futurism": "Futurisme",
         "Gothic": "Gotiek",
         "Impressionism": "Impressionisme",
+        "Mannerism": "Maniërisme",
         "Minimalism": "Minimalisme",
         "Modernism": "Modernisme",
         "Naturalism": "Naturalisme",
@@ -503,9 +515,7 @@ MOVEMENTS = {
     },
 }
 
-MEDIA = {
-    "en": {k: k for k in MEDIA_EN},
-
+MEDIA_PARTIAL = {
     "ja": {
         "Acrylic Painting": "アクリル画",
         "Algorithmic Art": "アルゴリズムアート",
@@ -531,7 +541,6 @@ MEDIA = {
         "Pastel": "パステル画",
         "Pencil": "鉛筆画",
         "Photography": "写真",
-        "Pixel Art": "ピクセルアート",
         "Printmaking": "版画",
         "Sand": "砂絵",
         "Silk Painting": "絹絵",
@@ -545,7 +554,6 @@ MEDIA = {
         "Woodblock Printing": "木版画",
         "Yarn": "毛糸アート",
     },
-
     "zh": {
         "Acrylic Painting": "丙烯画",
         "Ceramics": "陶瓷",
@@ -582,7 +590,6 @@ MEDIA = {
         "Woodblock Printing": "木版画",
         "Yarn": "毛线艺术",
     },
-
     "ru": {
         "Acrylic Painting": "Акриловая живопись",
         "Ceramics": "Керамика",
@@ -616,7 +623,6 @@ MEDIA = {
         "Wood Sculpture": "Деревянная скульптура",
         "Woodblock Printing": "Ксилография",
     },
-
     "fr": {
         "Acrylic Painting": "Peinture acrylique",
         "Ceramics": "Céramique",
@@ -644,7 +650,6 @@ MEDIA = {
         "Wood Sculpture": "Sculpture sur bois",
         "Woodblock Printing": "Gravure sur bois",
     },
-
     "de": {
         "Acrylic Painting": "Acrylmalerei",
         "Ceramics": "Keramik",
@@ -672,7 +677,6 @@ MEDIA = {
         "Wood Sculpture": "Holzskulptur",
         "Woodblock Printing": "Holzschnitt",
     },
-
     "it": {
         "Acrylic Painting": "Pittura acrilica",
         "Ceramics": "Ceramica",
@@ -700,7 +704,6 @@ MEDIA = {
         "Wood Sculpture": "Scultura in legno",
         "Woodblock Printing": "Xilografia",
     },
-
     "pt": {
         "Acrylic Painting": "Pintura acrílica",
         "Ceramics": "Cerâmica",
@@ -728,7 +731,6 @@ MEDIA = {
         "Wood Sculpture": "Escultura em madeira",
         "Woodblock Printing": "Xilogravura",
     },
-
     "es": {
         "Acrylic Painting": "Pintura acrílica",
         "Ceramics": "Cerámica",
@@ -756,7 +758,6 @@ MEDIA = {
         "Wood Sculpture": "Escultura en madera",
         "Woodblock Printing": "Xilografía",
     },
-
     "nl": {
         "Acrylic Painting": "Acrylschilderij",
         "Ceramics": "Keramiek",
@@ -786,7 +787,6 @@ MEDIA = {
     },
 }
 
-# Locales that need only empty placeholders (will use getMessageFallback)
 ALL_LOCALES = ["en", "zh", "nl", "fr", "de", "it", "ja", "pt", "ru", "es"]
 
 for locale in ALL_LOCALES:
@@ -794,10 +794,18 @@ for locale in ALL_LOCALES:
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
 
-    data["stylebearMovements"] = MOVEMENTS.get(locale, {})
-    data["stylebearMedia"] = MEDIA.get(locale, {})
+    # Build complete namespace: every key present, translated if available, else English
+    movement_overrides = MOVEMENTS_PARTIAL.get(locale, {})
+    media_overrides = MEDIA_PARTIAL.get(locale, {})
+
+    data["stylebearMovements"] = {name: movement_overrides.get(name, name) for name in MOVEMENTS_EN}
+    data["stylebearMedia"] = {name: media_overrides.get(name, name) for name in MEDIA_EN}
+
+    translated_m = sum(1 for k in MOVEMENTS_EN if movement_overrides.get(k, k) != k)
+    translated_mt = sum(1 for k in MEDIA_EN if media_overrides.get(k, k) != k)
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
         f.write("\n")
-    print(f"patched {locale}.json: {len(data['stylebearMovements'])} movements, {len(data['stylebearMedia'])} media")
+    print(f"{locale}.json: {translated_m}/{len(MOVEMENTS_EN)} movements translated, "
+          f"{translated_mt}/{len(MEDIA_EN)} media translated")
