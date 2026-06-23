@@ -89,9 +89,11 @@ function ArtistThumbChip({
 
 function MovementChip({
   movement,
+  name,
   onClick,
 }: {
   movement: ArtMovement;
+  name: string;
   onClick: () => void;
 }) {
   return (
@@ -105,7 +107,7 @@ function MovementChip({
         style={{ backgroundColor: movement.color }}
         aria-hidden="true"
       />
-      {movement.name}
+      {name}
     </button>
   );
 }
@@ -154,6 +156,8 @@ export default function TimelineInfoCard({
   onSelect,
 }: TimelineInfoCardProps) {
   const t = useTranslations("museum");
+  const tm = useTranslations("museumMovements");
+  const te = useTranslations("museumEvents");
   const panelRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const [showPromptModal, setShowPromptModal] = useState(false);
@@ -242,7 +246,11 @@ export default function TimelineInfoCard({
         .filter((b): b is { other: Artist; label: string } => b.other !== undefined)
     : [];
 
-  const heading = artist?.name ?? movement?.name ?? event?.name ?? "";
+  const heading =
+    artist?.name ??
+    (movement ? tm(movement.id as Parameters<typeof tm>[0]) : undefined) ??
+    (event ? te(event.id as Parameters<typeof te>[0]) : undefined) ??
+    "";
   const bandColor =
     movement?.color ??
     (artist ? movements.get(artist.movements[0] ?? "")?.color : undefined) ??
@@ -355,6 +363,7 @@ export default function TimelineInfoCard({
                     <MovementChip
                       key={mid}
                       movement={m}
+                      name={tm(m.id as Parameters<typeof tm>[0])}
                       onClick={() => onSelect({ type: "movement", id: mid })}
                     />
                   );
@@ -446,6 +455,7 @@ export default function TimelineInfoCard({
                         <MovementChip
                           key={mid}
                           movement={m}
+                          name={tm(m.id as Parameters<typeof tm>[0])}
                           onClick={() => onSelect({ type: "movement", id: mid })}
                         />
                       );
@@ -466,6 +476,7 @@ export default function TimelineInfoCard({
                         <MovementChip
                           key={mid}
                           movement={m}
+                          name={tm(m.id as Parameters<typeof tm>[0])}
                           onClick={() => onSelect({ type: "movement", id: mid })}
                         />
                       );
@@ -513,6 +524,7 @@ export default function TimelineInfoCard({
                     <MovementChip
                       key={mid}
                       movement={m}
+                      name={tm(m.id as Parameters<typeof tm>[0])}
                       onClick={() => onSelect({ type: "movement", id: mid })}
                     />
                   );
@@ -559,7 +571,7 @@ export default function TimelineInfoCard({
       <MuseumPromptModal
         type={artist ? "artist" : "movement"}
         id={selection.id}
-        name={artist?.name ?? movement?.name ?? ""}
+        name={artist?.name ?? (movement ? tm(movement.id as Parameters<typeof tm>[0]) : "") ?? ""}
         onClose={() => setShowPromptModal(false)}
       />
     )}

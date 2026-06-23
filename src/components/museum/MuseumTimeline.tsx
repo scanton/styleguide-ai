@@ -145,6 +145,8 @@ export default function MuseumTimeline({
   galleryKeys,
 }: MuseumTimelineProps) {
   const t = useTranslations("museum");
+  const tm = useTranslations("museumMovements");
+  const te = useTranslations("museumEvents");
   const scrollRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const scrollTarget = useRef(0);
@@ -610,7 +612,7 @@ export default function MuseumTimeline({
                   type="button"
                   data-event-marker
                   onClick={() => setSelection({ type: "event", id: e.id })}
-                  aria-label={`World event: ${e.name}, ${formatYear(e.year)}`}
+                  aria-label={`World event: ${te(e.id as Parameters<typeof te>[0])}, ${formatYear(e.year)}`}
                   className="absolute z-10 flex items-center gap-1.5 whitespace-nowrap rounded-full border border-border bg-card px-2.5 py-1 text-[10px] font-medium text-foreground shadow-sm transition-[opacity,box-shadow] duration-200 hover:shadow-md"
                   style={{
                     left: x,
@@ -624,7 +626,7 @@ export default function MuseumTimeline({
                     style={{ backgroundColor: "var(--brand-gold)" }}
                     aria-hidden="true"
                   />
-                  {e.name}
+                  {te(e.id as Parameters<typeof te>[0])}
                 </button>
               </div>
             );
@@ -722,7 +724,7 @@ export default function MuseumTimeline({
                 onMouseLeave={() => hoverMovement(m.id)(false)}
                 onFocus={() => hoverMovement(m.id)(true)}
                 onBlur={() => hoverMovement(m.id)(false)}
-                aria-label={`${m.name}, ${formatYear(m.startYear)} to ${
+                aria-label={`${tm(m.id as Parameters<typeof tm>[0])}, ${formatYear(m.startYear)} to ${
                   m.endYear === null ? "present" : formatYear(m.endYear)
                 }`}
                 className="absolute flex items-center overflow-hidden rounded-full px-4 text-left shadow-sm transition-[filter,box-shadow,opacity] duration-200 hover:shadow-md hover:brightness-110 focus-visible:brightness-110"
@@ -736,7 +738,7 @@ export default function MuseumTimeline({
                 }}
               >
                 <span className="sticky left-4 truncate text-sm font-medium text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.45)]">
-                  {m.name}
+                  {tm(m.id as Parameters<typeof tm>[0])}
                 </span>
               </button>
             );
