@@ -250,7 +250,7 @@
     "metaTitle": "Rising | StyleGuideAI",
     "metaDescription": "Galeria de arte da comunidade — as imagens mais amadas dos últimos 24 horas, retiradas do DeviantArt, Discord e uploads diretos.",
     "badge": "Galeria da Comunidade",
-    "heading": "Rising",
+    "heading": "Em Alta",
     "subtitle": "As artes mais amadas da nossa comunidade nos últimos 24 horas. As imagens sobem obtendo mais corações em menos tempo — depois expiram para dar espaço ao que vem a seguir.",
     "tabRising": "Rising",
     "tabDeviantart": "DeviantArt",
@@ -323,7 +323,7 @@
   "museum": {
     "metaTitle": "Museu Virtual — Explore a História da Arte",
     "metaDescription": "Viaje por 40.000 anos da história da arte numa linha do tempo interativa — movimentos, mestres, eventos mundanos e as conexões entre eles.",
-    "heading": "O Museu Virtual",
+    "heading": "Museu Virtual",
     "subheading": "40.000 Anos de Arte, Uma Linha do Tempo",
     "description": "Das cavernas pintadas até a fronteira digital — {movements} movimentos, {artists} artistas e os eventos mundanos e amizades que os conectam. Toque em qualquer coisa para se aproximar.",
     "enterGallery": "Entrar na Galeria →",
@@ -352,7 +352,9 @@
     "worldEvent": "Evento mundial",
     "timelineAriaLabel": "Linha do tempo da história da arte — role horizontalmente para viajar no tempo",
     "jumpToEra": "Ir para era",
-    "yearAtCenter": "Ano no centro da visualização"
+    "yearAtCenter": "Ano no centro da visualização",
+    "influenceFlows": "Fluxos de influência",
+    "artistBonds": "Vínculos de artistas"
   },
   "account": {
     "historyMetaTitle": "Meu Histórico",

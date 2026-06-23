@@ -250,7 +250,7 @@
     "metaTitle": "En el contexto del arte, emerge Rising junto a StyleGuideAI",
     "metaDescription": "Expresión comunitaria con imágenes destacadas de la última hora, extraídas de plataformas relevantes.",
     "badge": "Herramienta Principal",
-    "heading": "Rising",
+    "heading": "Tendencias",
     "subtitle": "Nuestras obras más apreciadas en la comunidad se agitarán con alas; el arte avanza con rapidez.",
     "tabRising": "Rising",
     "tabDeviantart": "DeviantArt",
@@ -322,7 +322,7 @@
   "museum": {
     "metaTitle": "Museo Virtual — Explora la Historia del Arte",
     "metaDescription": "Recorre 40,000 Años de Arte con su Historia",
-    "heading": "El Tema Virtual",
+    "heading": "Museo Virtual",
     "subheading": "40,000 Años de Arte",
     "description": "De los murales a los eventos globales, conexiones entre ellos. Explora todo con el focus general.",
     "enterGallery": "Entrar a la Galería →",
@@ -347,7 +347,9 @@
     "worldEvent": "Evento mundial",
     "timelineAriaLabel": "Línea de tiempo de la historia del arte — desplázate horizontalmente para viajar en el tiempo",
     "jumpToEra": "Saltar a era",
-    "yearAtCenter": "Año en el centro de la vista"
+    "yearAtCenter": "Año en el centro de la vista",
+    "influenceFlows": "Flujos de influencia",
+    "artistBonds": "Vínculos de artistas"
   },
   "account": {
     "historyMetaTitle": "Mi Historia",

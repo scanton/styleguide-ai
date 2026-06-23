@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { RisingGallery } from "@/components/rising/RisingGallery";
 
 export const metadata: Metadata = {
@@ -23,20 +24,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RisingPage() {
+export default async function RisingPage() {
+  const t = await getTranslations("rising");
+
   return (
     <div className="min-h-screen bg-stone-950 text-white">
       <div className="max-w-7xl mx-auto px-4 py-10">
-        {/* Header */}
         <div className="mb-8">
           <p className="text-sm font-semibold uppercase tracking-widest text-purple-400 mb-2">
-            Community Gallery
+            {t("badge")}
           </p>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">Rising</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">{t("heading")}</h1>
           <p className="text-stone-400 max-w-xl text-base leading-relaxed">
-            The most-loved art from our community in the past 24 hours. Images rise
-            by getting the most hearts in the least time — then expire to make room
-            for what&apos;s next.
+            {t("subtitle")}
           </p>
         </div>
 

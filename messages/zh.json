@@ -250,7 +250,7 @@
     "metaTitle": "Rising | StyleGuideAI",
     "metaDescription": "社区艺术画廊 — 过去 24 小时最受欢迎的图片，来源于 DeviantArt、Discord 以及直接上传。",
     "badge": "社区画廊",
-    "heading": "Rising",
+    "heading": "上升榜",
     "subtitle": "过去 24 小时最受欢迎的社区艺术作品。图像会因获得最多点赞而上升，然后过期以腾出位置给新的内容。",
     "tabRising": "Rising",
     "tabDeviantart": "DeviantArt",
@@ -322,7 +322,7 @@
   "museum": {
     "metaTitle": "Virtual Museum — 探索艺术史",
     "metaDescription": "在互动时间线上穿越 40,000 年艺术史 — 流派、大师、世界事件及其间的联系。",
-    "heading": "The Virtual Museum",
+    "heading": "虚拟博物馆",
     "subheading": "40,000 年艺术史，一条时间线",
     "description": "从岩洞壁画到数字前沿 — {movements} 个流派，{artists} 位艺术家，以及连接他们的世界事件与友谊。点击任意内容深入探索。",
     "enterGallery": "进入展厅 →",
@@ -351,7 +351,9 @@
     "worldEvent": "世界大事",
     "timelineAriaLabel": "艺术史时间线 — 横向滚动穿越历史",
     "jumpToEra": "跳转到时代",
-    "yearAtCenter": "视图中心年份"
+    "yearAtCenter": "视图中心年份",
+    "influenceFlows": "影响流",
+    "artistBonds": "艺术家联系"
   },
   "account": {
     "historyMetaTitle": "我的历史",

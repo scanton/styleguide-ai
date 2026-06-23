@@ -249,7 +249,7 @@
     "metaTitle": "Rising | StyleGuideAI",
     "metaDescription": "Сообщество художественной галереи — самые любимые изображения за последние 24 часа, взятые из DeviantArt, Discord и прямых загрузок.",
     "badge": "Галерея сообщества",
-    "heading": "Rising",
+    "heading": "В тренде",
     "subtitle": "Самые любимые работы нашего сообщества за последние 24 часа. Изображения поднимаются вверх, получая наибольшее количество сердец за минимальное время — затем они истекают, освобождая место для новых.",
     "tabRising": "Rising",
     "tabDeviantart": "DeviantArt",
@@ -322,7 +322,7 @@
   "museum": {
     "metaTitle": "Virtual Museum — Explore Art History",
     "metaDescription": "Travel through 40,000 years of art history on an interactive timeline — movements, masters, world events, and the connections between them.",
-    "heading": "The Virtual Museum",
+    "heading": "Виртуальный музей",
     "subheading": "40,000 Years of Art, One Timeline",
     "description": "From the painted caves to the digital frontier — {movements} movements, {artists} artists, and the world events and friendships that connect them. Tap anything to step closer.",
     "enterGallery": "Enter Gallery →",
@@ -351,7 +351,9 @@
     "worldEvent": "Мировое событие",
     "timelineAriaLabel": "Хронология истории искусства — прокручивайте горизонтально, чтобы путешествовать во времени",
     "jumpToEra": "Перейти к эпохе",
-    "yearAtCenter": "Год в центре вида"
+    "yearAtCenter": "Год в центре вида",
+    "influenceFlows": "Потоки влияния",
+    "artistBonds": "Связи художников"
   },
   "account": {
     "historyMetaTitle": "Моя история",

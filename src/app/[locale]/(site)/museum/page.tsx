@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import {
   getMovements,
   getArtists,
@@ -7,8 +8,6 @@ import {
   getGalleryKeys,
 } from "@/lib/museum-data";
 import MuseumTimeline from "@/components/museum/MuseumTimeline";
-
-export const dynamic = "force-static";
 
 export const metadata: Metadata = {
   title: "Virtual Museum — Explore Art History",
@@ -22,7 +21,8 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", images: ["/images/og/og-museum.png"] },
 };
 
-export default function MuseumPage() {
+export default async function MuseumPage() {
+  const t = await getTranslations("museum");
   const movements = getMovements();
   const artists = getArtists();
   const events = getEvents();
@@ -31,22 +31,18 @@ export default function MuseumPage() {
 
   return (
     <div className="py-8 md:py-12">
-      {/* Hero */}
       <header className="mx-auto max-w-3xl space-y-3 px-4 pb-8 text-center md:pb-12">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-accent">
-          The Virtual Museum
+          {t("heading")}
         </p>
         <h1 className="font-heading text-4xl text-primary md:text-5xl">
-          40,000 Years of Art, One Timeline
+          {t("subheading")}
         </h1>
         <p className="mx-auto max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
-          From the painted caves to the digital frontier — {movements.length}{" "}
-          movements, {artists.length} artists, and the world events and
-          friendships that connect them. Tap anything to step closer.
+          {t("description", { movements: movements.length, artists: artists.length })}
         </p>
       </header>
 
-      {/* Timeline (full-bleed) */}
       <MuseumTimeline
         movements={movements}
         artists={artists}

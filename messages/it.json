@@ -250,7 +250,7 @@
     "metaTitle": "Rising | StyleGuideAI",
     "metaDescription": "Galleria comunitaria — le immagini più amate degli ultimi 24 ore, estratte da DeviantArt, Discord e caricamenti diretti.",
     "badge": "Galleria comunitaria",
-    "heading": "Rising",
+    "heading": "In Ascesa",
     "subtitle": "L'arte più amata della nostra comunità negli ultimi 24 ore. Le immagini salgono diventando più apprezzate in fretta — poi scompaiono per rendere spazio a qualcosa di nuovo.",
     "tabRising": "Rising",
     "tabDeviantart": "DeviantArt",
@@ -323,7 +323,7 @@
   "museum": {
     "metaTitle": "Museo Virtuale — Esplora la Storia dell'Arte",
     "metaDescription": "Viaggia attraverso 40.000 anni di storia dell'arte su una linea temporale interattiva — movimenti, maestri, eventi mondiali e le connessioni tra loro.",
-    "heading": "Il Museo Virtuale",
+    "heading": "Museo Virtuale",
     "subheading": "40.000 Anni d'Arte, Una Sola Linea Temporale",
     "description": "Dalle grotte dipinte alla frontiera digitale — {movements} movimenti, {artists} artisti e gli eventi mondiali e le amicizie che li collegano. Tocca qualsiasi cosa per avvicinarti.",
     "enterGallery": "Entra in Galleria →",
@@ -352,7 +352,9 @@
     "worldEvent": "Evento mondiale",
     "timelineAriaLabel": "Cronologia della storia dell'arte — scorrere orizzontalmente per viaggiare nel tempo",
     "jumpToEra": "Vai all'era",
-    "yearAtCenter": "Anno al centro della vista"
+    "yearAtCenter": "Anno al centro della vista",
+    "influenceFlows": "Flussi di influenza",
+    "artistBonds": "Legami artistici"
   },
   "account": {
     "historyMetaTitle": "La mia cronologia",

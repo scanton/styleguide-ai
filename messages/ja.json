@@ -250,7 +250,7 @@
     "metaTitle": "Rising｜StyleGuideAI",
     "metaDescription": "コミュニティアートギャラリー — 過去24時間で愛されたイメージの最も人気のある画像コレクション。DeviantArt、Discord、および直接アップロードから選出。",
     "badge": "コミュニティギャラリー",
-    "heading": "Rising",
+    "heading": "急上昇",
     "subtitle": "私たちのコミュニティから過去24時間で最も愛されたアートを厳選。画像は心を掴むほど多くのいいねを集めれば昇順に表示され、次々と新しい作品を残すために消えていきます。",
     "tabRising": "Rising",
     "tabDeviantart": "DeviantArt",
@@ -323,7 +323,7 @@
   "museum": {
     "metaTitle": "Virtual Museum — アートヒストリーを探索",
     "metaDescription": "40,000年のアート史を、インタラクティブなティムラインで旅する — 動き、マスターズ、世界の出来事、そしてそれらをつなぐ関係性。",
-    "heading": "The Virtual Museum",
+    "heading": "バーチャルミュージアム",
     "subheading": "40,000年のアート、一つのティムライン",
     "description": "彫刻された洞窟からデジタルの最前線へ — {movements} の動き、{artists} のアーティスト、そしてそれらをつなぐ世界の出来事や友情。何かをタップして、さらに近づきましょう。",
     "enterGallery": "ギャラリーへ →",
@@ -352,7 +352,9 @@
     "worldEvent": "世界の出来事",
     "timelineAriaLabel": "美術史タイムライン — 横にスクロールして時代を旅しよう",
     "jumpToEra": "時代へジャンプ",
-    "yearAtCenter": "ビューの中央の年"
+    "yearAtCenter": "ビューの中央の年",
+    "influenceFlows": "影響の流れ",
+    "artistBonds": "芸術家のつながり"
   },
   "account": {
     "historyMetaTitle": "My History",

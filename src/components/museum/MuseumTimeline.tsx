@@ -512,7 +512,7 @@ export default function MuseumTimeline({
                 : "border-border bg-secondary text-secondary-foreground hover:bg-muted"
             }`}
           >
-            Influence flows
+            {t("influenceFlows")}
           </button>
           <button
             type="button"
@@ -524,7 +524,7 @@ export default function MuseumTimeline({
                 : "border-border bg-secondary text-secondary-foreground hover:bg-muted"
             }`}
           >
-            Artist bonds
+            {t("artistBonds")}
           </button>
           <output
             aria-label={t("yearAtCenter")}

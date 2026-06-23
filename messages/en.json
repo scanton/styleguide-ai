@@ -352,7 +352,9 @@
     "worldEvent": "World event",
     "timelineAriaLabel": "Art history timeline — scroll horizontally to travel through time",
     "jumpToEra": "Jump to era",
-    "yearAtCenter": "Year at center of view"
+    "yearAtCenter": "Year at center of view",
+    "influenceFlows": "Influence flows",
+    "artistBonds": "Artist bonds"
   },
   "account": {
     "historyMetaTitle": "My History",
