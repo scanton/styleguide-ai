@@ -22,6 +22,7 @@ export const users = pgTable("users", {
   image: text("image"),
   displayName: text("display_name"),
   preferredAspectRatio: text("preferred_aspect_ratio"),
+  preferredLanguage: text("preferred_language"),
   createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
 });
 

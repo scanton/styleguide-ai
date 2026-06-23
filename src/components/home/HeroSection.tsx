@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { gsap } from "gsap";
 import { prefersReducedMotion } from "@/lib/motion";
 import { Button } from "@/components/ui/button";

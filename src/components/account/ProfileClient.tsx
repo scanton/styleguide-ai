@@ -2,8 +2,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { ASPECT_RATIOS } from "@/lib/aspect-ratios";
+import { locales, localeNames } from "@/i18n/routing";
 
 interface UserProfile {
   id: string;
@@ -12,14 +15,18 @@ interface UserProfile {
   image: string | null;
   displayName: string | null;
   preferredAspectRatio: string | null;
+  preferredLanguage: string | null;
   createdAt: string | null;
 }
 
 export function ProfileClient() {
   const { data: session } = useSession();
+  const t = useTranslations("account");
+  const router = useRouter();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [displayName, setDisplayName] = useState("");
   const [preferredAspectRatio, setPreferredAspectRatio] = useState<string>("");
+  const [preferredLanguage, setPreferredLanguage] = useState<string>("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -32,6 +39,7 @@ export function ProfileClient() {
           setProfile(data.user);
           setDisplayName(data.user.displayName ?? data.user.name ?? "");
           setPreferredAspectRatio(data.user.preferredAspectRatio ?? "");
+          setPreferredLanguage(data.user.preferredLanguage ?? "");
         }
       })
       .finally(() => setLoading(false));
@@ -43,19 +51,27 @@ export function ProfileClient() {
       await fetch("/api/account/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ displayName, preferredAspectRatio: preferredAspectRatio || null }),
+        body: JSON.stringify({
+          displayName,
+          preferredAspectRatio: preferredAspectRatio || null,
+          preferredLanguage: preferredLanguage || null,
+        }),
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
+      // If a language was selected, switch the UI immediately
+      if (preferredLanguage) {
+        router.replace("/account/profile", { locale: preferredLanguage });
+      }
     } finally {
       setSaving(false);
     }
-  }, [displayName, preferredAspectRatio]);
+  }, [displayName, preferredAspectRatio, preferredLanguage, router]);
 
   if (!session?.user) {
     return (
       <div className="text-center py-16 text-muted-foreground">
-        Sign in to view your profile.
+        {t("signInRequiredProfile")}
       </div>
     );
   }
@@ -86,26 +102,24 @@ export function ProfileClient() {
           <p className="font-bold text-lg text-foreground">{profile?.displayName ?? profile?.name ?? "—"}</p>
           <p className="text-sm text-muted-foreground">{profile?.email}</p>
           {memberSince && (
-            <p className="text-xs text-muted-foreground mt-0.5">Member since {memberSince}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{t("memberSinceLabel")}: {memberSince}</p>
           )}
         </div>
       </div>
 
       {/* Display name edit */}
       <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
-        <h2 className="font-semibold text-foreground">Display Name</h2>
-        <p className="text-sm text-muted-foreground">
-          This name is shown in your history. Leave blank to use your Google name.
-        </p>
+        <h2 className="font-semibold text-foreground">{t("displayName")}</h2>
+        <p className="text-sm text-muted-foreground">{t("displayNameHint")}</p>
         <div className="flex gap-3">
           <input
             type="text"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
             maxLength={60}
-            placeholder={profile?.name ?? "Your display name"}
+            placeholder={profile?.name ?? t("displayNamePlaceholder")}
             className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            aria-label="Display name"
+            aria-label={t("displayName")}
           />
           <Button onClick={handleSave} disabled={saving} size="sm">
             {saved ? "Saved!" : saving ? "Saving…" : "Save"}
@@ -115,18 +129,16 @@ export function ProfileClient() {
 
       {/* Preferred Aspect Ratio */}
       <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
-        <h2 className="font-semibold text-foreground">Preferred Aspect Ratio</h2>
-        <p className="text-sm text-muted-foreground">
-          StyleBear, StyleDice, and StyleTarot will include your preferred aspect ratio in generated prompts when you&apos;re signed in.
-        </p>
+        <h2 className="font-semibold text-foreground">{t("preferredRatio")}</h2>
+        <p className="text-sm text-muted-foreground">{t("preferredRatioHint")}</p>
         <div className="flex gap-3 items-end">
           <select
             value={preferredAspectRatio}
             onChange={(e) => setPreferredAspectRatio(e.target.value)}
             className="flex-1 h-11 rounded-lg border border-border bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            aria-label="Preferred aspect ratio"
+            aria-label={t("preferredRatio")}
           >
-            <option value="">No preference</option>
+            <option value="">{t("noPreference")}</option>
             {ASPECT_RATIOS.map((ar) => (
               <option key={ar.value} value={ar.value}>{ar.label}</option>
             ))}
@@ -137,21 +149,45 @@ export function ProfileClient() {
         </div>
       </div>
 
+      {/* Preferred Language */}
+      <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+        <h2 className="font-semibold text-foreground">{t("preferredLanguage")}</h2>
+        <p className="text-sm text-muted-foreground">
+          When set, this language is used when no browser preference is detected. Your browser&apos;s language always takes priority.
+        </p>
+        <div className="flex gap-3 items-end">
+          <select
+            value={preferredLanguage}
+            onChange={(e) => setPreferredLanguage(e.target.value)}
+            className="flex-1 h-11 rounded-lg border border-border bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label={t("preferredLanguage")}
+          >
+            <option value="">{t("noPreference")}</option>
+            {locales.map((l) => (
+              <option key={l} value={l}>{localeNames[l]}</option>
+            ))}
+          </select>
+          <Button onClick={handleSave} disabled={saving} size="sm">
+            {saved ? "Saved!" : saving ? "Saving…" : "Save"}
+          </Button>
+        </div>
+      </div>
+
       {/* Read-only info */}
       <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
-        <h2 className="font-semibold text-foreground">Account Info</h2>
+        <h2 className="font-semibold text-foreground">{t("accountInfo")}</h2>
         <div className="text-sm space-y-2">
           <div className="flex justify-between gap-4">
-            <span className="text-muted-foreground">Email</span>
+            <span className="text-muted-foreground">{t("emailLabel")}</span>
             <span className="text-foreground font-medium truncate">{profile?.email ?? "—"}</span>
           </div>
           <div className="flex justify-between gap-4">
-            <span className="text-muted-foreground">Sign-in method</span>
+            <span className="text-muted-foreground">{t("signInMethodLabel")}</span>
             <span className="text-foreground font-medium">Google</span>
           </div>
           {memberSince && (
             <div className="flex justify-between gap-4">
-              <span className="text-muted-foreground">Member since</span>
+              <span className="text-muted-foreground">{t("memberSinceLabel")}</span>
               <span className="text-foreground font-medium">{memberSince}</span>
             </div>
           )}

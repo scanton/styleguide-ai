@@ -1,10 +1,29 @@
 "use client";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 
 export function Footer() {
+  const t = useTranslations("footer");
   const pathname = usePathname();
   const isDark = pathname === "/rising";
+
+  const toolLinks = [
+    { href: "/stylebear" as const, label: "StyleBear" },
+    { href: "/styledice" as const, label: "StyleDice" },
+    { href: "/styletarot" as const, label: "StyleTarot" },
+  ];
+
+  const exploreLinks = [
+    { href: "/museum" as const, label: t("museum") },
+    { href: "/articles" as const, label: t("articles") },
+    { href: "/themes" as const, label: t("themes") },
+    { href: "/about" as const, label: t("about") },
+  ];
+
+  const companyLinks = [
+    { href: "/consulting" as const, label: t("consulting") },
+    { href: "/privacy" as const, label: t("privacy") },
+  ];
 
   return (
     <footer
@@ -29,7 +48,7 @@ export function Footer() {
                 isDark ? "text-stone-400" : "text-muted-foreground"
               }`}
             >
-              A 1,000+ member community for AI artists and art enthusiasts.
+              {t("tagline")}
             </p>
             <div className="flex gap-3 pt-1">
               <a
@@ -39,7 +58,7 @@ export function Footer() {
                 className={`text-sm font-medium hover:underline focus-visible:outline-ring rounded transition-colors duration-700 ${
                   isDark ? "text-purple-400" : "text-primary"
                 }`}
-                aria-label="Join our Discord (opens in new tab)"
+                aria-label={t("discordAriaLabel")}
               >
                 Discord
               </a>
@@ -50,7 +69,7 @@ export function Footer() {
                 className={`text-sm font-medium hover:underline focus-visible:outline-ring rounded transition-colors duration-700 ${
                   isDark ? "text-purple-400" : "text-primary"
                 }`}
-                aria-label="StyleGuideAI on DeviantArt (opens in new tab)"
+                aria-label={t("deviantartAriaLabel")}
               >
                 DeviantArt
               </a>
@@ -64,18 +83,14 @@ export function Footer() {
                 isDark ? "text-stone-100" : "text-foreground"
               }`}
             >
-              Tools
+              {t("toolsHeading")}
             </h3>
             <ul
               className={`space-y-2 text-sm transition-colors duration-700 ${
                 isDark ? "text-stone-400" : "text-muted-foreground"
               }`}
             >
-              {[
-                { href: "/stylebear", label: "StyleBear" },
-                { href: "/styledice", label: "StyleDice" },
-                { href: "/styletarot", label: "StyleTarot" },
-              ].map((l) => (
+              {toolLinks.map((l) => (
                 <li key={l.href}>
                   <Link
                     href={l.href}
@@ -97,19 +112,14 @@ export function Footer() {
                 isDark ? "text-stone-100" : "text-foreground"
               }`}
             >
-              Explore
+              {t("exploreHeading")}
             </h3>
             <ul
               className={`space-y-2 text-sm transition-colors duration-700 ${
                 isDark ? "text-stone-400" : "text-muted-foreground"
               }`}
             >
-              {[
-                { href: "/museum", label: "Virtual Museum" },
-                { href: "/articles", label: "Articles" },
-                { href: "/themes", label: "Daily Themes" },
-                { href: "/about", label: "About" },
-              ].map((l) => (
+              {exploreLinks.map((l) => (
                 <li key={l.href}>
                   <Link
                     href={l.href}
@@ -131,17 +141,14 @@ export function Footer() {
                 isDark ? "text-stone-100" : "text-foreground"
               }`}
             >
-              Company
+              {t("companyHeading")}
             </h3>
             <ul
               className={`space-y-2 text-sm transition-colors duration-700 ${
                 isDark ? "text-stone-400" : "text-muted-foreground"
               }`}
             >
-              {[
-                { href: "/consulting", label: "Consulting" },
-                { href: "/privacy", label: "Privacy Policy" },
-              ].map((l) => (
+              {companyLinks.map((l) => (
                 <li key={l.href}>
                   <Link
                     href={l.href}
@@ -164,9 +171,9 @@ export function Footer() {
               : "text-muted-foreground"
           }`}
         >
-          <p>© {new Date().getFullYear()} StyleGuideAI. All rights reserved.</p>
+          <p>{t("copyright", { year: new Date().getFullYear() })}</p>
           <p>
-            Built by{" "}
+            {t("builtBy")}{" "}
             <a
               href="https://satoricanton.com"
               target="_blank"

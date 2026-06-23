@@ -1,20 +1,31 @@
 import type { MetadataRoute } from "next";
+import { locales } from "@/i18n/routing";
 
-const BASE = "https://styleguideai.com";
+const BASE = "https://www.styleguideai.com";
+
+const PAGES = [
+  { path: "/",          changeFrequency: "daily"   as const, priority: 1.0 },
+  { path: "/rising",    changeFrequency: "hourly"  as const, priority: 0.9 },
+  { path: "/museum",    changeFrequency: "weekly"  as const, priority: 0.9 },
+  { path: "/stylebear", changeFrequency: "monthly" as const, priority: 0.9 },
+  { path: "/articles",  changeFrequency: "daily"   as const, priority: 0.8 },
+  { path: "/styletarot",changeFrequency: "monthly" as const, priority: 0.8 },
+  { path: "/styledice", changeFrequency: "monthly" as const, priority: 0.8 },
+  { path: "/consulting",changeFrequency: "monthly" as const, priority: 0.7 },
+  { path: "/themes",    changeFrequency: "daily"   as const, priority: 0.6 },
+  { path: "/about",     changeFrequency: "monthly" as const, priority: 0.5 },
+  { path: "/privacy",   changeFrequency: "yearly"  as const, priority: 0.2 },
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  return [
-    { url: BASE, lastModified: now, changeFrequency: "daily", priority: 1 },
-    { url: `${BASE}/museum`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${BASE}/stylebear`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/styletarot`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${BASE}/styledice`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${BASE}/articles`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
-    { url: `${BASE}/themes`, lastModified: now, changeFrequency: "daily", priority: 0.6 },
-    { url: `${BASE}/consulting`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${BASE}/rising`, lastModified: now, changeFrequency: "hourly", priority: 0.9 },
-    { url: `${BASE}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${BASE}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.2 },
-  ];
+
+  return PAGES.flatMap(({ path, changeFrequency, priority }) =>
+    locales.map((locale) => ({
+      url: `${BASE}/${locale}${path}`,
+      lastModified: now,
+      changeFrequency,
+      priority,
+    }))
+  );
 }

@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useSession, signIn, signOut } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { gsap } from "gsap";
 import { prefersReducedMotion } from "@/lib/motion";
+import { Link, usePathname } from "@/i18n/navigation";
+import { LanguageSelector } from "./LanguageSelector";
 
 interface NavLink {
   href: string;
@@ -13,6 +14,8 @@ interface NavLink {
 }
 
 export function MobileNav({ links }: { links: NavLink[] }) {
+  const t = useTranslations("nav");
+  const tUser = useTranslations("userMenu");
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const { data: session } = useSession();
@@ -53,7 +56,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
       <button
         className="md:hidden flex flex-col justify-center items-center w-11 h-11 gap-1.5 rounded-md focus-visible:outline-ring"
         onClick={() => setOpen((v) => !v)}
-        aria-label={open ? "Close menu" : "Open menu"}
+        aria-label={open ? t("closeMenu") : t("openMenu")}
         aria-expanded={open}
         aria-controls="mobile-nav-drawer"
       >
@@ -76,26 +79,26 @@ export function MobileNav({ links }: { links: NavLink[] }) {
         ref={drawerRef}
         className="fixed top-0 right-0 z-50 h-full w-72 flex-col bg-background shadow-2xl hidden md:hidden"
         role="dialog"
-        aria-label="Mobile navigation"
+        aria-label={t("mobileNav")}
         aria-modal="true"
       >
         <div className="flex items-center justify-between border-b px-6 py-4">
-          <span className="font-heading font-bold text-primary text-lg">Menu</span>
+          <span className="font-heading font-bold text-primary text-lg">{t("menu")}</span>
           <button
             onClick={() => setOpen(false)}
             className="w-11 h-11 flex items-center justify-center rounded-md text-foreground/70 hover:text-foreground focus-visible:outline-ring"
-            aria-label="Close menu"
+            aria-label={t("closeMenu")}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
               <path d="M18 6L6 18M6 6l12 12" />
             </svg>
           </button>
         </div>
-        <nav className="flex flex-col gap-1 p-4 flex-1 overflow-y-auto" aria-label="Mobile navigation">
+        <nav className="flex flex-col gap-1 p-4 flex-1 overflow-y-auto" aria-label={t("mobileNav")}>
           {links.map((link) => (
             <Link
               key={link.href}
-              href={link.href}
+              href={link.href as Parameters<typeof Link>[0]["href"]}
               aria-current={pathname.startsWith(link.href) ? "page" : undefined}
               className={`rounded-md px-4 py-3 text-base font-medium min-h-[44px] flex items-center transition-colors hover:bg-muted focus-visible:outline-ring ${
                 pathname.startsWith(link.href) ? "text-primary bg-muted" : "text-foreground"
@@ -113,19 +116,19 @@ export function MobileNav({ links }: { links: NavLink[] }) {
                   href="/account/history"
                   className="rounded-md px-4 py-3 text-base font-medium min-h-[44px] flex items-center gap-2 transition-colors hover:bg-muted focus-visible:outline-ring text-foreground"
                 >
-                  📋 My History
+                  <span aria-hidden="true">📋</span> {tUser("history")}
                 </Link>
                 <Link
                   href="/account/profile"
                   className="rounded-md px-4 py-3 text-base font-medium min-h-[44px] flex items-center gap-2 transition-colors hover:bg-muted focus-visible:outline-ring text-foreground"
                 >
-                  👤 Profile
+                  <span aria-hidden="true">👤</span> {tUser("profile")}
                 </Link>
                 <button
                   onClick={() => { setOpen(false); signOut(); }}
                   className="w-full rounded-md px-4 py-3 text-base font-medium min-h-[44px] flex items-center gap-2 transition-colors hover:bg-muted focus-visible:outline-ring text-foreground text-left"
                 >
-                  ↩ Sign out
+                  <span aria-hidden="true">↩</span> {tUser("signOut")}
                 </button>
               </>
             ) : (
@@ -133,9 +136,14 @@ export function MobileNav({ links }: { links: NavLink[] }) {
                 onClick={() => { setOpen(false); signIn("google"); }}
                 className="w-full rounded-md px-4 py-3 text-base font-medium min-h-[44px] flex items-center transition-colors hover:bg-muted focus-visible:outline-ring text-primary text-left"
               >
-                Sign in with Google
+                {tUser("signIn")}
               </button>
             )}
+          </div>
+
+          {/* Language selector in drawer */}
+          <div className="mt-2 pt-2 border-t border-border px-2">
+            <LanguageSelector />
           </div>
         </nav>
       </div>

@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { risingPosts } from "@/drizzle/schema";
 import { gt, lt, and, sql, eq } from "drizzle-orm";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 async function getTopRising() {
   return db

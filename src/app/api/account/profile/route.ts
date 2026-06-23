@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { users } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
+import { locales } from "@/i18n/routing";
 
 export async function GET() {
   const session = await auth();
@@ -19,6 +20,7 @@ export async function GET() {
       image: users.image,
       displayName: users.displayName,
       preferredAspectRatio: users.preferredAspectRatio,
+      preferredLanguage: users.preferredLanguage,
       createdAt: users.createdAt,
     })
     .from(users)
@@ -45,32 +47,47 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  const { displayName, preferredAspectRatio } = body as {
+  const { displayName, preferredAspectRatio, preferredLanguage } = body as {
     displayName?: string;
     preferredAspectRatio?: string | null;
+    preferredLanguage?: string | null;
   };
+
   if (typeof displayName !== "string") {
     return NextResponse.json({ error: "displayName must be a string" }, { status: 422 });
   }
 
   const trimmed = displayName.trim().slice(0, 60);
   const aspectRatio = typeof preferredAspectRatio === "string" ? preferredAspectRatio || null : undefined;
+  const lang =
+    typeof preferredLanguage === "string" && locales.includes(preferredLanguage as typeof locales[number])
+      ? preferredLanguage
+      : preferredLanguage === null
+      ? null
+      : undefined;
 
-  const updates: Partial<{ displayName: string | null; preferredAspectRatio: string | null }> = {
-    displayName: trimmed || null,
-  };
-  if (aspectRatio !== undefined) {
-    updates.preferredAspectRatio = aspectRatio;
-  }
+  const updates: Partial<{
+    displayName: string | null;
+    preferredAspectRatio: string | null;
+    preferredLanguage: string | null;
+  }> = { displayName: trimmed || null };
+
+  if (aspectRatio !== undefined) updates.preferredAspectRatio = aspectRatio;
+  if (lang !== undefined) updates.preferredLanguage = lang;
 
   const [updated] = await db
     .update(users)
     .set(updates)
     .where(eq(users.id, session.user.id))
-    .returning({ displayName: users.displayName, preferredAspectRatio: users.preferredAspectRatio });
+    .returning({
+      displayName: users.displayName,
+      preferredAspectRatio: users.preferredAspectRatio,
+      preferredLanguage: users.preferredLanguage,
+    });
 
   return NextResponse.json({
     displayName: updated?.displayName ?? null,
     preferredAspectRatio: updated?.preferredAspectRatio ?? null,
+    preferredLanguage: updated?.preferredLanguage ?? null,
   });
 }

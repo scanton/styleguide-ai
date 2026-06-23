@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { db } from "@/lib/db";
 import { risingPosts } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";

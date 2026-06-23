@@ -1,28 +1,30 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { gsap } from "gsap";
 import { prefersReducedMotion } from "@/lib/motion";
+import { Link, usePathname } from "@/i18n/navigation";
 import { MobileNav } from "./MobileNav";
 import { SearchButton } from "./SearchButton";
 import { UserMenu } from "./UserMenu";
-
-const NAV_LINKS = [
-  { href: "/rising", label: "Rising" },
-  { href: "/museum", label: "Virtual Museum" },
-  { href: "/articles", label: "Articles" },
-  { href: "/styletarot", label: "StyleTarot" },
-  { href: "/stylebear", label: "StyleBear" },
-  { href: "/consulting", label: "Consulting" },
-];
+import { LanguageSelector } from "./LanguageSelector";
 
 export function Header() {
+  const t = useTranslations("nav");
   const pathname = usePathname();
   const isDark = pathname === "/rising";
   const headerRef = useRef<HTMLElement>(null);
   const [scrolled, setScrolled] = useState(false);
+
+  const NAV_LINKS = [
+    { href: "/rising" as const, label: t("rising") },
+    { href: "/museum" as const, label: t("museum") },
+    { href: "/articles" as const, label: t("articles") },
+    { href: "/styletarot" as const, label: t("styletarot") },
+    { href: "/stylebear" as const, label: t("stylebear") },
+    { href: "/consulting" as const, label: t("consulting") },
+  ];
 
   useEffect(() => {
     if (!headerRef.current) return;
@@ -62,7 +64,7 @@ export function Header() {
           className={`flex items-center gap-2 font-heading text-lg font-bold transition-colors duration-700 focus-visible:outline-ring ${
             isDark ? "text-purple-400" : "text-primary"
           }`}
-          aria-label="StyleGuideAI — home"
+          aria-label={t("homeAriaLabel")}
         >
           <span className="text-2xl" aria-hidden="true">✦</span>
           <span>StyleGuideAI</span>
@@ -71,7 +73,7 @@ export function Header() {
         {/* Desktop nav */}
         <nav
           className="hidden md:flex items-center gap-1"
-          aria-label="Main navigation"
+          aria-label={t("mainNav")}
         >
           {NAV_LINKS.map((link) => (
             <Link
@@ -96,6 +98,7 @@ export function Header() {
         {/* Right actions */}
         <div className="flex items-center gap-2">
           <SearchButton />
+          <LanguageSelector />
           <UserMenu />
           <MobileNav links={NAV_LINKS} />
         </div>

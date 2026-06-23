@@ -2,10 +2,12 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 
 export function UserMenu() {
+  const t = useTranslations("userMenu");
   const { data: session, status } = useSession();
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -33,7 +35,7 @@ export function UserMenu() {
         onClick={() => signIn("google")}
         className="hidden sm:flex min-h-[36px]"
       >
-        Sign in
+        {t("signIn")}
       </Button>
     );
   }
@@ -41,7 +43,7 @@ export function UserMenu() {
   const displayName = session.user.name ?? session.user.email ?? "Account";
   const initials = displayName
     .split(" ")
-    .map((w) => w[0])
+    .map((w: string) => w[0])
     .slice(0, 2)
     .join("")
     .toUpperCase();
@@ -50,7 +52,7 @@ export function UserMenu() {
     <div className="relative" ref={wrapperRef} onKeyDown={handleKeyDown}>
       <button
         onClick={() => setOpen((v) => !v)}
-        aria-label="Open user menu"
+        aria-label={t("openMenu")}
         aria-expanded={open}
         aria-haspopup="menu"
         className="flex items-center justify-center w-9 h-9 rounded-full overflow-hidden border-2 border-transparent hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors"
@@ -76,7 +78,6 @@ export function UserMenu() {
           role="menu"
           className="absolute right-0 top-full mt-2 w-52 rounded-xl border border-border bg-background shadow-xl py-1 z-50"
         >
-          {/* User info header */}
           <div className="px-4 py-3 border-b border-border">
             <p className="text-sm font-semibold text-foreground truncate">{displayName}</p>
             {session.user.email && (
@@ -90,7 +91,7 @@ export function UserMenu() {
             onClick={() => setOpen(false)}
             className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:bg-muted"
           >
-            <span aria-hidden="true">📋</span> My History
+            <span aria-hidden="true">📋</span> {t("history")}
           </Link>
           <Link
             href="/account/profile"
@@ -98,7 +99,7 @@ export function UserMenu() {
             onClick={() => setOpen(false)}
             className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:bg-muted"
           >
-            <span aria-hidden="true">👤</span> Profile
+            <span aria-hidden="true">👤</span> {t("profile")}
           </Link>
 
           <div className="border-t border-border mt-1 pt-1">
@@ -107,7 +108,7 @@ export function UserMenu() {
               onClick={() => { setOpen(false); signOut(); }}
               className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:bg-muted text-left"
             >
-              <span aria-hidden="true">↩</span> Sign out
+              <span aria-hidden="true">↩</span> {t("signOut")}
             </button>
           </div>
         </div>

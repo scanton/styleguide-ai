@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { TAROT_CARDS, CARD_TYPE_COLORS } from "@/data/styletarot/cards";
 import { promptTypes } from "@/data/stylebear/config";
 import { ShareToRisingModal } from "@/components/rising/ShareToRisingModal";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
