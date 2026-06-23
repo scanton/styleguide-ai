@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -28,6 +29,7 @@ interface CommunitySectionProps {
 }
 
 export function CommunitySection({ latestEventTitle, latestEventUrl, spotlightItems }: CommunitySectionProps) {
+  const t = useTranslations("home");
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -91,18 +93,18 @@ export function CommunitySection({ latestEventTitle, latestEventUrl, spotlightIt
           <div className="space-y-6">
             <div className="reveal inline-flex items-center gap-2 rounded-full bg-accent/10 px-3 py-1 text-sm font-medium text-accent">
               <span aria-hidden="true">★</span>
-              <span>Community Spotlight</span>
+              <span>{t("communityBadge")}</span>
             </div>
             <h2
               id="community-heading"
               className="reveal font-heading text-3xl font-bold sm:text-4xl"
             >
-              Art Made by
+              {t("communityHeading1")}
               <br />
-              Our Community
+              {t("communityHeading2")}
             </h2>
             <p className="reveal text-muted-foreground leading-relaxed max-w-md">
-              Every day our members share their AI art creations — from Impressionist landscapes to Cubist portraits to entirely new aesthetics. Join 1,000+ artists exploring the intersection of AI and art history.
+              {t("communityDesc")}
             </p>
             <div className="reveal flex flex-wrap gap-3">
               <Button asChild size="lg" variant="outline" className="min-h-[44px]">
@@ -111,7 +113,7 @@ export function CommunitySection({ latestEventTitle, latestEventUrl, spotlightIt
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Join the Discord ↗
+                  {t("communityJoinDiscord")}
                 </a>
               </Button>
               <Button asChild size="lg" variant="ghost" className="min-h-[44px]">
@@ -120,7 +122,7 @@ export function CommunitySection({ latestEventTitle, latestEventUrl, spotlightIt
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  View DeviantArt ↗
+                  {t("communityViewDA")}
                 </a>
               </Button>
             </div>
@@ -130,7 +132,7 @@ export function CommunitySection({ latestEventTitle, latestEventUrl, spotlightIt
                 🎨
               </div>
               <div className="min-w-0">
-                <p className="text-xs text-muted-foreground font-medium">Latest Community Theme</p>
+                <p className="text-xs text-muted-foreground font-medium">{t("communityThemeLabel")}</p>
                 {latestEventTitle ? (
                   latestEventUrl ? (
                     <a
@@ -145,11 +147,11 @@ export function CommunitySection({ latestEventTitle, latestEventUrl, spotlightIt
                     <p className="font-bold text-primary line-clamp-1">{latestEventTitle}</p>
                   )
                 ) : (
-                  <p className="font-bold text-primary">Coming soon…</p>
+                  <p className="font-bold text-primary">{t("communityThemeComingSoon")}</p>
                 )}
               </div>
               <Button asChild variant="ghost" size="sm" className="ml-auto flex-shrink-0">
-                <Link href="/themes">All themes →</Link>
+                <Link href="/themes">{t("communityAllThemes")}</Link>
               </Button>
             </div>
           </div>

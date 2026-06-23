@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -11,26 +12,15 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const SERVICES = [
-  {
-    icon: "🤖",
-    title: "AI Model Training",
-    description: "LoRA fine-tuning for custom art styles and character models.",
-  },
-  {
-    icon: "🎨",
-    title: "Art Direction",
-    description: "Strategic creative direction for AI-generated visual content.",
-  },
-  {
-    icon: "⚙️",
-    title: "AI Agent Design",
-    description: "Custom agentic AI systems for creative workflows and automation.",
-  },
-];
-
 export function ConsultingCTA() {
+  const t = useTranslations("home");
   const sectionRef = useRef<HTMLElement>(null);
+
+  const SERVICES = [
+    { icon: "🤖", title: t("consultingService1Title"), description: t("consultingService1Desc") },
+    { icon: "🎨", title: t("consultingService2Title"), description: t("consultingService2Desc") },
+    { icon: "⚙️", title: t("consultingService3Title"), description: t("consultingService3Desc") },
+  ];
 
   useEffect(() => {
     if (prefersReducedMotion() || !sectionRef.current) return;
@@ -62,10 +52,10 @@ export function ConsultingCTA() {
                 id="consulting-heading"
                 className="reveal font-heading text-3xl font-bold sm:text-4xl"
               >
-                Work With StyleGuideAI
+                {t("consultingHeading")}
               </h2>
               <p className="reveal leading-relaxed opacity-90 max-w-md">
-                Founded by an AI art director with 300+ published articles on art history and AI. Available for consulting on AI art production, model training, and agentic system design.
+                {t("consultingDesc")}
               </p>
               <div className="reveal flex flex-wrap gap-3">
                 <Button
@@ -73,7 +63,7 @@ export function ConsultingCTA() {
                   size="lg"
                   className="bg-white text-primary hover:bg-white/90 min-h-[44px]"
                 >
-                  <Link href="/consulting">View Services</Link>
+                  <Link href="/consulting">{t("consultingViewServices")}</Link>
                 </Button>
                 <Button
                   asChild
@@ -86,7 +76,7 @@ export function ConsultingCTA() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Read Articles ↗
+                    {t("consultingReadArticles")}
                   </a>
                 </Button>
               </div>

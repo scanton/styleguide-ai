@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { gsap } from "gsap";
 import { prefersReducedMotion } from "@/lib/motion";
@@ -19,6 +20,7 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ theme }: HeroSectionProps) {
+  const t = useTranslations("home");
   const headingRef = useRef<HTMLHeadingElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
@@ -49,29 +51,29 @@ export function HeroSection({ theme }: HeroSectionProps) {
           <div className="space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
               <span aria-hidden="true">✦</span>
-              <span>1,000+ member AI art community</span>
+              <span>{t("heroBadge")}</span>
             </div>
             <h1
               ref={headingRef}
               id="hero-heading"
               className="font-heading text-4xl font-bold leading-tight text-foreground sm:text-5xl lg:text-6xl"
             >
-              Where AI Art
+              {t("heroHeadline1")}
               <br />
-              <span className="text-primary">Meets Art History</span>
+              <span className="text-primary">{t("heroHeadline2")}</span>
             </h1>
             <p
               ref={subRef}
               className="max-w-lg text-lg text-muted-foreground leading-relaxed"
             >
-              Explore a living community of AI artists, generate stunning prompts with StyleBear, and tour 40,000 years of art history in our Virtual Museum.
+              {t("heroSubtitle")}
             </p>
             <div ref={ctaRef} className="flex flex-wrap gap-3">
               <Button asChild size="lg" className="min-h-[44px]">
-                <Link href="/museum">Explore Museum</Link>
+                <Link href="/museum">{t("heroExploreMuseum")}</Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="min-h-[44px]">
-                <Link href="/styletarot">Play StyleTarot</Link>
+                <Link href="/styletarot">{t("heroPlayTarot")}</Link>
               </Button>
               <Button asChild variant="ghost" size="lg" className="min-h-[44px]">
                 <a
@@ -79,7 +81,7 @@ export function HeroSection({ theme }: HeroSectionProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Join Discord ↗
+                  {t("heroJoinDiscord")}
                 </a>
               </Button>
             </div>
@@ -124,7 +126,7 @@ export function HeroSection({ theme }: HeroSectionProps) {
               </div>
               {/* Floating badge */}
               <div className="absolute -bottom-4 -left-4 rounded-xl bg-card border border-border shadow-lg px-4 py-3">
-                <p className="text-xs font-medium text-muted-foreground">This month&apos;s theme</p>
+                <p className="text-xs font-medium text-muted-foreground">{t("heroThisMonthsTheme")}</p>
                 <p className="text-sm font-bold text-primary">
                   {theme?.galleryName ?? "Daily Themes"}
                 </p>
