@@ -17,14 +17,14 @@ const TOOLS = [
     title: "StyleDice",
     subtitle: "Roll for creative inspiration",
     route: "/styledice" as const,
-    ready: false,
+    ready: true,
   },
   {
     key: "styletarot",
     title: "StyleTarot",
     subtitle: "Draw your artistic destiny",
     route: "/styletarot" as const,
-    ready: false,
+    ready: true,
   },
 ];
 

@@ -62,3 +62,60 @@ export async function fetchStyleBearHistory(
 export async function deleteStyleBearHistory(id: string, sessionToken: string): Promise<void> {
   await apiFetch(`/api/stylebear/history?id=${id}`, { method: "DELETE" }, sessionToken);
 }
+
+// --- StyleDice history ---
+
+export async function saveStyleDiceHistory(
+  diceValues: string[],
+  generatedPrompt: string,
+  sessionToken: string
+): Promise<{ entry?: { id: string } } | null> {
+  try {
+    const res = await apiFetch(
+      "/api/styledice/history",
+      { method: "POST", body: JSON.stringify({ diceValues, generatedPrompt }) },
+      sessionToken
+    );
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
+// --- StyleTarot history ---
+
+export async function saveStyleTarotHistory(
+  cardIndices: number[],
+  generatedPrompt: string,
+  sessionToken: string
+): Promise<{ entry?: { id: string } } | null> {
+  try {
+    const res = await apiFetch(
+      "/api/styletarot/history",
+      { method: "POST", body: JSON.stringify({ cardIndices, generatedPrompt }) },
+      sessionToken
+    );
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
+// --- Generic LLM (no promptStyle required) ---
+
+export async function callLLM(body: {
+  messages: { role: string; content: string }[];
+  maxTokens?: number;
+}): Promise<string | null> {
+  try {
+    const res = await fetch(`${API_BASE}/api/llm`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    return data.content ?? data.text ?? data.choices?.[0]?.message?.content ?? null;
+  } catch {
+    return null;
+  }
+}
