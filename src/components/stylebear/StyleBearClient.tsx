@@ -83,6 +83,8 @@ function buildPrompt(
 
 export default function StyleBearClient() {
   const t = useTranslations("stylebear");
+  const tm = useTranslations("stylebearMovements");
+  const tmt = useTranslations("stylebearMedia");
   const { data: session } = useSession();
   const [selectedMovements, setSelectedMovements] = useState<string[]>(
     Array(TRIPLE_COUNT).fill("")
@@ -382,7 +384,7 @@ export default function StyleBearClient() {
               <option value="">{t("noneOption")}</option>
               {sortedMovements.map((m) => (
                 <option key={m.name} value={m.name}>
-                  {m.name}
+                  {tm(m.name as Parameters<typeof tm>[0])}
                 </option>
               ))}
             </select>
@@ -409,7 +411,7 @@ export default function StyleBearClient() {
               <option value="">{t("noneOption")}</option>
               {sortedMedia.map((m) => (
                 <option key={m.name} value={m.name}>
-                  {m.name}
+                  {tmt(m.name as Parameters<typeof tmt>[0])}
                 </option>
               ))}
             </select>

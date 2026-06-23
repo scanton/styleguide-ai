@@ -11,5 +11,11 @@ export default getRequestConfig(async ({ requestLocale }) => {
   return {
     locale,
     messages: (await import(`../../messages/${locale}.json`)).default,
+    getMessageFallback({ namespace, key }: { namespace?: string; key: string }) {
+      if (namespace === "stylebearMovements" || namespace === "stylebearMedia") {
+        return key;
+      }
+      return [namespace, key].filter(Boolean).join(".");
+    },
   };
 });
