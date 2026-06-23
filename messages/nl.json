@@ -19,12 +19,12 @@
   },
   "nav": {
     "homeAriaLabel": "StyleGuideAI - thuis",
-    "rising": "Rising",
-    "museum": "Virtual Museum",
+    "rising": "Trending",
+    "museum": "Virtueel Museum",
     "articles": "Artikelen",
     "styletarot": "StyleTarot",
     "stylebear": "StyleBear",
-    "consulting": "Advies",
+    "consulting": "Diensten",
     "mainNav": "Hoofdnavigatie",
     "mobileNav": "Mobicule navigatie",
     "openMenu": "Menu openen",
@@ -39,16 +39,16 @@
     "signOut": "Sign out"
   },
   "search": {
-    "dialogTitle": "Zoek StyleGuideAI",
-    "placeholder": "Zoek kunstenaars, stijlen, artikelen…",
-    "searching": "Bezig met zoeken…",
+    "dialogTitle": "StyleGuideAI doorzoeken",
+    "placeholder": "Zoek kunstenaars, bewegingen, artikelen…",
+    "searching": "Zoeken…",
     "noResults": "Geen resultaten voor \"{query}\"",
     "resultsGroup": "Resultaten",
-    "startTyping": "Begin met typen om te zoeken naar kunstenaars, kunststijlen en artikelen.",
+    "startTyping": "Begin te typen om kunstenaars, kunstbewegingen en artikelen te zoeken.",
     "buttonAriaLabel": "Zoeken (Ctrl+K)",
     "buttonText": "Zoeken",
     "typeArtist": "Kunstenaar",
-    "typeMovement": "Stijl",
+    "typeMovement": "Beweging",
     "typeArticle": "Artikel",
     "typeTheme": "Thema"
   },
@@ -111,7 +111,13 @@
     "consultingService2Title": "Art Direction",
     "consultingService2Desc": "Strategische creatieve richting voor door AI gegenereerde visuele content.",
     "consultingService3Title": "AI Agent Design",
-    "consultingService3Desc": "Op maat gemaakte agentic AI-systemen voor creatieve workflows en automatisering."
+    "consultingService3Desc": "Op maat gemaakte agentic AI-systemen voor creatieve workflows en automatisering.",
+    "risingHeading": "Nu Trending",
+    "risingSubheading": "Communitygalerij",
+    "risingTopOfWeek": "Top van de Week",
+    "risingTopOfWeekSub": "Community Favorieten",
+    "risingSeeAll": "Alles zien",
+    "risingViewGallery": "Galerij bekijken"
   },
   "about": {
     "metaTitle": "About StyleGuideAI",
@@ -297,7 +303,9 @@
     "noArticles": "No articles found.",
     "emptyState": "No articles yet — check back soon!",
     "readOnMedium": "Read on Medium ↗",
-    "paginationLabel": "Article pages"
+    "paginationLabel": "Article pages",
+    "clearSearch": "Zoekopdracht wissen",
+    "search": "Zoeken"
   },
   "themes": {
     "metaTitle": "Community Themes & Events",
@@ -339,7 +347,12 @@
     "promptShare": "Share to Rising ↗",
     "promptSaved": "Saved to your Museum history.",
     "promptError": "Generation failed. Please try again.",
-    "contentInEnglish": "Museum content is currently available in English only."
+    "contentInEnglish": "Museum content is currently available in English only.",
+    "closeCard": "Sluiten",
+    "worldEvent": "Wereldgebeurtenis",
+    "timelineAriaLabel": "Kunstgeschiedenistijdlijn — scroll horizontaal door de tijd",
+    "jumpToEra": "Ga naar tijdperk",
+    "yearAtCenter": "Jaar in het midden van het beeld"
   },
   "account": {
     "historyMetaTitle": "My History",

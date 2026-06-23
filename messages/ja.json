@@ -19,17 +19,17 @@
   },
   "nav": {
     "homeAriaLabel": "StyleGuideAI — home",
-    "rising": "Rising",
-    "museum": "Virtual Museum",
-    "articles": "Articles",
+    "rising": "急上昇",
+    "museum": "バーチャルミュージアム",
+    "articles": "記事",
     "styletarot": "StyleTarot",
     "stylebear": "StyleBear",
-    "consulting": "Consulting",
+    "consulting": "コンサルティング",
     "mainNav": "Main navigation",
     "mobileNav": "Mobile navigation",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "menu": "Menu"
+    "menu": "メニュー"
   },
   "userMenu": {
     "signIn": "サインイン",
@@ -39,18 +39,18 @@
     "signOut": "サインアウト"
   },
   "search": {
-    "dialogTitle": "Search StyleGuideAI",
-    "placeholder": "Search artists, movements, articles…",
-    "searching": "Searching…",
-    "noResults": "No results for \"{query}\"",
-    "resultsGroup": "Results",
-    "startTyping": "Start typing to search artists, art movements, and articles.",
-    "buttonAriaLabel": "Search (Ctrl+K)",
-    "buttonText": "Search",
-    "typeArtist": "Artist",
-    "typeMovement": "Movement",
-    "typeArticle": "Article",
-    "typeTheme": "Theme"
+    "dialogTitle": "StyleGuideAI を検索",
+    "placeholder": "アーティスト、流派、記事を検索…",
+    "searching": "検索中…",
+    "noResults": "「{query}」の結果はありません",
+    "resultsGroup": "結果",
+    "startTyping": "アーティスト、芸術運動、記事を検索するには入力してください。",
+    "buttonAriaLabel": "検索 (Ctrl+K)",
+    "buttonText": "検索",
+    "typeArtist": "アーティスト",
+    "typeMovement": "芸術運動",
+    "typeArticle": "記事",
+    "typeTheme": "テーマ"
   },
   "footer": {
     "tagline": "AIアーティストとアート愛好家が集う、1,000人以上のコミュニティ。",
@@ -111,7 +111,13 @@
     "consultingService2Title": "Art Direction",
     "consultingService2Desc": "AI生成のビジュアルコンテンツに対する戦略的なクリエイティブディレクション。",
     "consultingService3Title": "AI Agent Design",
-    "consultingService3Desc": "創造的なワークフローと自動化のためのカスタムエージェントAIシステム。"
+    "consultingService3Desc": "創造的なワークフローと自動化のためのカスタムエージェントAIシステム。",
+    "risingHeading": "今急上昇中",
+    "risingSubheading": "コミュニティギャラリー",
+    "risingTopOfWeek": "今週のトップ",
+    "risingTopOfWeekSub": "コミュニティのお気に入り",
+    "risingSeeAll": "すべて見る",
+    "risingViewGallery": "ギャラリーを見る"
   },
   "about": {
     "metaTitle": "About StyleGuideAI",
@@ -297,7 +303,9 @@
     "noArticles": "No articles found.",
     "emptyState": "No articles yet — check back soon!",
     "readOnMedium": "Read on Medium ↗",
-    "paginationLabel": "Article pages"
+    "paginationLabel": "Article pages",
+    "clearSearch": "検索をクリア",
+    "search": "検索"
   },
   "themes": {
     "metaTitle": "コミュニティテーマとイベント",
@@ -339,7 +347,12 @@
     "promptShare": "Risingへ共有 ↗",
     "promptSaved": "あなたのミュージアム履歴に保存しました。",
     "promptError": "生成に失敗しました。もう一度お試しください。",
-    "contentInEnglish": "ミュージアムのコンテンツは現在は英語のみご利用いただけます。"
+    "contentInEnglish": "ミュージアムのコンテンツは現在は英語のみご利用いただけます。",
+    "closeCard": "閉じる",
+    "worldEvent": "世界の出来事",
+    "timelineAriaLabel": "美術史タイムライン — 横にスクロールして時代を旅しよう",
+    "jumpToEra": "時代へジャンプ",
+    "yearAtCenter": "ビューの中央の年"
   },
   "account": {
     "historyMetaTitle": "My History",

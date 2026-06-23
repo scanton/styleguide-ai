@@ -18,8 +18,8 @@
   },
   "nav": {
     "homeAriaLabel": "StyleGuideAI — главная",
-    "rising": "Rising",
-    "museum": "Virtual Museum",
+    "rising": "В тренде",
+    "museum": "Виртуальный музей",
     "articles": "Статьи",
     "styletarot": "StyleTarot",
     "stylebear": "StyleBear",
@@ -38,16 +38,16 @@
     "signOut": "Выйти"
   },
   "search": {
-    "dialogTitle": "Поиск в StyleGuideAI",
-    "placeholder": "Поиск художников, направлений, статей…",
+    "dialogTitle": "Поиск по StyleGuideAI",
+    "placeholder": "Поиск художников, движений, статей…",
     "searching": "Поиск…",
-    "noResults": "По запросу \"{query}\" ничего не найдено",
+    "noResults": "Нет результатов для «{query}»",
     "resultsGroup": "Результаты",
-    "startTyping": "Начните вводить текст, чтобы найти художников, направления искусства и статьи.",
+    "startTyping": "Начните вводить для поиска художников, художественных движений и статей.",
     "buttonAriaLabel": "Поиск (Ctrl+K)",
     "buttonText": "Поиск",
     "typeArtist": "Художник",
-    "typeMovement": "Направление",
+    "typeMovement": "Движение",
     "typeArticle": "Статья",
     "typeTheme": "Тема"
   },
@@ -110,7 +110,13 @@
     "consultingService2Title": "Art Direction",
     "consultingService2Desc": "Strategic creative direction for AI-generated visual content.",
     "consultingService3Title": "AI Agent Design",
-    "consultingService3Desc": "Custom agentic AI systems for creative workflows and automation."
+    "consultingService3Desc": "Custom agentic AI systems for creative workflows and automation.",
+    "risingHeading": "Сейчас в тренде",
+    "risingSubheading": "Галерея сообщества",
+    "risingTopOfWeek": "Топ недели",
+    "risingTopOfWeekSub": "Избранное сообщества",
+    "risingSeeAll": "Смотреть все",
+    "risingViewGallery": "Открыть галерею"
   },
   "about": {
     "metaTitle": "About StyleGuideAI",
@@ -296,7 +302,9 @@
     "noArticles": "Статьи не найдены.",
     "emptyState": "Статей пока нет — заходите позже!",
     "readOnMedium": "Читать на Medium ↗",
-    "paginationLabel": "Страницы статей"
+    "paginationLabel": "Страницы статей",
+    "clearSearch": "Очистить поиск",
+    "search": "Поиск"
   },
   "themes": {
     "metaTitle": "Сообщество Темы и События",
@@ -338,7 +346,12 @@
     "promptShare": "Share to Rising ↗",
     "promptSaved": "Saved to your Museum history.",
     "promptError": "Generation failed. Please try again.",
-    "contentInEnglish": "Museum content is currently available in English only."
+    "contentInEnglish": "Museum content is currently available in English only.",
+    "closeCard": "Закрыть",
+    "worldEvent": "Мировое событие",
+    "timelineAriaLabel": "Хронология истории искусства — прокручивайте горизонтально, чтобы путешествовать во времени",
+    "jumpToEra": "Перейти к эпохе",
+    "yearAtCenter": "Год в центре вида"
   },
   "account": {
     "historyMetaTitle": "Моя история",

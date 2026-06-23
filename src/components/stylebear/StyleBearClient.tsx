@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { gsap } from "gsap";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { prefersReducedMotion } from "@/lib/motion";
 import { artMovements } from "@/data/stylebear/art-movements";
 import { mediaTypes } from "@/data/stylebear/media-types";
@@ -81,6 +82,7 @@ function buildPrompt(
 }
 
 export default function StyleBearClient() {
+  const t = useTranslations("stylebear");
   const { data: session } = useSession();
   const [selectedMovements, setSelectedMovements] = useState<string[]>(
     Array(TRIPLE_COUNT).fill("")
@@ -98,7 +100,6 @@ export default function StyleBearClient() {
   const [loading, setLoading] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
 
-  // Seed aspect ratio from user's profile preference once session loads
   useEffect(() => {
     if (!session?.user) return;
     fetch("/api/account/profile")
@@ -119,7 +120,6 @@ export default function StyleBearClient() {
   const footerRef = useRef<HTMLTextAreaElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
 
-  // Animate output section into view the first time Generate is clicked
   useEffect(() => {
     if (hasGenerated && outputRef.current && !prefersReducedMotion()) {
       gsap.fromTo(
@@ -157,7 +157,6 @@ export default function StyleBearClient() {
       const generated = data.content ?? data.error ?? "No response";
       setOutput(generated);
 
-      // Save to history for authenticated users (non-fatal)
       if (session?.user && data.content) {
         const allOptionDefs = [...checkboxOptions, ...cultureKeys];
         const inputs = JSON.stringify({
@@ -183,11 +182,11 @@ export default function StyleBearClient() {
         }
       }
     } catch {
-      setOutput("Error generating prompt. Please try again.");
+      setOutput(t("error"));
     } finally {
       setLoading(false);
     }
-  }, [selectedMovements, selectedMedia, checkedOptions, promptType, aspectRatio, session]);
+  }, [selectedMovements, selectedMedia, checkedOptions, promptType, aspectRatio, session, t]);
 
   const handleRandomize = useCallback(() => {
     const randMovements = Array.from({ length: TRIPLE_COUNT }, (_, i) => {
@@ -251,9 +250,9 @@ export default function StyleBearClient() {
             className="h-[140px] w-auto"
           />
         </div>
-        <h1 className="font-heading text-4xl text-primary">StyleBear</h1>
+        <h1 className="font-heading text-4xl text-primary">{t("title")}</h1>
         <p className="text-muted-foreground text-sm max-w-md mx-auto">
-          AI art prompt generator. Pick your movements, media, and style — StyleBear does the rest.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -261,7 +260,7 @@ export default function StyleBearClient() {
       <section className="flex flex-wrap gap-3 items-end">
         <div className="flex-1 min-w-[140px] space-y-1">
           <label htmlFor="prompt-type" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            Prompt Style
+            {t("promptStyle")}
           </label>
           <select
             id="prompt-type"
@@ -279,7 +278,7 @@ export default function StyleBearClient() {
 
         <div className="flex-1 min-w-[140px] space-y-1">
           <label htmlFor="aspect-ratio" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            Aspect Ratio
+            {t("aspectRatio")}
           </label>
           <select
             id="aspect-ratio"
@@ -300,7 +299,7 @@ export default function StyleBearClient() {
           onClick={handleRandomize}
           className="h-11 px-4 rounded-md border border-border bg-secondary text-secondary-foreground hover:bg-muted transition-colors text-sm min-w-[100px]"
         >
-          Randomize
+          {t("randomize")}
         </button>
 
         <button
@@ -309,22 +308,22 @@ export default function StyleBearClient() {
           disabled={loading}
           className="h-11 px-6 rounded-md bg-primary text-primary-foreground hover:opacity-90 transition-opacity text-sm font-medium min-w-[120px] disabled:opacity-50"
         >
-          {loading ? "Generating…" : "Generate"}
+          {loading ? t("generating") : t("generate")}
         </button>
       </section>
 
       {/* Subject */}
       <section className="space-y-1">
         <label htmlFor="subject-input" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-          Subject
+          {t("subject")}
         </label>
         <textarea
           id="subject-input"
           ref={subjectRef}
           rows={3}
-          placeholder="Describe your subject. Use {option1|option2} for random choices."
+          placeholder={t("subjectPlaceholder")}
           className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm resize-y focus-visible:outline-2 focus-visible:outline-ring"
-          aria-label="Subject description"
+          aria-label={t("subjectAriaLabel")}
         />
       </section>
 
@@ -334,7 +333,7 @@ export default function StyleBearClient() {
           <section className="border border-border rounded-lg p-4 space-y-3 bg-card min-h-[100px]">
             {loading ? (
               <div className="flex items-center justify-center h-16 text-muted-foreground text-sm animate-pulse">
-                StyleBear is crafting your prompt…
+                {t("crafting")}
               </div>
             ) : (
               <>
@@ -345,7 +344,7 @@ export default function StyleBearClient() {
                     onClick={handleCopy}
                     className="px-4 py-2 text-sm rounded-md bg-primary text-primary-foreground hover:opacity-90 transition-opacity min-h-[44px]"
                   >
-                    {copySuccess ? "Copied!" : "Copy Prompt"}
+                    {copySuccess ? t("copied") : t("copyPrompt")}
                   </button>
                   <button
                     type="button"
@@ -355,7 +354,7 @@ export default function StyleBearClient() {
                     }}
                     className="px-4 py-2 text-sm rounded-md border border-primary text-primary hover:bg-primary/10 transition-colors min-h-[44px]"
                   >
-                    Share to Rising ↗
+                    {t("share")}
                   </button>
                 </div>
               </>
@@ -366,7 +365,7 @@ export default function StyleBearClient() {
 
       {/* Art Movements */}
       <section className="space-y-2">
-        <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Art Movements</h2>
+        <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t("artMovements")}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           {selectedMovements.map((val, i) => (
             <select
@@ -380,7 +379,7 @@ export default function StyleBearClient() {
               className="h-11 rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-2 focus-visible:outline-ring"
               aria-label={`Art movement ${i + 1}`}
             >
-              <option value="">— none —</option>
+              <option value="">{t("noneOption")}</option>
               {sortedMovements.map((m) => (
                 <option key={m.name} value={m.name}>
                   {m.name}
@@ -393,7 +392,7 @@ export default function StyleBearClient() {
 
       {/* Media Types */}
       <section className="space-y-2">
-        <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Media Types</h2>
+        <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t("mediaTypes")}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           {selectedMedia.map((val, i) => (
             <select
@@ -407,7 +406,7 @@ export default function StyleBearClient() {
               className="h-11 rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-2 focus-visible:outline-ring"
               aria-label={`Media type ${i + 1}`}
             >
-              <option value="">— none —</option>
+              <option value="">{t("noneOption")}</option>
               {sortedMedia.map((m) => (
                 <option key={m.name} value={m.name}>
                   {m.name}
@@ -420,7 +419,7 @@ export default function StyleBearClient() {
 
       {/* Checkbox Options */}
       <section className="space-y-3">
-        <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Options</h2>
+        <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t("options")}</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {checkboxOptions.map((opt) => (
             <label key={opt.key} className="flex items-center gap-2 text-sm cursor-pointer min-h-[44px]">
@@ -443,7 +442,7 @@ export default function StyleBearClient() {
           className="text-xs text-accent hover:underline underline-offset-2 min-h-[44px] px-2"
           aria-expanded={showCultures}
         >
-          {showCultures ? "Hide Cultures" : "Show Cultures"}
+          {showCultures ? t("hideCultures") : t("showCultures")}
         </button>
 
         {showCultures && (
@@ -467,15 +466,15 @@ export default function StyleBearClient() {
       {/* Footer */}
       <section className="space-y-1">
         <label htmlFor="footer-input" className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-          Footer
+          {t("footerLabel")}
         </label>
         <textarea
           id="footer-input"
           ref={footerRef}
           rows={2}
-          placeholder="Text appended at the end of every prompt."
+          placeholder={t("footerPlaceholder")}
           className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm resize-y focus-visible:outline-2 focus-visible:outline-ring"
-          aria-label="Footer text"
+          aria-label={t("footerAriaLabel")}
         />
       </section>
 

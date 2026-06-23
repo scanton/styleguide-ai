@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { gsap } from "gsap";
 import { prefersReducedMotion as shouldReduceMotion } from "@/lib/motion";
 import { TAROT_CARDS, CARD_TYPE_COLORS, type TarotCard } from "@/data/styletarot/cards";
@@ -52,11 +53,12 @@ function CardBack() {
   );
 }
 
-function CardFace({ card, held, onClick, interactive }: {
+function CardFace({ card, held, onClick, interactive, heldLabel }: {
   card: TarotCard;
   held: boolean;
   onClick?: () => void;
   interactive?: boolean;
+  heldLabel: string;
 }) {
   const [imgError, setImgError] = useState(false);
   const typeColor = CARD_TYPE_COLORS[card.type] ?? "oklch(0.42 0.22 285)";
@@ -105,7 +107,7 @@ function CardFace({ card, held, onClick, interactive }: {
               className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full text-white shadow"
               style={{ backgroundColor: typeColor }}
             >
-              Held
+              {heldLabel}
             </span>
           </div>
         )}
@@ -135,9 +137,17 @@ const ALL_TYPES = Array.from(new Set(TAROT_CARDS.map((c) => c.type))).sort();
 function ExploreMode({
   selected,
   onToggle,
+  searchPlaceholder,
+  allTypesLabel,
+  noResultsLabel,
+  heldLabel,
 }: {
   selected: Set<number>;
   onToggle: (index: number) => void;
+  searchPlaceholder: string;
+  allTypesLabel: string;
+  noResultsLabel: string;
+  heldLabel: string;
 }) {
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<string>("all");
@@ -158,7 +168,7 @@ function ExploreMode({
       <div className="flex flex-col sm:flex-row gap-3">
         <input
           type="search"
-          placeholder="Search cards…"
+          placeholder={searchPlaceholder}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 rounded-full border border-black/15 bg-white px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
@@ -168,7 +178,7 @@ function ExploreMode({
           onChange={(e) => setFilterType(e.target.value)}
           className="rounded-full border border-black/15 bg-white px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
         >
-          <option value="all">All types</option>
+          <option value="all">{allTypesLabel}</option>
           {ALL_TYPES.map((t) => (
             <option key={t} value={t}>{typeLabel(t)}</option>
           ))}
@@ -192,13 +202,14 @@ function ExploreMode({
                     held={isSelected}
                     onClick={() => !isDisabled && onToggle(card.index)}
                     interactive={!isDisabled || isSelected}
+                    heldLabel={heldLabel}
                   />
                 </div>
               );
             })}
 
             {filtered.length === 0 && (
-              <p className="col-span-full text-center text-muted-foreground py-12">No cards match your search.</p>
+              <p className="col-span-full text-center text-muted-foreground py-12">{noResultsLabel}</p>
             )}
           </div>
         </div>
@@ -216,6 +227,7 @@ type DrawPhase = "start" | "dealt" | "drawn" | "locked";
 
 export function StyleTarotClient() {
   const { data: session } = useSession();
+  const t = useTranslations("styletarot");
 
   // Mode
   const [mode, setMode] = useState<GameMode>("draw");
@@ -409,7 +421,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
       prompt = data.content ?? data.text ?? data.choices?.[0]?.message?.content ?? null;
       setGeneratedPrompt(prompt);
     } catch {
-      setGeneratedPrompt("Failed to generate prompt. Please try again.");
+      setGeneratedPrompt(t("generatePrompt"));
     }
 
     // Save history
@@ -440,7 +452,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
     requestAnimationFrame(() => {
       promptRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     });
-  }, [getActiveCards, session, savedEntryId, preferredAspectRatio]);
+  }, [getActiveCards, session, savedEntryId, preferredAspectRatio, t]);
 
   const handleCopy = useCallback(() => {
     if (!generatedPrompt) return;
@@ -543,7 +555,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
               ].join(" ")}
               style={mode === m ? { backgroundColor: "oklch(0.42 0.22 285)" } : {}}
             >
-              {m === "draw" ? "Draw Mode" : "Explore Mode"}
+              {m === "draw" ? t("drawMode") : t("exploreMode")}
             </button>
           ))}
         </div>
@@ -556,15 +568,14 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
           {drawPhase === "start" && (
             <div className="flex flex-col items-center gap-6 py-8 text-center">
               <p className="text-muted-foreground max-w-sm">
-                Deal five cards at random. Hold the ones that inspire you, then redraw the
-                rest — once. Lock in your hand and generate your art prompt.
+                {t("drawDescription")}
               </p>
               <button
                 onClick={handleDeal}
                 className="px-8 py-4 rounded-full text-lg font-semibold text-white transition-transform hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                 style={{ backgroundColor: "oklch(0.42 0.22 285)" }}
               >
-                Deal Cards
+                {t("dealCards")}
               </button>
             </div>
           )}
@@ -576,22 +587,22 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
               {drawPhase === "dealt" && (
                 <p className="text-center text-sm text-muted-foreground mb-4">
                   <span className="font-semibold text-foreground/80">
-                    {redrawsLeft} redraw left
+                    {t("redraws", { n: redrawsLeft })}
                   </span>
                   {" · "}
-                  Click a card to hold it, then Redraw the rest.
+                  {t("holdInstruction")}
                 </p>
               )}
               {drawPhase === "drawn" && (
                 <p className="text-center text-sm text-muted-foreground mb-4">
-                  <span className="font-semibold text-foreground/80">Hand locked.</span>
-                  {" "}Generate your art prompt from these five cards.
+                  <span className="font-semibold text-foreground/80">{t("handLocked")}</span>
+                  {" "}{t("generateInstruction")}
                 </p>
               )}
               {drawPhase === "locked" && !generatedPrompt && (
                 <p className="text-center text-sm text-muted-foreground mb-4">
-                  <span className="font-semibold text-foreground/80">Hand locked.</span>
-                  {" "}Generate your art prompt from these five cards.
+                  <span className="font-semibold text-foreground/80">{t("handLocked")}</span>
+                  {" "}{t("generateInstruction")}
                 </p>
               )}
 
@@ -614,6 +625,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
                       held={held[i]}
                       onClick={() => handleToggleHold(i)}
                       interactive={drawPhase === "dealt"}
+                      heldLabel={t("lockHand")}
                     />
                   </div>
                 ))}
@@ -629,7 +641,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
                       className="px-6 py-3 rounded-full font-semibold text-white transition-transform hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2"
                       style={{ backgroundColor: "oklch(0.42 0.22 285)" }}
                     >
-                      Redraw ({redrawsLeft} left)
+                      {t("redraw", { n: redrawsLeft })}
                     </button>
                   )}
 
@@ -638,7 +650,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
                       onClick={handleLockHand}
                       className="px-6 py-3 rounded-full font-semibold border border-black/20 text-foreground/70 hover:text-foreground hover:border-black/40 transition-colors focus-visible:outline-none focus-visible:ring-2"
                     >
-                      Lock Hand
+                      {t("lockHand")}
                     </button>
                   )}
 
@@ -649,7 +661,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
                       className="px-6 py-3 rounded-full font-semibold text-white transition-transform hover:scale-105 active:scale-95 disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2"
                       style={{ backgroundColor: "oklch(0.60 0.14 195)" }}
                     >
-                      {generating ? "Generating…" : generatedPrompt ? "Re-generate" : "Generate Prompt"}
+                      {generating ? t("generating") : generatedPrompt ? t("regenerate") : t("generatePrompt")}
                     </button>
                   )}
 
@@ -657,7 +669,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
                     onClick={handleNewHand}
                     className="px-6 py-3 rounded-full font-semibold border border-black/20 text-foreground/60 hover:text-foreground hover:border-black/40 transition-colors focus-visible:outline-none focus-visible:ring-2"
                   >
-                    New Hand
+                    {t("newHand")}
                   </button>
                 </div>
               )}
@@ -671,9 +683,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              Select exactly{" "}
-              <span className="font-semibold text-foreground">{HAND_SIZE} cards</span>
-              {" "}to generate a prompt.
+              {t("selectCards", { n: HAND_SIZE })}
             </p>
             <span
               className="text-sm font-bold tabular-nums"
@@ -683,7 +693,14 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
             </span>
           </div>
 
-          <ExploreMode selected={exploreSelected} onToggle={handleExploreToggle} />
+          <ExploreMode
+            selected={exploreSelected}
+            onToggle={handleExploreToggle}
+            searchPlaceholder={t("searchPlaceholder")}
+            allTypesLabel={t("allTypes")}
+            noResultsLabel={t("noResults")}
+            heldLabel={t("lockHand")}
+          />
 
           {exploreSelected.size === HAND_SIZE && (
             <div className="flex flex-wrap justify-center gap-3 pt-2">
@@ -693,13 +710,13 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
                 className="px-6 py-3 rounded-full font-semibold text-white transition-transform hover:scale-105 active:scale-95 disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2"
                 style={{ backgroundColor: "oklch(0.60 0.14 195)" }}
               >
-                {generating ? "Generating…" : generatedPrompt ? "Re-generate" : "Generate Prompt"}
+                {generating ? t("generating") : generatedPrompt ? t("regenerate") : t("generatePrompt")}
               </button>
               <button
                 onClick={() => { setExploreSelected(new Set()); setGeneratedPrompt(null); }}
                 className="px-6 py-3 rounded-full font-semibold border border-black/20 text-foreground/60 hover:text-foreground hover:border-black/40 transition-colors focus-visible:outline-none focus-visible:ring-2"
               >
-                Clear Selection
+                {t("clearSelection")}
               </button>
             </div>
           )}
@@ -710,7 +727,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
       {mode === "explore" && exploreSelected.size > 0 && (
         <div className="space-y-2">
           <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground text-center">
-            Your Selection
+            {t("yourSelection")}
           </h2>
           <div className="grid grid-cols-5 gap-2">
             {Array.from(exploreSelected).map((idx) => {
@@ -723,6 +740,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
                     held={true}
                     onClick={() => handleExploreToggle(idx)}
                     interactive={true}
+                    heldLabel={t("lockHand")}
                   />
                 </div>
               );
@@ -742,14 +760,14 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
               className="text-xs font-bold uppercase tracking-wider"
               style={{ color: "oklch(0.42 0.22 285)" }}
             >
-              Generated Art Prompt
+              {t("generatedPrompt")}
             </span>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleCopy}
                 className="text-xs font-semibold px-3 py-1.5 rounded-full border border-black/10 hover:bg-black/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
               >
-                {copied ? "Copied!" : "Copy"}
+                {copied ? t("copied") : t("copy")}
               </button>
               <button
                 onClick={() => {
@@ -758,7 +776,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
                 }}
                 className="text-xs font-semibold px-3 py-1.5 rounded-full border border-[oklch(0.42_0.22_285)] text-[oklch(0.42_0.22_285)] hover:bg-purple-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
               >
-                Share to Rising ↗
+                {t("share")}
               </button>
             </div>
           </div>
@@ -766,7 +784,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
 
           {/* Cards used summary */}
           <div className="border-t border-black/5 pt-3 space-y-1">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Cards used</p>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("cardsUsed")}</p>
             <div className="flex flex-wrap gap-1.5">
               {activeCards.map((card) => {
                 const color = CARD_TYPE_COLORS[card.type] ?? "oklch(0.42 0.22 285)";
@@ -784,7 +802,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
           </div>
 
           {session?.user && (
-            <p className="text-[11px] text-foreground/40">Saved to your history.</p>
+            <p className="text-[11px] text-foreground/40">{t("savedToHistory")}</p>
           )}
         </div>
       )}

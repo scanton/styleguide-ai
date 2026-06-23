@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import gsap from "gsap";
 import type {
@@ -109,14 +110,24 @@ function MovementChip({
   );
 }
 
-function EnterGalleryButton({ href }: { href: string | null }) {
+function EnterGalleryButton({
+  href,
+  label,
+  comingSoonLabel,
+  artworkNote,
+}: {
+  href: string | null;
+  label: string;
+  comingSoonLabel: string;
+  artworkNote: string;
+}) {
   if (href) {
     return (
       <Link
         href={href}
         className="block w-full rounded-md bg-primary px-4 py-3 text-center text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 min-h-[44px]"
       >
-        Enter Gallery →
+        {label}
       </Link>
     );
   }
@@ -124,10 +135,10 @@ function EnterGalleryButton({ href }: { href: string | null }) {
     <button
       type="button"
       disabled
-      title="Artworks for this gallery are still being collected"
+      title={artworkNote}
       className="w-full rounded-md bg-primary/50 px-4 py-3 text-sm font-medium text-primary-foreground cursor-not-allowed min-h-[44px]"
     >
-      Enter Gallery — coming soon
+      {comingSoonLabel}
     </button>
   );
 }
@@ -142,6 +153,7 @@ export default function TimelineInfoCard({
   onClose,
   onSelect,
 }: TimelineInfoCardProps) {
+  const t = useTranslations("museum");
   const panelRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const [showPromptModal, setShowPromptModal] = useState(false);
@@ -278,7 +290,7 @@ export default function TimelineInfoCard({
                 )}
                 {event && (
                   <>
-                    {formatYear(event.year)} · World event
+                    {formatYear(event.year)} · {t("worldEvent")}
                   </>
                 )}
               </p>
@@ -286,7 +298,7 @@ export default function TimelineInfoCard({
             <button
               type="button"
               onClick={animateClose}
-              aria-label="Close info card"
+              aria-label={t("closeCard")}
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground hover:bg-muted transition-colors"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -333,7 +345,7 @@ export default function TimelineInfoCard({
           {artist && artist.movements.length > 0 && (
             <div className="space-y-2">
               <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Movements
+                {t("movementsLabel")}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {artist.movements.map((mid) => {
@@ -355,7 +367,7 @@ export default function TimelineInfoCard({
           {artist && artistBonds.length > 0 && (
             <div className="space-y-2">
               <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Connections
+                {t("connectionsLabel")}
               </h3>
               <ul className="space-y-2">
                 {artistBonds.map((bond) => (
@@ -377,7 +389,7 @@ export default function TimelineInfoCard({
           {artist && relatedArticles.length > 0 && (
             <div className="space-y-2">
               <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Related Articles
+                {t("relatedArticles")}
               </h3>
               <ul className="space-y-1">
                 {relatedArticles.map((a) => (
@@ -400,7 +412,7 @@ export default function TimelineInfoCard({
           {movement && movement.keyArtists.length > 0 && (
             <div className="space-y-2">
               <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Key Artists
+                {t("keyArtists")}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {movement.keyArtists.map((aid) => {
@@ -424,7 +436,7 @@ export default function TimelineInfoCard({
               {movement.influencedBy.length > 0 && (
                 <div className="space-y-2">
                   <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                    Grew from
+                    {t("grewFrom")}
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {movement.influencedBy.map((mid) => {
@@ -444,7 +456,7 @@ export default function TimelineInfoCard({
               {movement.influences.length > 0 && (
                 <div className="space-y-2">
                   <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                    Paved the way for
+                    {t("pavedWayFor")}
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {movement.influences.map((mid) => {
@@ -468,7 +480,7 @@ export default function TimelineInfoCard({
           {movement && relatedArticles.length > 0 && (
             <div className="space-y-2">
               <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Related Articles
+                {t("relatedArticles")}
               </h3>
               <ul className="space-y-1">
                 {relatedArticles.map((a) => (
@@ -491,7 +503,7 @@ export default function TimelineInfoCard({
           {event && event.influencedMovements.length > 0 && (
             <div className="space-y-2">
               <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Shaped these movements
+                {t("shapedMovements")}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {event.influencedMovements.map((mid) => {
@@ -514,6 +526,9 @@ export default function TimelineInfoCard({
             {!event && (
               <EnterGalleryButton
                 href={`/museum/gallery/${selection.type}/${selection.id}`}
+                label={t("enterGallery")}
+                comingSoonLabel={t("enterGalleryComingSoon")}
+                artworkNote={t("enterGalleryArtworkNote")}
               />
             )}
             {(artist || movement) && (
@@ -522,7 +537,7 @@ export default function TimelineInfoCard({
                 onClick={() => setShowPromptModal(true)}
                 className="block w-full rounded-md bg-primary/10 border border-primary/30 px-4 py-3 text-center text-sm text-primary font-medium hover:bg-primary/20 transition-colors min-h-[44px]"
               >
-                Generate Prompt with StyleBear
+                {t("generatePrompt")}
               </button>
             )}
             {(artist?.wikipediaUrl ?? movement?.wikipediaUrl) && (
@@ -532,7 +547,7 @@ export default function TimelineInfoCard({
                 rel="noopener noreferrer"
                 className="block w-full rounded-md border border-border px-4 py-3 text-center text-sm text-foreground hover:bg-muted transition-colors min-h-[44px]"
               >
-                Read on Wikipedia ↗
+                {t("readWikipedia")}
               </a>
             )}
           </div>

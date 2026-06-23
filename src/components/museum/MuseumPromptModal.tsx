@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
 import { ShareToRisingModal } from "@/components/rising/ShareToRisingModal";
 import { SignInPromptModal } from "@/components/rising/SignInPromptModal";
@@ -13,6 +14,7 @@ interface MuseumPromptModalProps {
 }
 
 export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModalProps) {
+  const t = useTranslations("museum");
   const { data: session } = useSession();
   const [sceneDetails, setSceneDetails] = useState("");
   const [prompt, setPrompt] = useState<string | null>(null);
@@ -89,7 +91,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
         } catch {}
       }
     } catch {
-      setPrompt("Generation failed. Please try again.");
+      setPrompt(t("promptError"));
     } finally {
       setGenerating(false);
     }
@@ -131,7 +133,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
               id="museum-prompt-modal-title"
               className="font-heading text-xl text-primary"
             >
-              Generate Prompt with StyleBear
+              {t("promptModalTitle")}
             </h2>
             <p className="text-sm text-muted-foreground mt-0.5">
               {typeLabel}: <span className="font-medium text-foreground">{name}</span>
@@ -140,7 +142,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close modal"
+            aria-label={t("closeCard")}
             className="flex-shrink-0 h-9 w-9 flex items-center justify-center rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
           >
             ✕
@@ -153,7 +155,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
             htmlFor="scene-details"
             className="text-xs font-medium text-muted-foreground uppercase tracking-wide"
           >
-            Scene Details <span className="normal-case font-normal">(optional)</span>
+            {t("promptSceneLabel")} <span className="normal-case font-normal">{t("promptSceneOptional")}</span>
           </label>
           <textarea
             id="scene-details"
@@ -172,7 +174,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
           disabled={generating}
           className="w-full h-11 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
         >
-          {generating ? "Generating…" : "Generate Prompt"}
+          {generating ? t("promptGenerating") : t("generatePrompt")}
         </button>
 
         {/* Output */}
@@ -187,7 +189,7 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
                 onClick={handleCopy}
                 className="flex-1 h-10 rounded-lg border border-border bg-secondary text-secondary-foreground text-sm hover:bg-muted transition-colors"
               >
-                {copied ? "Copied!" : "Copy Prompt"}
+                {copied ? t("promptCopied") : t("promptCopy")}
               </button>
               <button
                 type="button"
@@ -197,12 +199,12 @@ export function MuseumPromptModal({ type, id, name, onClose }: MuseumPromptModal
                 }}
                 className="flex-1 h-10 rounded-lg border border-primary text-primary text-sm hover:bg-primary/10 transition-colors"
               >
-                Share to Rising ↗
+                {t("promptShare")}
               </button>
             </div>
             {session?.user && (
               <p className="text-xs text-muted-foreground text-center">
-                Saved to your Museum history.
+                {t("promptSaved")}
               </p>
             )}
           </div>

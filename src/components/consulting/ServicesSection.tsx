@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { prefersReducedMotion } from "@/lib/motion";
@@ -9,50 +10,33 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const SERVICES = [
-  {
-    number: "01",
-    title: "Art Model Training",
-    audience: "Artists, studios, and product teams",
-    description:
-      "LoRA fine-tuning for custom image generation models — whether you want to replicate a consistent visual style, train a character or product model, or build proprietary image generation capability. I handle dataset preparation, training pipeline setup, and quality evaluation.",
-    bullets: [
-      "LoRA / SDXL / Flux fine-tuning",
-      "Dataset curation and captioning",
-      "Style replication and character consistency",
-      "Training pipeline setup and documentation",
-    ],
-  },
-  {
-    number: "02",
-    title: "Art Direction & Style Consulting",
-    audience: "Product teams and creative directors",
-    description:
-      "Deep knowledge of art history applied to GenAI art projects. I bridge the gap between \"make it look painterly\" and knowing exactly which movement, palette, and technique achieves the desired aesthetic. Clients include product teams building AI art features who need an expert eye.",
-    bullets: [
-      "Movement and period identification",
-      "Style prompt development and refinement",
-      "Aesthetic direction for AI art pipelines",
-      "Art history research and documentation",
-    ],
-  },
-  {
-    number: "03",
-    title: "AI Agent Design & GenAI Systems",
-    audience: "Companies building AI-powered products",
-    description:
-      "Designing and building AI-powered systems that produce generative AI outputs — end-to-end agentic workflows, multi-step prompt pipelines, tool-calling systems, and LLM integrations. I understand both the technical architecture and the creative output requirements.",
-    bullets: [
-      "Agentic workflow design and implementation",
-      "Multi-model LLM pipeline architecture",
-      "GenAI product strategy",
-      "API integration and system design",
-    ],
-  },
-];
-
 export function ServicesSection() {
+  const t = useTranslations("consulting");
   const sectionRef = useRef<HTMLElement>(null);
+
+  const SERVICES = [
+    {
+      number: "01",
+      title: t("service1Title"),
+      audience: t("service1Audience"),
+      description: t("service1Desc"),
+      bullets: [t("service1Point1"), t("service1Point2"), t("service1Point3"), t("service1Point4")],
+    },
+    {
+      number: "02",
+      title: t("service2Title"),
+      audience: t("service2Audience"),
+      description: t("service2Desc"),
+      bullets: [t("service2Point1"), t("service2Point2"), t("service2Point3"), t("service2Point4")],
+    },
+    {
+      number: "03",
+      title: t("service3Title"),
+      audience: t("service3Audience"),
+      description: t("service3Desc"),
+      bullets: [t("service3Point1"), t("service3Point2"), t("service3Point3"), t("service3Point4")],
+    },
+  ];
 
   useEffect(() => {
     if (prefersReducedMotion() || !sectionRef.current) return;
@@ -83,10 +67,10 @@ export function ServicesSection() {
           id="services-heading"
           className="font-heading text-3xl font-bold sm:text-4xl"
         >
-          Services
+          {t("servicesHeading")}
         </h2>
         <p className="text-muted-foreground max-w-lg">
-          Three core practice areas, each grounded in both technical depth and creative expertise.
+          {t("servicesSubheading")}
         </p>
       </div>
 

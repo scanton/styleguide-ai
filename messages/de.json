@@ -19,12 +19,12 @@
   },
   "nav": {
     "homeAriaLabel": "StyleGuideAI — Startseite",
-    "rising": "Rising",
-    "museum": "Virtual Museum",
+    "rising": "Im Trend",
+    "museum": "Virtuelles Museum",
     "articles": "Artikel",
     "styletarot": "StyleTarot",
     "stylebear": "StyleBear",
-    "consulting": "Consulting",
+    "consulting": "Beratung",
     "mainNav": "Hauptnavigation",
     "mobileNav": "Mobile Navigation",
     "openMenu": "Menü öffnen",
@@ -39,14 +39,14 @@
     "signOut": "Abmelden"
   },
   "search": {
-    "dialogTitle": "Suche StyleGuideAI",
-    "placeholder": "Künstler, Bewegungen und Artikel…",
-    "searching": "Durchsucht…",
+    "dialogTitle": "StyleGuideAI durchsuchen",
+    "placeholder": "Künstler, Bewegungen, Artikel suchen…",
+    "searching": "Suche…",
     "noResults": "Keine Ergebnisse für \"{query}\"",
     "resultsGroup": "Ergebnisse",
-    "startTyping": "Um Künstler, Bewegungen und Artikel zu durchsuchen, tippen Sie ein.",
-    "buttonAriaLabel": "Suche (Ctrl+K)",
-    "buttonText": "Suche",
+    "startTyping": "Tippe, um Künstler, Kunstbewegungen und Artikel zu suchen.",
+    "buttonAriaLabel": "Suchen (Ctrl+K)",
+    "buttonText": "Suchen",
     "typeArtist": "Künstler",
     "typeMovement": "Bewegung",
     "typeArticle": "Artikel",
@@ -111,7 +111,13 @@
     "consultingService2Title": "Kunstleitung",
     "consultingService2Desc": "Strategische kreative Leitung für KI‑generierte visuelle Inhalte.",
     "consultingService3Title": "KI‑Agent‑Design",
-    "consultingService3Desc": "Maßgeschneiderte agentische KI‑Systeme für kreative Workflows und Automatisierung."
+    "consultingService3Desc": "Maßgeschneiderte agentische KI‑Systeme für kreative Workflows und Automatisierung.",
+    "risingHeading": "Jetzt im Trend",
+    "risingSubheading": "Community-Galerie",
+    "risingTopOfWeek": "Top der Woche",
+    "risingTopOfWeekSub": "Community-Favoriten",
+    "risingSeeAll": "Alle anzeigen",
+    "risingViewGallery": "Galerie ansehen"
   },
   "about": {
     "metaTitle": "Über StyleGuideAI",
@@ -297,7 +303,9 @@
     "noArticles": "Keine Artikel gefunden.",
     "emptyState": "Noch keine Artikel — schaut später nochmal vorbei!",
     "readOnMedium": "Lies auf Medium ↗",
-    "paginationLabel": "Artikel"
+    "paginationLabel": "Artikel",
+    "clearSearch": "Suche löschen",
+    "search": "Suchen"
   },
   "themes": {
     "metaTitle": "Community-Themen & Veranstaltungen",
@@ -339,7 +347,12 @@
     "promptShare": "Auf Rising teilen ↗",
     "promptSaved": "Gespeichert in deinem Museum-Verlauf",
     "promptError": "Die Generierung ist fehlgeschlagen. Bitte versuche es erneut.",
-    "contentInEnglish": "Der Museum-Inhalt ist derzeit nur auf Englisch verfügbar."
+    "contentInEnglish": "Der Museum-Inhalt ist derzeit nur auf Englisch verfügbar.",
+    "closeCard": "Schließen",
+    "worldEvent": "Weltereignis",
+    "timelineAriaLabel": "Kunstgeschichte-Zeitleiste — horizontal scrollen, um durch die Zeit zu reisen",
+    "jumpToEra": "Zu Ära springen",
+    "yearAtCenter": "Jahr in der Mitte der Ansicht"
   },
   "account": {
     "historyMetaTitle": "Meine Geschichte",

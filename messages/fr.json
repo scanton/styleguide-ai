@@ -19,12 +19,12 @@
   },
   "nav": {
     "homeAriaLabel": "StyleGuideAI — home",
-    "rising": "Rising",
-    "museum": "Virtual Museum",
+    "rising": "Tendances",
+    "museum": "Musée Virtuel",
     "articles": "Articles",
     "styletarot": "StyleTarot",
     "stylebear": "StyleBear",
-    "consulting": "Consulting",
+    "consulting": "Conseil",
     "mainNav": "Navigation principale",
     "mobileNav": "Navigation mobile",
     "openMenu": "Ouvrir le menu",
@@ -39,18 +39,18 @@
     "signOut": "Se déconnecter"
   },
   "search": {
-    "dialogTitle": "Search StyleGuideAI",
-    "placeholder": "Search artists, movements, articles…",
-    "searching": "Searching…",
-    "noResults": "No results for \"{query}\"",
-    "resultsGroup": "Results",
-    "startTyping": "Start typing to search artists, art movements, and articles.",
-    "buttonAriaLabel": "Search (Ctrl+K)",
-    "buttonText": "Search",
-    "typeArtist": "Artist",
-    "typeMovement": "Movement",
+    "dialogTitle": "Rechercher dans StyleGuideAI",
+    "placeholder": "Rechercher artistes, mouvements, articles…",
+    "searching": "Recherche…",
+    "noResults": "Aucun résultat pour « {query} »",
+    "resultsGroup": "Résultats",
+    "startTyping": "Commencez à taper pour rechercher des artistes, mouvements artistiques et articles.",
+    "buttonAriaLabel": "Rechercher (Ctrl+K)",
+    "buttonText": "Rechercher",
+    "typeArtist": "Artiste",
+    "typeMovement": "Mouvement",
     "typeArticle": "Article",
-    "typeTheme": "Theme"
+    "typeTheme": "Thème"
   },
   "footer": {
     "tagline": "Une communauté de plus de 1 000 membres pour les artistes et amateurs d'art IA.",
@@ -111,7 +111,13 @@
     "consultingService2Title": "Direction artistique",
     "consultingService2Desc": "Direction créative stratégique pour du contenu visuel généré par l'IA.",
     "consultingService3Title": "Conception d'agents IA",
-    "consultingService3Desc": "Systèmes agentiques d'IA sur mesure pour les flux créatifs et l'automatisation."
+    "consultingService3Desc": "Systèmes agentiques d'IA sur mesure pour les flux créatifs et l'automatisation.",
+    "risingHeading": "En ce moment",
+    "risingSubheading": "Galerie Communautaire",
+    "risingTopOfWeek": "Top de la semaine",
+    "risingTopOfWeekSub": "Favoris de la communauté",
+    "risingSeeAll": "Tout voir",
+    "risingViewGallery": "Voir la galerie"
   },
   "about": {
     "metaTitle": "About StyleGuideAI",
@@ -297,7 +303,9 @@
     "noArticles": "Aucun article trouvé.",
     "emptyState": "Pas encore d'articles — revenez bientôt !",
     "readOnMedium": "Lire sur Medium ↗",
-    "paginationLabel": "Pages d'articles"
+    "paginationLabel": "Pages d'articles",
+    "clearSearch": "Effacer la recherche",
+    "search": "Rechercher"
   },
   "themes": {
     "metaTitle": "Thèmes et événements communautaires",
@@ -339,7 +347,12 @@
     "promptShare": "Partager vers Rising ↗",
     "promptSaved": "Enregistré dans l'historique de votre Musée.",
     "promptError": "La génération a échoué. Veuillez réessayer.",
-    "contentInEnglish": "Le contenu du Musée est actuellement disponible uniquement en anglais."
+    "contentInEnglish": "Le contenu du Musée est actuellement disponible uniquement en anglais.",
+    "closeCard": "Fermer",
+    "worldEvent": "Événement mondial",
+    "timelineAriaLabel": "Frise chronologique de l'histoire de l'art — faites défiler horizontalement pour voyager dans le temps",
+    "jumpToEra": "Aller à l'ère",
+    "yearAtCenter": "Année au centre de la vue"
   },
   "account": {
     "historyMetaTitle": "Mon historique",

@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { db } from "@/lib/db";
 import { risingPosts } from "@/drizzle/schema";
 import { gt, lt, and, sql, eq } from "drizzle-orm";
@@ -109,7 +110,11 @@ function ImageStrip({
 }
 
 export async function RisingWidget() {
-  const [rising, topOfWeek] = await Promise.all([getTopRising(), getTopOfWeek()]);
+  const [rising, topOfWeek, t] = await Promise.all([
+    getTopRising(),
+    getTopOfWeek(),
+    getTranslations("home"),
+  ]);
 
   if (!rising.length && !topOfWeek.length) return null;
 
@@ -119,19 +124,19 @@ export async function RisingWidget() {
         {rising.length > 0 && (
           <ImageStrip
             posts={rising}
-            heading="Rising Right Now"
-            subheading="Community Gallery"
+            heading={t("risingHeading")}
+            subheading={t("risingSubheading")}
             linkHref="/rising"
-            linkLabel="See all"
+            linkLabel={t("risingSeeAll")}
           />
         )}
         {topOfWeek.length > 0 && (
           <ImageStrip
             posts={topOfWeek}
-            heading="Top of the Week"
-            subheading="Community Favorites"
+            heading={t("risingTopOfWeek")}
+            subheading={t("risingTopOfWeekSub")}
             linkHref="/rising"
-            linkLabel="View gallery"
+            linkLabel={t("risingViewGallery")}
           />
         )}
       </div>

@@ -19,8 +19,8 @@
   },
   "nav": {
     "homeAriaLabel": "StyleGuideAI — Home",
-    "rising": "Rising",
-    "museum": "Virtual Museum",
+    "rising": "In Ascesa",
+    "museum": "Museo Virtuale",
     "articles": "Articoli",
     "styletarot": "StyleTarot",
     "stylebear": "StyleBear",
@@ -39,12 +39,12 @@
     "signOut": "Esci"
   },
   "search": {
-    "dialogTitle": "Cerca StyleGuideAI",
+    "dialogTitle": "Cerca in StyleGuideAI",
     "placeholder": "Cerca artisti, movimenti, articoli…",
-    "searching": "Ricerca in corso…",
+    "searching": "Ricerca…",
     "noResults": "Nessun risultato per \"{query}\"",
     "resultsGroup": "Risultati",
-    "startTyping": "Inizia a digitare per cercare artisti, movimenti e articoli.",
+    "startTyping": "Inizia a digitare per cercare artisti, movimenti artistici e articoli.",
     "buttonAriaLabel": "Cerca (Ctrl+K)",
     "buttonText": "Cerca",
     "typeArtist": "Artista",
@@ -111,7 +111,13 @@
     "consultingService2Title": "Direzione Artistica",
     "consultingService2Desc": "Direzione creativa strategica per contenuti visivi generati da AI.",
     "consultingService3Title": "Design di Agenti AI",
-    "consultingService3Desc": "Sistemi agenti AI personalizzati per flussi di lavoro creativi e automazione."
+    "consultingService3Desc": "Sistemi agenti AI personalizzati per flussi di lavoro creativi e automazione.",
+    "risingHeading": "In Tendenza",
+    "risingSubheading": "Galleria della Comunità",
+    "risingTopOfWeek": "Top della Settimana",
+    "risingTopOfWeekSub": "Preferiti della Comunità",
+    "risingSeeAll": "Vedi tutto",
+    "risingViewGallery": "Vedi galleria"
   },
   "about": {
     "metaTitle": "Informazioni su StyleGuideAI",
@@ -297,7 +303,9 @@
     "noArticles": "Nessun articolo trovato.",
     "emptyState": "Nessun articolo ancora — torna a controllare presto!",
     "readOnMedium": "Leggi su Medium ↗",
-    "paginationLabel": "Pagine degli articoli"
+    "paginationLabel": "Pagine degli articoli",
+    "clearSearch": "Cancella ricerca",
+    "search": "Cerca"
   },
   "themes": {
     "metaTitle": "Temi ed eventi della community",
@@ -339,7 +347,12 @@
     "promptShare": "Condividi su Rising ↗",
     "promptSaved": "Salvato nella tua cronologia del Museo.",
     "promptError": "Generazione fallita. Riprova.",
-    "contentInEnglish": "I contenuti del Museo sono attualmente disponibili solo in inglese."
+    "contentInEnglish": "I contenuti del Museo sono attualmente disponibili solo in inglese.",
+    "closeCard": "Chiudi",
+    "worldEvent": "Evento mondiale",
+    "timelineAriaLabel": "Cronologia della storia dell'arte — scorrere orizzontalmente per viaggiare nel tempo",
+    "jumpToEra": "Vai all'era",
+    "yearAtCenter": "Anno al centro della vista"
   },
   "account": {
     "historyMetaTitle": "La mia cronologia",

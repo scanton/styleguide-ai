@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 
@@ -37,8 +38,6 @@ function formatDate(iso: string | null) {
   });
 }
 
-// Returns page numbers and "…" sentinels to render.
-// Always shows first + last; shows current ±2; ellipsis fills gaps > 1.
 function getPaginationItems(current: number, total: number): (number | "…")[] {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
 
@@ -58,6 +57,8 @@ function getPaginationItems(current: number, total: number): (number | "…")[] 
 const PAGE_SIZE = 24;
 
 export function ArticlesClient({ initialQ, initialPage, initialTotal }: Props) {
+  const t = useTranslations("articles");
+  const ta = useTranslations("account");
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -117,22 +118,22 @@ export function ArticlesClient({ initialQ, initialPage, initialTotal }: Props) {
           type="search"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Search articles…"
+          placeholder={t("searchPlaceholder")}
           className="flex-1 h-11 rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-2 focus-visible:outline-ring"
-          aria-label="Search articles"
+          aria-label={t("searchPlaceholder")}
         />
         <button
           type="submit"
           className="h-11 px-4 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
         >
-          Search
+          {t("search")}
         </button>
         {query && (
           <button
             type="button"
             onClick={() => { setInputValue(""); setQuery(""); setPage(1); pushUrl("", 1); }}
             className="h-11 px-3 rounded-md border border-border text-sm text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Clear search"
+            aria-label={t("clearSearch")}
           >
             ✕
           </button>
@@ -143,7 +144,7 @@ export function ArticlesClient({ initialQ, initialPage, initialTotal }: Props) {
       {!loading && data && (
         <p className="text-sm text-muted-foreground">
           {data.total === 0
-            ? "No articles found."
+            ? t("noArticles")
             : `${data.total} article${data.total === 1 ? "" : "s"}${query ? ` matching "${query}"` : ""}`}
         </p>
       )}
@@ -158,7 +159,7 @@ export function ArticlesClient({ initialQ, initialPage, initialTotal }: Props) {
       ) : data?.articles.length === 0 ? (
         <div className="py-16 text-center text-muted-foreground">
           <p className="text-4xl mb-3" aria-hidden="true">📚</p>
-          <p>No articles yet — check back soon!</p>
+          <p>{t("emptyState")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -169,7 +170,6 @@ export function ArticlesClient({ initialQ, initialPage, initialTotal }: Props) {
               target="_blank"
               rel="noopener noreferrer"
               className="group rounded-xl border border-border bg-card overflow-hidden flex flex-col hover:border-primary/40 hover:shadow-md transition-all focus-visible:outline-2 focus-visible:outline-ring"
-              aria-label={`Read "${article.title}" on Medium`}
             >
               {/* Thumbnail */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -221,7 +221,7 @@ export function ArticlesClient({ initialQ, initialPage, initialTotal }: Props) {
                     {formatDate(article.publishedAt)}
                   </time>
                   <span className="text-xs font-medium text-primary">
-                    Read on Medium ↗
+                    {t("readOnMedium")}
                   </span>
                 </div>
               </div>
@@ -233,20 +233,18 @@ export function ArticlesClient({ initialQ, initialPage, initialTotal }: Props) {
       {/* Pagination */}
       {totalPages > 1 && (
         <nav
-          aria-label="Article pages"
+          aria-label={t("paginationLabel")}
           className="flex items-center justify-center gap-1 pt-4 flex-wrap"
         >
-          {/* Prev */}
           <button
             onClick={() => goToPage(page - 1)}
             disabled={page === 1}
             className="h-10 px-3 rounded-md border border-border text-sm font-medium disabled:opacity-40 hover:bg-muted transition-colors"
-            aria-label="Previous page"
+            aria-label={ta("prevPage")}
           >
             ←
           </button>
 
-          {/* Numbered pages */}
           {paginationItems.map((item, i) =>
             item === "…" ? (
               <span key={`ellipsis-${i}`} className="h-10 w-10 flex items-center justify-center text-sm text-muted-foreground select-none">
@@ -257,7 +255,7 @@ export function ArticlesClient({ initialQ, initialPage, initialTotal }: Props) {
                 key={item}
                 onClick={() => goToPage(item)}
                 aria-current={item === page ? "page" : undefined}
-                aria-label={`Page ${item}`}
+                aria-label={`${item}`}
                 className={`h-10 w-10 rounded-md text-sm font-medium transition-colors ${
                   item === page
                     ? "bg-primary text-primary-foreground"
@@ -269,12 +267,11 @@ export function ArticlesClient({ initialQ, initialPage, initialTotal }: Props) {
             )
           )}
 
-          {/* Next */}
           <button
             onClick={() => goToPage(page + 1)}
             disabled={page === totalPages}
             className="h-10 px-3 rounded-md border border-border text-sm font-medium disabled:opacity-40 hover:bg-muted transition-colors"
-            aria-label="Next page"
+            aria-label={ta("nextPage")}
           >
             →
           </button>

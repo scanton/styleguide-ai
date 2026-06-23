@@ -19,8 +19,8 @@
   },
   "nav": {
     "homeAriaLabel": "StyleGuideAI — 首页",
-    "rising": "Rising",
-    "museum": "Virtual Museum",
+    "rising": "上升榜",
+    "museum": "虚拟博物馆",
     "articles": "文章",
     "styletarot": "StyleTarot",
     "stylebear": "StyleBear",
@@ -39,18 +39,18 @@
     "signOut": "退出"
   },
   "search": {
-    "dialogTitle": "Search StyleGuideAI",
-    "placeholder": "Search artists, movements, articles…",
-    "searching": "Searching…",
-    "noResults": "No results for \"{query}\"",
-    "resultsGroup": "Results",
-    "startTyping": "Start typing to search artists, art movements, and articles.",
-    "buttonAriaLabel": "Search (Ctrl+K)",
-    "buttonText": "Search",
-    "typeArtist": "Artist",
-    "typeMovement": "Movement",
-    "typeArticle": "Article",
-    "typeTheme": "Theme"
+    "dialogTitle": "搜索 StyleGuideAI",
+    "placeholder": "搜索艺术家、流派、文章…",
+    "searching": "搜索中…",
+    "noResults": "未找到\"{query}\"的结果",
+    "resultsGroup": "结果",
+    "startTyping": "开始输入以搜索艺术家、艺术流派和文章。",
+    "buttonAriaLabel": "搜索 (Ctrl+K)",
+    "buttonText": "搜索",
+    "typeArtist": "艺术家",
+    "typeMovement": "流派",
+    "typeArticle": "文章",
+    "typeTheme": "主题"
   },
   "footer": {
     "tagline": "A 1,000+ member community for AI artists and art enthusiasts.",
@@ -111,7 +111,13 @@
     "consultingService2Title": "艺术指导",
     "consultingService2Desc": "为 AI 生成的视觉内容提供战略性创意指导。",
     "consultingService3Title": "AI 代理设计",
-    "consultingService3Desc": "为创意工作流和自动化打造定制的代理 AI 系统。"
+    "consultingService3Desc": "为创意工作流和自动化打造定制的代理 AI 系统。",
+    "risingHeading": "急上昇热榜",
+    "risingSubheading": "社区画廊",
+    "risingTopOfWeek": "本周精选",
+    "risingTopOfWeekSub": "社区收藏",
+    "risingSeeAll": "查看全部",
+    "risingViewGallery": "查看画廊"
   },
   "about": {
     "metaTitle": "关于StyleGuideAI",
@@ -296,7 +302,9 @@
     "noArticles": "No articles found.",
     "emptyState": "No articles yet — check back soon!",
     "readOnMedium": "Read on Medium ↗",
-    "paginationLabel": "Article pages"
+    "paginationLabel": "Article pages",
+    "clearSearch": "清除搜索",
+    "search": "搜索"
   },
   "themes": {
     "metaTitle": "Community Themes & Events",
@@ -338,7 +346,12 @@
     "promptShare": "分享到 Rising ↗",
     "promptSaved": "已保存至您的博物馆历史记录。",
     "promptError": "生成失败，请重试。",
-    "contentInEnglish": "博物馆内容目前仅提供英文版。"
+    "contentInEnglish": "博物馆内容目前仅提供英文版。",
+    "closeCard": "关闭",
+    "worldEvent": "世界大事",
+    "timelineAriaLabel": "艺术史时间线 — 横向滚动穿越历史",
+    "jumpToEra": "跳转到时代",
+    "yearAtCenter": "视图中心年份"
   },
   "account": {
     "historyMetaTitle": "我的历史",

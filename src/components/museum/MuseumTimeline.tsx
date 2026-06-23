@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useTranslations } from "next-intl";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import type {
@@ -143,6 +144,7 @@ export default function MuseumTimeline({
   connections,
   galleryKeys,
 }: MuseumTimelineProps) {
+  const t = useTranslations("museum");
   const scrollRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const scrollTarget = useRef(0);
@@ -480,7 +482,7 @@ export default function MuseumTimeline({
       {/* Era mini-map + toggles + year readout */}
       <div className="flex flex-col gap-2 px-4 md:px-8">
         <nav
-          aria-label="Jump to era"
+          aria-label={t("jumpToEra")}
           className="flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {ERAS.map((era) => (
@@ -525,7 +527,7 @@ export default function MuseumTimeline({
             Artist bonds
           </button>
           <output
-            aria-label="Year at center of view"
+            aria-label={t("yearAtCenter")}
             className="ml-auto shrink-0 rounded-md border border-border bg-card px-3 py-1.5 font-heading text-base tabular-nums text-primary sm:text-lg"
           >
             {formatYear(centerYear)}
@@ -537,7 +539,7 @@ export default function MuseumTimeline({
       <div
         ref={scrollRef}
         role="region"
-        aria-label="Art history timeline — scroll horizontally to travel through time"
+        aria-label={t("timelineAriaLabel")}
         tabIndex={0}
         onKeyDown={onKeyDown}
         className="relative w-full overflow-x-auto overflow-y-hidden overscroll-x-contain border-y border-border bg-gradient-to-b from-card via-background to-card [scrollbar-width:thin]"

@@ -1,24 +1,26 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import type { RisingPost, RisingSource } from "@/app/api/rising/posts/route";
 import { MasonryGrid } from "./MasonryGrid";
 import { RisingDetailModal } from "./RisingDetailModal";
 
 type TabKey = "all" | RisingSource | "tools";
 
-const TABS: { key: TabKey; label: string }[] = [
-  { key: "all", label: "Rising" },
-  { key: "deviantart", label: "DeviantArt" },
-  { key: "discord", label: "Discord" },
-  { key: "site", label: "Site Uploads" },
-  { key: "tools", label: "From Our Tools" },
-];
-
 export function RisingGallery() {
+  const t = useTranslations("rising");
   const [activeTab, setActiveTab] = useState<TabKey>("all");
   const [posts, setPosts] = useState<RisingPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPost, setSelectedPost] = useState<RisingPost | null>(null);
+
+  const TABS: { key: TabKey; label: string }[] = [
+    { key: "all",        label: t("tabRising") },
+    { key: "deviantart", label: "DeviantArt" },
+    { key: "discord",    label: "Discord" },
+    { key: "site",       label: t("tabSiteUploads") },
+    { key: "tools",      label: t("tabFromTools") },
+  ];
 
   const fetchPosts = useCallback(async (tab: TabKey) => {
     setLoading(true);

@@ -19,8 +19,8 @@
   },
   "nav": {
     "homeAriaLabel": "StyleGuideAI — inicio",
-    "rising": "Rising",
-    "museum": "Virtual Museum",
+    "rising": "Tendencias",
+    "museum": "Museo Virtual",
     "articles": "Artículos",
     "styletarot": "StyleTarot",
     "stylebear": "StyleBear",
@@ -42,7 +42,7 @@
     "dialogTitle": "Buscar en StyleGuideAI",
     "placeholder": "Buscar artistas, movimientos, artículos…",
     "searching": "Buscando…",
-    "noResults": "No se encontraron resultados para \"{query}\"",
+    "noResults": "Sin resultados para \"{query}\"",
     "resultsGroup": "Resultados",
     "startTyping": "Empieza a escribir para buscar artistas, movimientos artísticos y artículos.",
     "buttonAriaLabel": "Buscar (Ctrl+K)",
@@ -111,7 +111,13 @@
     "consultingService2Title": "Dirección artística",
     "consultingService2Desc": "Dirección creativa estratégica para contenido visual generado con inteligencia artificial.",
     "consultingService3Title": "Diseño de agentes de inteligencia artificial",
-    "consultingService3Desc": "Sistemas autónomos de inteligencia artificial personalizados para flujos de trabajo creativos y automatización."
+    "consultingService3Desc": "Sistemas autónomos de inteligencia artificial personalizados para flujos de trabajo creativos y automatización.",
+    "risingHeading": "En Tendencia",
+    "risingSubheading": "Galería de la Comunidad",
+    "risingTopOfWeek": "Lo mejor de la semana",
+    "risingTopOfWeekSub": "Favoritos de la Comunidad",
+    "risingSeeAll": "Ver todo",
+    "risingViewGallery": "Ver galería"
   },
   "about": {
     "metaTitle": "Acerca de StyleGuideAI",
@@ -296,7 +302,9 @@
     "noArticles": "No se encontraron artículos.",
     "emptyState": "Aún no hay artículos — ¡vuelve pronto!",
     "readOnMedium": "Leer en Medium ↗",
-    "paginationLabel": "Páginas de artículo"
+    "paginationLabel": "Páginas de artículo",
+    "clearSearch": "Borrar búsqueda",
+    "search": "Buscar"
   },
   "themes": {
     "metaTitle": "Temas y eventos de la comunidad",
@@ -334,7 +342,12 @@
     "promptCopy": "Copiado!",
     "promptCopied": "Guardado en tu Historia del Museo",
     "promptShare": "Compartir en Emergencia ↗",
-    "contentInEnglish": "El Contenido del Museo está disponible actualmente en inglés solo."
+    "contentInEnglish": "El Contenido del Museo está disponible actualmente en inglés solo.",
+    "closeCard": "Cerrar",
+    "worldEvent": "Evento mundial",
+    "timelineAriaLabel": "Línea de tiempo de la historia del arte — desplázate horizontalmente para viajar en el tiempo",
+    "jumpToEra": "Saltar a era",
+    "yearAtCenter": "Año en el centro de la vista"
   },
   "account": {
     "historyMetaTitle": "Mi Historia",
