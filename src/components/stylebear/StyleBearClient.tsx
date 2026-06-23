@@ -270,7 +270,7 @@ export default function StyleBearClient() {
           >
             {promptTypes.map((pt) => (
               <option key={pt.value} value={pt.value}>
-                {pt.label}
+                {t(`promptType_${pt.value}` as Parameters<typeof t>[0])}
               </option>
             ))}
           </select>
@@ -288,7 +288,7 @@ export default function StyleBearClient() {
           >
             {ASPECT_RATIOS.map((ar) => (
               <option key={ar.value} value={ar.value}>
-                {ar.label}
+                {t(`ar_${ar.value.replace(":", "_")}` as Parameters<typeof t>[0])}
               </option>
             ))}
           </select>
@@ -428,9 +428,9 @@ export default function StyleBearClient() {
                 checked={checkedOptions.has(opt.key)}
                 onChange={() => toggleOption(opt.key)}
                 className="h-4 w-4 rounded border-input accent-primary"
-                aria-label={opt.label}
+                aria-label={t(opt.key as Parameters<typeof t>[0])}
               />
-              <span>{opt.label}</span>
+              <span>{t(opt.key as Parameters<typeof t>[0])}</span>
             </label>
           ))}
         </div>
@@ -454,9 +454,9 @@ export default function StyleBearClient() {
                   checked={checkedOptions.has(c.key)}
                   onChange={() => toggleOption(c.key)}
                   className="h-4 w-4 rounded border-input accent-primary"
-                  aria-label={`Culture: ${c.label}`}
+                  aria-label={t(c.key as Parameters<typeof t>[0])}
                 />
-                <span>{c.label}</span>
+                <span>{t(c.key as Parameters<typeof t>[0])}</span>
               </label>
             ))}
           </div>
