@@ -101,6 +101,100 @@ export async function saveStyleTarotHistory(
   }
 }
 
+// --- Rising ---
+
+export interface RisingPost {
+  id: string;
+  source: "deviantart" | "discord" | "site";
+  imageUrl: string;
+  thumbnailUrl: string | null;
+  title: string | null;
+  caption: string | null;
+  creatorName: string;
+  creatorUrl: string | null;
+  toolOrigin: string | null;
+  toolContext: string | null;
+  siteLikes: number;
+  rawEngagement: number;
+  risingScore: number;
+  aspectRatioClass: "portrait" | "square" | "landscape";
+  imageWidth: number | null;
+  imageHeight: number | null;
+  createdAt: string | null;
+  expiresAt: string;
+  sourceUrl: string | null;
+  hasVoted: boolean;
+}
+
+export async function fetchRisingPosts(
+  source = "all",
+  sessionToken?: string | null
+): Promise<RisingPost[]> {
+  try {
+    const res = await apiFetch(`/api/rising/posts?source=${source}`, {}, sessionToken);
+    const data = await res.json();
+    return data.posts ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function voteRisingPost(
+  postId: string,
+  sessionToken?: string | null
+): Promise<{ voted: boolean; likes: number } | null> {
+  try {
+    const res = await apiFetch(
+      "/api/rising/vote",
+      { method: "POST", body: JSON.stringify({ postId }) },
+      sessionToken
+    );
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function reportRisingPost(postId: string, sessionToken?: string | null): Promise<void> {
+  try {
+    await apiFetch(
+      "/api/rising/report",
+      { method: "POST", body: JSON.stringify({ postId }) },
+      sessionToken
+    );
+  } catch {}
+}
+
+export async function uploadRisingPost(
+  imageUri: string,
+  mimeType: string,
+  caption: string,
+  toolOrigin: string | null,
+  sessionToken: string
+): Promise<{ postId: string; imageUrl: string } | null> {
+  try {
+    const formData = new FormData();
+    formData.append("file", {
+      uri: imageUri,
+      name: "photo.jpg",
+      type: mimeType,
+    } as unknown as Blob);
+    if (caption.trim()) formData.append("caption", caption.trim());
+    if (toolOrigin) formData.append("toolOrigin", toolOrigin);
+
+    const res = await fetch(`${API_BASE}/api/rising/upload`, {
+      method: "POST",
+      headers: { Cookie: `next-auth.session-token=${sessionToken}` },
+      body: formData,
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
 // --- Generic LLM (no promptStyle required) ---
 
 export async function callLLM(body: {

@@ -53,6 +53,7 @@ export default function RootLayout() {
         <Stack.Screen name="stylebear" />
         <Stack.Screen name="styledice" />
         <Stack.Screen name="styletarot" />
+        <Stack.Screen name="rising" />
         <Stack.Screen name="+not-found" />
       </Stack>
     </SessionProvider>
