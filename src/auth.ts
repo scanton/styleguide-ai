@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { accounts, sessions, users, verificationTokens } from "@/drizzle/schema";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   adapter: DrizzleAdapter(db, {
     usersTable: users,
     accountsTable: accounts,
@@ -19,8 +20,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   session: { strategy: "database" },
   pages: {
-    signIn: "/",
-    error: "/",
+    signIn: "/en",
+    error: "/en",
   },
   callbacks: {
     session({ session, user }) {
