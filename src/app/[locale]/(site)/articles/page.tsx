@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 import { ArticlesClient } from "@/components/articles/ArticlesClient";
 import { db } from "@/lib/db";
 import { articles } from "@/drizzle/schema";
@@ -28,11 +29,14 @@ export default async function ArticlesPage({ searchParams }: Props) {
   const { q = "", page: pageParam = "1" } = await searchParams;
   const initialPage = Math.max(1, parseInt(pageParam, 10) || 1);
 
-  const [{ total }] = await db
-    .select({ total: count() })
-    .from(articles)
-    .where(notInArray(articles.slug, BLOCKED_SLUGS))
-    .catch(() => [{ total: 0 }]);
+  const [[{ total }], t] = await Promise.all([
+    db
+      .select({ total: count() })
+      .from(articles)
+      .where(notInArray(articles.slug, BLOCKED_SLUGS))
+      .catch(() => [{ total: 0 }]),
+    getTranslations("articles"),
+  ]);
 
   return (
     <main className="min-h-screen px-4 py-12 md:py-16">
@@ -40,14 +44,14 @@ export default async function ArticlesPage({ searchParams }: Props) {
         {/* Header */}
         <div className="space-y-3 max-w-2xl">
           <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-            <span aria-hidden="true">✍️</span>
-            <span>By Satori Canton</span>
+            <span aria-hidden="true">{t("badge")}</span>
+            <span>{t("byAuthor")}</span>
           </div>
           <h1 className="font-heading text-4xl font-bold sm:text-5xl">
-            Art History Articles
+            {t("heading")}
           </h1>
           <p className="text-muted-foreground leading-relaxed text-lg">
-            {total} deep-dives into art movements, techniques, and the history behind the styles that inspire our community. Originally published on Medium.
+            {t("totalCount", { total })}
           </p>
           <a
             href="https://medium.com/@satoricanton"
@@ -55,7 +59,7 @@ export default async function ArticlesPage({ searchParams }: Props) {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline underline-offset-2"
           >
-            Follow on Medium ↗
+            {t("followMedium")}
           </a>
         </div>
 

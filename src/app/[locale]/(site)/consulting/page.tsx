@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { ContactForm } from "@/components/consulting/ContactForm";
 import { ServicesSection } from "@/components/consulting/ServicesSection";
 
@@ -8,25 +9,25 @@ export const metadata: Metadata = {
     "Satori Canton offers consulting on AI model training, art direction, and AI agent design. Head of AI at HeartStamp, founder of StyleGuideAI.",
 };
 
-export default function ConsultingPage() {
+export default async function ConsultingPage() {
+  const t = await getTranslations("consulting");
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-16 md:py-24 space-y-20">
       {/* Header */}
       <section aria-labelledby="consulting-heading" className="grid gap-10 lg:grid-cols-2 lg:items-start">
         <div className="space-y-5">
           <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-            Available for engagements
+            {t("availableBadge")}
           </div>
           <h1
             id="consulting-heading"
             className="font-heading text-4xl font-bold sm:text-5xl leading-tight"
           >
-            AI &amp; Art
-            <br />
-            Consulting
+            {t("heading")}
           </h1>
           <p className="text-muted-foreground leading-relaxed max-w-md">
-            Head of AI at HeartStamp. Founder of StyleGuideAI. Author of 300+ articles on art history and AI art. I help teams build AI-powered creative systems that actually work.
+            {t("intro")}
           </p>
 
           {/* Past clients — hidden until ready to publish */}
@@ -60,9 +61,9 @@ export default function ConsultingPage() {
           className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-6"
         >
           <div className="space-y-1">
-            <h2 className="font-heading font-bold text-xl">Get in touch</h2>
+            <h2 className="font-heading font-bold text-xl">{t("getInTouch")}</h2>
             <p className="text-sm text-muted-foreground">
-              Tell me about your project. I&apos;ll reply within a couple of days.
+              {t("contactIntro")}
             </p>
           </div>
           <ContactForm />

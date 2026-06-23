@@ -175,7 +175,7 @@
     "generate": "Generate",
     "generating": "Generating…",
     "subject": "Subject",
-    "subjectPlaceholder": "Describe your subject. Use {curly} for random choices.",
+    "subjectPlaceholder": "Describe your subject. Use '{curly}' for random choices.",
     "subjectAriaLabel": "Subject description",
     "crafting": "StyleBear is crafting your prompt…",
     "copyPrompt": "Copy Prompt",
@@ -305,7 +305,9 @@
     "noArticles": "No articles found.",
     "emptyState": "No articles yet — check back soon!",
     "readOnMedium": "Read on Medium ↗",
-    "paginationLabel": "Article pages"
+    "paginationLabel": "Article pages",
+    "resultsCount": "{total, plural, one {# article} other {# articles}}",
+    "resultsCountQuery": "{total, plural, one {# article} other {# articles}} matching \"{query}\""
   },
   "themes": {
     "metaTitle": "Community Themes & Events",

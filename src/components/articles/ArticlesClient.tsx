@@ -145,7 +145,9 @@ export function ArticlesClient({ initialQ, initialPage, initialTotal }: Props) {
         <p className="text-sm text-muted-foreground">
           {data.total === 0
             ? t("noArticles")
-            : `${data.total} article${data.total === 1 ? "" : "s"}${query ? ` matching "${query}"` : ""}`}
+            : query
+              ? t("resultsCountQuery", { total: data.total, query })
+              : t("resultsCount", { total: data.total })}
         </p>
       )}
 
