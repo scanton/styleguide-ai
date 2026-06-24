@@ -198,7 +198,7 @@ Create a detailed, imaginative prompt that weaves all six elements into a vivid,
             { role: "system", content: systemMessage },
             { role: "user", content: userMessage },
           ],
-          maxTokens: 512,
+          maxTokens: 2048,
         }),
       });
       const data = await res.json();

@@ -414,7 +414,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
             { role: "system", content: systemMessage },
             { role: "user", content: userMessage },
           ],
-          maxTokens: 600,
+          maxTokens: 2048,
         }),
       });
       const data = await res.json();
