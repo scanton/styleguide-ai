@@ -432,7 +432,7 @@ Create a detailed, imaginative prompt that weaves all six elements into a vivid,
           <img
             src="/images/loading_animation_satori_bear-small.gif"
             alt="Generating prompt…"
-            className="w-72 h-72 object-contain"
+            className="w-48 h-48 object-contain"
           />
         </div>
       )}

@@ -365,7 +365,7 @@ export default function StyleBearClient() {
                 <img
                   src="/images/loading_animation_satori_bear-small.gif"
                   alt="Generating prompt…"
-                  className="w-72 h-72 object-contain"
+                  className="w-48 h-48 object-contain"
                 />
               </div>
             ) : (

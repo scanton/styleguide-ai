@@ -780,7 +780,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
           <img
             src="/images/loading_animation_satori_bear-small.gif"
             alt="Generating prompt…"
-            className="w-72 h-72 object-contain"
+            className="w-48 h-48 object-contain"
           />
         </div>
       )}
