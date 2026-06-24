@@ -8,6 +8,7 @@ import { prefersReducedMotion as shouldReduceMotion } from "@/lib/motion";
 import { TAROT_CARDS, CARD_TYPE_COLORS, type TarotCard } from "@/data/styletarot/cards";
 import { ShareToRisingModal } from "@/components/rising/ShareToRisingModal";
 import { SignInPromptModal } from "@/components/rising/SignInPromptModal";
+import { readLLMStream } from "@/lib/llm-stream";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -421,11 +422,28 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
           maxTokens: 2048,
         }),
       });
-      const data = await res.json();
-      prompt = data.content ?? data.text ?? data.choices?.[0]?.message?.content ?? null;
-      setGeneratedPrompt(prompt);
-      if (data.model) setModelLabel(data.model);
-      if (data.warning) setModelWarning(data.warning);
+
+      if (res.headers.get("content-type")?.includes("x-ndjson")) {
+        await readLLMStream(res, (event) => {
+          if (event.status === "failed") {
+            setModelWarning(`${event.model} failed — trying another model…`);
+          } else if (event.status === "done") {
+            prompt = event.content;
+            setGeneratedPrompt(event.content);
+            setModelLabel(event.model);
+            if (event.warning) setModelWarning(event.warning);
+            else setModelWarning(null);
+          } else if (event.status === "error") {
+            setGeneratedPrompt(t("generatePrompt"));
+          }
+        });
+      } else {
+        const data = await res.json();
+        prompt = data.content ?? data.text ?? data.choices?.[0]?.message?.content ?? null;
+        setGeneratedPrompt(prompt);
+        if (data.model) setModelLabel(data.model);
+        if (data.warning) setModelWarning(data.warning);
+      }
     } catch {
       setGeneratedPrompt(t("generatePrompt"));
     }

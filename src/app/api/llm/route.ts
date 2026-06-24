@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { callLLM, pickExperimentModel, EXPERIMENT_MODELS, type LLMMessage } from "@/lib/openrouter";
 import { systemPrompts } from "@/data/stylebear/system-prompts";
 
-// Experiment mode: random model selection with fallback.
+// Experiment mode: random model selection with live fallback streaming.
 // To revert to the DEFAULT_MODEL env var, set OPENROUTER_EXPERIMENT=false in Vercel.
 const EXPERIMENT_ACTIVE = process.env.OPENROUTER_EXPERIMENT !== "false";
 
@@ -11,31 +11,56 @@ function shortModel(model: string): string {
   return model.split("/").pop()?.replace(/:free$/, "") ?? model;
 }
 
-async function callWithExperiment(
-  messages: LLMMessage[],
-  maxTokens?: number
-): Promise<{ content: string; model: string; warning?: string }> {
-  const tried: string[] = [];
+// Returns a streaming NDJSON response. Events are newline-delimited JSON:
+//   {"status":"trying","model":"owl-alpha"}
+//   {"status":"failed","model":"owl-alpha"}
+//   {"status":"done","content":"...","model":"gpt-oss-120b","warning":"..."}
+//   {"status":"error","error":"..."}
+function experimentStream(messages: LLMMessage[], maxTokens?: number): Response {
+  const encoder = new TextEncoder();
 
-  while (tried.length < EXPERIMENT_MODELS.length) {
-    const model = pickExperimentModel(tried);
-    tried.push(model);
+  const stream = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      const tried: string[] = [];
 
-    try {
-      const result = await callLLM(messages, { model, maxTokens });
-      const warning =
-        tried.length > 1
-          ? `${tried.slice(0, -1).map(shortModel).join(", ")} failed — fell back to ${shortModel(model)}`
-          : undefined;
-      return { content: result.content, model, warning };
-    } catch {
-      if (tried.length >= EXPERIMENT_MODELS.length) {
-        throw new Error("All experiment models failed");
+      while (tried.length < EXPERIMENT_MODELS.length) {
+        const model = pickExperimentModel(tried);
+        tried.push(model);
+
+        controller.enqueue(
+          encoder.encode(JSON.stringify({ status: "trying", model: shortModel(model) }) + "\n")
+        );
+
+        try {
+          const result = await callLLM(messages, { model, maxTokens });
+          const warning =
+            tried.length > 1
+              ? `${tried.slice(0, -1).map(shortModel).join(", ")} failed — fell back to ${shortModel(model)}`
+              : undefined;
+          controller.enqueue(
+            encoder.encode(
+              JSON.stringify({ status: "done", content: result.content, model: shortModel(model), warning }) + "\n"
+            )
+          );
+          controller.close();
+          return;
+        } catch {
+          controller.enqueue(
+            encoder.encode(JSON.stringify({ status: "failed", model: shortModel(model) }) + "\n")
+          );
+        }
       }
-    }
-  }
 
-  throw new Error("All experiment models failed");
+      controller.enqueue(
+        encoder.encode(JSON.stringify({ status: "error", error: "All experiment models failed" }) + "\n")
+      );
+      controller.close();
+    },
+  });
+
+  return new Response(stream, {
+    headers: { "Content-Type": "application/x-ndjson" },
+  });
 }
 
 export async function POST(request: Request) {
@@ -59,10 +84,7 @@ export async function POST(request: Request) {
     const systemPrompt = systemPrompts[promptStyle] ?? systemPrompts.flux;
     const userContent = imageData
       ? [
-          {
-            type: "image_url" as const,
-            image_url: { url: imageData },
-          },
+          { type: "image_url" as const, image_url: { url: imageData } },
           {
             type: "text" as const,
             text: (messages?.[0]?.content as string) ?? "Analyze this image and create an art prompt.",
@@ -75,10 +97,10 @@ export async function POST(request: Request) {
       { role: "user", content: userContent as LLMMessage["content"] },
     ];
 
+    if (EXPERIMENT_ACTIVE) return experimentStream(llmMessages, maxTokens ?? 2048);
+
     try {
-      const result = EXPERIMENT_ACTIVE
-        ? await callWithExperiment(llmMessages, maxTokens ?? 2048)
-        : await callLLM(llmMessages, { model, maxTokens: maxTokens ?? 2048 });
+      const result = await callLLM(llmMessages, { model, maxTokens: maxTokens ?? 2048 });
       return NextResponse.json(result);
     } catch (err) {
       console.error("LLM error:", err);
@@ -91,10 +113,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "messages array required" }, { status: 422 });
   }
 
+  if (EXPERIMENT_ACTIVE) return experimentStream(messages, maxTokens);
+
   try {
-    const result = EXPERIMENT_ACTIVE
-      ? await callWithExperiment(messages, maxTokens)
-      : await callLLM(messages, { model, maxTokens });
+    const result = await callLLM(messages, { model, maxTokens });
     return NextResponse.json(result);
   } catch (err) {
     console.error("LLM error:", err);

@@ -13,6 +13,7 @@ import { ASPECT_RATIOS, DEFAULT_STYLEBEAR_ASPECT_RATIO } from "@/lib/aspect-rati
 import { processWildcards } from "@/lib/wildcards";
 import { ShareToRisingModal } from "@/components/rising/ShareToRisingModal";
 import { SignInPromptModal } from "@/components/rising/SignInPromptModal";
+import { readLLMStream } from "@/lib/llm-stream";
 
 const STYLEBEAR_MODEL = "openrouter/free";
 
@@ -159,13 +160,32 @@ export default function StyleBearClient() {
           maxTokens: 2048,
         }),
       });
-      const data = (await res.json()) as { content?: string; error?: string; model?: string; warning?: string };
-      const generated = data.content ?? data.error ?? "No response";
-      setOutput(generated);
-      if (data.model) setModelLabel(data.model);
-      if (data.warning) setModelWarning(data.warning);
 
-      if (session?.user && data.content) {
+      let generated = "No response";
+      if (res.headers.get("content-type")?.includes("x-ndjson")) {
+        await readLLMStream(res, (event) => {
+          if (event.status === "failed") {
+            setModelWarning(`${event.model} failed — trying another model…`);
+          } else if (event.status === "done") {
+            generated = event.content;
+            setOutput(event.content);
+            setModelLabel(event.model);
+            if (event.warning) setModelWarning(event.warning);
+            else setModelWarning(null);
+          } else if (event.status === "error") {
+            generated = "Failed to generate prompt. Please try again.";
+            setOutput(generated);
+          }
+        });
+      } else {
+        const data = (await res.json()) as { content?: string; error?: string; model?: string; warning?: string };
+        generated = data.content ?? data.error ?? "No response";
+        setOutput(generated);
+        if (data.model) setModelLabel(data.model);
+        if (data.warning) setModelWarning(data.warning);
+      }
+
+      if (session?.user && generated && generated !== "No response" && !generated.startsWith("Failed")) {
         const allOptionDefs = [...checkboxOptions, ...cultureKeys];
         const inputs = JSON.stringify({
           source: "stylebear",
@@ -181,7 +201,7 @@ export default function StyleBearClient() {
           const saveRes = await fetch("/api/stylebear/history", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: data.content, inputs }),
+            body: JSON.stringify({ prompt: generated, inputs }),
           });
           const saved = await saveRes.json();
           if (saved.entry?.id) setSavedEntryId(saved.entry.id);

@@ -12,6 +12,7 @@ import { popCultureFaces } from "@/data/styledice/pop-culture";
 import { genreFaces } from "@/data/styledice/genres";
 import { ShareToRisingModal } from "@/components/rising/ShareToRisingModal";
 import { SignInPromptModal } from "@/components/rising/SignInPromptModal";
+import { readLLMStream } from "@/lib/llm-stream";
 
 const MAX_REROLLS = 2;
 
@@ -67,6 +68,8 @@ export default function StyleDiceClient() {
   const [held, setHeld] = useState<boolean[]>(Array(6).fill(false));
   const [rerollsLeft, setRerollsLeft] = useState(MAX_REROLLS);
   const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null);
+  const [modelLabel, setModelLabel] = useState<string | null>(null);
+  const [modelWarning, setModelWarning] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -188,6 +191,8 @@ Create a detailed, imaginative prompt that weaves all six elements into a vivid,
     const systemMessage = `You are an expert AI art prompt engineer. Generate richly detailed, imaginative prompts for modern AI image models (Flux, Midjourney v6, DALL·E 3, Stable Diffusion XL). You MUST explicitly name every provided creative element — the art movement, artist, media type, technique, pop culture reference, and genre — within the prompt text itself. Never describe a style anonymously; always name it. Invent specific, vivid subjects and scenes, describe the art style in depth, and make every image feel like a deliberate authored artwork. Return ONLY the prompt itself — no preamble, no explanation, no labels, no quotation marks.`;
 
     let prompt: string | null = null;
+    setModelLabel(null);
+    setModelWarning(null);
 
     try {
       const res = await fetch("/api/llm", {
@@ -201,9 +206,28 @@ Create a detailed, imaginative prompt that weaves all six elements into a vivid,
           maxTokens: 2048,
         }),
       });
-      const data = await res.json();
-      prompt = data.content ?? data.text ?? data.choices?.[0]?.message?.content ?? null;
-      setGeneratedPrompt(prompt);
+
+      if (res.headers.get("content-type")?.includes("x-ndjson")) {
+        await readLLMStream(res, (event) => {
+          if (event.status === "failed") {
+            setModelWarning(`${event.model} failed — trying another model…`);
+          } else if (event.status === "done") {
+            prompt = event.content;
+            setGeneratedPrompt(event.content);
+            setModelLabel(event.model);
+            if (event.warning) setModelWarning(event.warning);
+            else setModelWarning(null);
+          } else if (event.status === "error") {
+            setGeneratedPrompt("Failed to generate prompt. Please try again.");
+          }
+        });
+      } else {
+        const data = await res.json();
+        prompt = data.content ?? data.text ?? data.choices?.[0]?.message?.content ?? null;
+        setGeneratedPrompt(prompt);
+        if (data.model) setModelLabel(data.model);
+        if (data.warning) setModelWarning(data.warning);
+      }
     } catch {
       setGeneratedPrompt("Failed to generate prompt. Please try again.");
     }
@@ -432,7 +456,13 @@ Create a detailed, imaginative prompt that weaves all six elements into a vivid,
               </button>
             </div>
           </div>
+          {modelWarning && (
+            <p className="text-xs text-amber-600 dark:text-amber-500">⚠️ {modelWarning}</p>
+          )}
           <p className="text-sm leading-relaxed text-foreground">{generatedPrompt}</p>
+          {modelLabel && (
+            <p className="text-xs text-muted-foreground/50">via {modelLabel}</p>
+          )}
           {session?.user && (
             <p className="text-[11px] text-foreground/40">Saved to your history.</p>
           )}
