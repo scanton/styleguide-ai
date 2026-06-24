@@ -430,7 +430,7 @@ Create a detailed, imaginative prompt that weaves all six elements into a vivid,
         <div className="flex items-center justify-center py-8">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/images/loading_animation_satori_bear-small.gif"
+            src="/images/loading_animation_satori_bear.gif"
             alt="Generating prompt…"
             className="w-32 h-32 object-contain"
           />
