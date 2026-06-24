@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations, useFormatter } from "next-intl";
 import { TAROT_CARDS, CARD_TYPE_COLORS } from "@/data/styletarot/cards";
 import { promptTypes } from "@/data/stylebear/config";
 import { ShareToRisingModal } from "@/components/rising/ShareToRisingModal";
@@ -54,7 +55,6 @@ interface ShareEntry {
   toolContext: string;
 }
 
-const DICE_CATEGORIES = ["Art Movement", "Famous Artist", "Media Type", "Art Technique", "Pop Culture", "Genre"];
 const DICE_COLORS = [
   "oklch(0.42 0.22 285)",
   "oklch(0.60 0.14 195)",
@@ -98,19 +98,20 @@ function parseBearInputs(raw: string): BearInputsParsed | null {
 }
 
 function BearTags({ inputs }: { inputs: string }) {
+  const t = useTranslations("history");
   const parsed = parseBearInputs(inputs);
   if (!parsed) return null;
 
   if (parsed.source === "museum") {
-    const entityLabel = parsed.entityType === "artist" ? "Artist" : parsed.entityType === "movement" ? "Movement" : "Museum";
+    const entityLabel = parsed.entityType === "artist" ? t("tagArtist") : parsed.entityType === "movement" ? t("tagMovement") : t("tabMuseum");
     return (
       <div className="flex flex-wrap gap-2">
         <span
           className="inline-flex flex-col text-xs rounded-lg px-2.5 py-1.5 text-white leading-tight"
           style={{ backgroundColor: "oklch(0.50 0.14 60)" }}
         >
-          <span className="opacity-70 text-[10px] uppercase tracking-wide font-semibold">Source</span>
-          <span className="font-medium mt-0.5">Virtual Museum</span>
+          <span className="opacity-70 text-[10px] uppercase tracking-wide font-semibold">{t("tagSource")}</span>
+          <span className="font-medium mt-0.5">{t("tagVirtualMuseum")}</span>
         </span>
         {parsed.name && (
           <span
@@ -130,22 +131,22 @@ function BearTags({ inputs }: { inputs: string }) {
 
   if (parsed.promptStyle) {
     tags.push({
-      category: "Prompt Style",
+      category: t("tagPromptStyle"),
       value: PROMPT_STYLE_LABELS.get(parsed.promptStyle) ?? parsed.promptStyle,
       color: "oklch(0.42 0.22 285)",
     });
   }
   if (parsed.aspectRatio) {
-    tags.push({ category: "Aspect Ratio", value: parsed.aspectRatio, color: "oklch(0.35 0.12 255)" });
+    tags.push({ category: t("tagAspectRatio"), value: parsed.aspectRatio, color: "oklch(0.35 0.12 255)" });
   }
   for (const m of parsed.movements ?? []) {
-    tags.push({ category: "Movement", value: m, color: "oklch(0.55 0.13 195)" });
+    tags.push({ category: t("tagMovement"), value: m, color: "oklch(0.55 0.13 195)" });
   }
   for (const m of parsed.media ?? []) {
-    tags.push({ category: "Media", value: m, color: "oklch(0.60 0.14 30)" });
+    tags.push({ category: t("tagMedia"), value: m, color: "oklch(0.60 0.14 30)" });
   }
   for (const o of parsed.options ?? []) {
-    tags.push({ category: "Option", value: o, color: "oklch(0.46 0.10 160)" });
+    tags.push({ category: t("tagOption"), value: o, color: "oklch(0.46 0.10 160)" });
   }
 
   if (tags.length === 0) return null;
@@ -166,20 +167,15 @@ function BearTags({ inputs }: { inputs: string }) {
   );
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    year: "numeric", month: "short", day: "numeric",
-  });
-}
-
 // ── Rising renders strip ──────────────────────────────────────────────────────
 
 function RisingRendersStrip({ renders }: { renders: HistoryRender[] }) {
+  const t = useTranslations("history");
   if (!renders.length) return null;
   return (
     <div className="space-y-2">
       <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-        Your Rising renders ({renders.length})
+        {t("risingRendersLabel", { count: renders.length })}
       </p>
       <div className="flex gap-2 flex-wrap">
         {renders.map((r) => (
@@ -191,7 +187,7 @@ function RisingRendersStrip({ renders }: { renders: HistoryRender[] }) {
           >
             <img
               src={r.thumbnailUrl ?? r.imageUrl}
-              alt="Your Rising render"
+              alt={t("risingRenderAlt")}
               className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
               loading="lazy"
             />
@@ -246,17 +242,18 @@ function getPaginationItems(current: number, total: number): (number | "…")[] 
 }
 
 function Pagination({ page, totalPages, onPage }: { page: number; totalPages: number; onPage: (p: number) => void }) {
+  const t = useTranslations("history");
   if (totalPages <= 1) return null;
   const items = getPaginationItems(page, totalPages);
   return (
-    <nav aria-label="History pages" className="flex items-center justify-center gap-1 pt-4 flex-wrap">
+    <nav aria-label={t("historyPagesLabel")} className="flex items-center justify-center gap-1 pt-4 flex-wrap">
       <button
         onClick={() => onPage(page - 1)}
         disabled={page === 1}
         className="h-10 px-3 rounded-md border border-border text-sm font-medium disabled:opacity-40 hover:bg-muted transition-colors"
-        aria-label="Previous page"
+        aria-label={t("prevPage")}
       >
-        ← Prev
+        {t("prevPage")}
       </button>
       {items.map((item, i) =>
         item === "…" ? (
@@ -266,7 +263,7 @@ function Pagination({ page, totalPages, onPage }: { page: number; totalPages: nu
             key={item}
             onClick={() => onPage(item)}
             aria-current={item === page ? "page" : undefined}
-            aria-label={`Page ${item}`}
+            aria-label={t("pageLabel", { n: item })}
             className={`h-10 w-10 rounded-md text-sm font-medium transition-colors ${
               item === page
                 ? "bg-primary text-primary-foreground"
@@ -281,9 +278,9 @@ function Pagination({ page, totalPages, onPage }: { page: number; totalPages: nu
         onClick={() => onPage(page + 1)}
         disabled={page === totalPages}
         className="h-10 px-3 rounded-md border border-border text-sm font-medium disabled:opacity-40 hover:bg-muted transition-colors"
-        aria-label="Next page"
+        aria-label={t("nextPage")}
       >
-        Next →
+        {t("nextPage")}
       </button>
     </nav>
   );
@@ -292,6 +289,8 @@ function Pagination({ page, totalPages, onPage }: { page: number; totalPages: nu
 // ── StyleBear tab ─────────────────────────────────────────────────────────────
 
 function BearHistoryTab() {
+  const t = useTranslations("history");
+  const format = useFormatter();
   const [entries, setEntries] = useState<BearEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState<string | null>(null);
@@ -325,11 +324,11 @@ function BearHistoryTab() {
     });
   }, []);
 
-  if (loading) return <p className="text-sm text-muted-foreground animate-pulse py-8 text-center">Loading…</p>;
+  if (loading) return <p className="text-sm text-muted-foreground animate-pulse py-8 text-center">{t("loading")}</p>;
   if (!entries.length) return (
     <div className="text-center py-12 space-y-2">
-      <p className="text-muted-foreground">No StyleBear prompts yet.</p>
-      <a href="/stylebear" className="text-sm text-primary hover:underline">Generate a prompt →</a>
+      <p className="text-muted-foreground">{t("bearEmpty")}</p>
+      <a href="/stylebear" className="text-sm text-primary hover:underline">{t("bearEmptyLink")}</a>
     </div>
   );
 
@@ -343,25 +342,27 @@ function BearHistoryTab() {
           {pageEntries.map((entry) => (
             <li key={entry.id} className="rounded-2xl border border-border bg-card p-5 space-y-3">
               <div className="flex items-center justify-between gap-3">
-                <span className="text-xs text-muted-foreground">{formatDate(entry.createdAt)}</span>
+                <span className="text-xs text-muted-foreground">
+                  {format.dateTime(new Date(entry.createdAt), { year: "numeric", month: "short", day: "numeric" })}
+                </span>
                 <button
                   onClick={() => handleDelete(entry.id)}
                   className="text-xs text-muted-foreground hover:text-destructive transition-colors focus-visible:outline-none focus-visible:underline"
-                  aria-label="Delete this prompt"
+                  aria-label={t("delete")}
                 >
-                  Delete
+                  {t("delete")}
                 </button>
               </div>
               <BearTags inputs={entry.inputs} />
               <div className="rounded-xl bg-muted/60 p-3 space-y-2">
-                <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Generated prompt</p>
+                <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">{t("generatedPrompt")}</p>
                 <p className="text-sm text-foreground leading-relaxed">{entry.prompt}</p>
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => handleCopy(entry.prompt, entry.id)}
                     className="text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:underline"
                   >
-                    {copied === entry.id ? "Copied!" : "Copy"}
+                    {copied === entry.id ? t("copied") : t("copy")}
                   </button>
                   <button
                     onClick={() =>
@@ -373,7 +374,7 @@ function BearHistoryTab() {
                     }
                     className="text-xs font-medium text-[oklch(0.42_0.22_285)] hover:underline focus-visible:outline-none focus-visible:underline"
                   >
-                    Share to Rising ↗
+                    {t("shareToRising")}
                   </button>
                 </div>
               </div>
@@ -402,6 +403,8 @@ function BearHistoryTab() {
 const TAROT_BY_INDEX = new Map(TAROT_CARDS.map((c) => [c.index, c]));
 
 function TarotHistoryTab() {
+  const t = useTranslations("history");
+  const format = useFormatter();
   const [entries, setEntries] = useState<TarotEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState<string | null>(null);
@@ -435,11 +438,11 @@ function TarotHistoryTab() {
     });
   }, []);
 
-  if (loading) return <p className="text-sm text-muted-foreground animate-pulse py-8 text-center">Loading…</p>;
+  if (loading) return <p className="text-sm text-muted-foreground animate-pulse py-8 text-center">{t("loading")}</p>;
   if (!entries.length) return (
     <div className="text-center py-12 space-y-2">
-      <p className="text-muted-foreground">No StyleTarot hands yet.</p>
-      <a href="/styletarot" className="text-sm text-primary hover:underline">Draw your first hand →</a>
+      <p className="text-muted-foreground">{t("tarotEmpty")}</p>
+      <a href="/styletarot" className="text-sm text-primary hover:underline">{t("tarotEmptyLink")}</a>
     </div>
   );
 
@@ -469,13 +472,15 @@ function TarotHistoryTab() {
             return (
               <li key={entry.id} className="rounded-2xl border border-border bg-card p-5 space-y-3">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-xs text-muted-foreground">{formatDate(entry.createdAt)}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {format.dateTime(new Date(entry.createdAt), { year: "numeric", month: "short", day: "numeric" })}
+                  </span>
                   <button
                     onClick={() => handleDelete(entry.id)}
                     className="text-xs text-muted-foreground hover:text-destructive transition-colors focus-visible:outline-none focus-visible:underline"
-                    aria-label="Delete this hand"
+                    aria-label={t("delete")}
                   >
-                    Delete
+                    {t("delete")}
                   </button>
                 </div>
                 <div className="grid grid-cols-5 gap-2">
@@ -502,14 +507,14 @@ function TarotHistoryTab() {
                 </div>
                 {entry.generatedPrompt && (
                   <div className="rounded-xl bg-muted/60 p-3 space-y-2">
-                    <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Generated prompt</p>
+                    <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">{t("generatedPrompt")}</p>
                     <p className="text-sm text-foreground leading-relaxed">{entry.generatedPrompt}</p>
                     <div className="flex items-center gap-3">
                       <button
                         onClick={() => handleCopy(entry.generatedPrompt!, entry.id)}
                         className="text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:underline"
                       >
-                        {copied === entry.id ? "Copied!" : "Copy"}
+                        {copied === entry.id ? t("copied") : t("copy")}
                       </button>
                       <button
                         onClick={() =>
@@ -521,7 +526,7 @@ function TarotHistoryTab() {
                         }
                         className="text-xs font-medium text-[oklch(0.42_0.22_285)] hover:underline focus-visible:outline-none focus-visible:underline"
                       >
-                        Share to Rising ↗
+                        {t("shareToRising")}
                       </button>
                     </div>
                   </div>
@@ -550,6 +555,8 @@ function TarotHistoryTab() {
 // ── StyleDice tab ─────────────────────────────────────────────────────────────
 
 function DiceHistoryTab() {
+  const t = useTranslations("history");
+  const format = useFormatter();
   const [entries, setEntries] = useState<DiceEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState<string | null>(null);
@@ -562,6 +569,15 @@ function DiceHistoryTab() {
       .then((d) => setEntries(d.history ?? []))
       .finally(() => setLoading(false));
   }, []);
+
+  const diceCategories = [
+    t("diceCatArtMovement"),
+    t("diceCatFamousArtist"),
+    t("diceCatMediaType"),
+    t("diceCatArtTechnique"),
+    t("diceCatPopCulture"),
+    t("diceCatGenre"),
+  ];
 
   const allIds = entries.map((e) => e.id);
   const { byId: uploads, refetch: refetchUploads } = useRisingUploads(allIds);
@@ -583,11 +599,11 @@ function DiceHistoryTab() {
     });
   }, []);
 
-  if (loading) return <p className="text-sm text-muted-foreground animate-pulse py-8 text-center">Loading…</p>;
+  if (loading) return <p className="text-sm text-muted-foreground animate-pulse py-8 text-center">{t("loading")}</p>;
   if (!entries.length) return (
     <div className="text-center py-12 space-y-2">
-      <p className="text-muted-foreground">No StyleDice rolls yet.</p>
-      <a href="/styledice" className="text-sm text-primary hover:underline">Roll the dice →</a>
+      <p className="text-muted-foreground">{t("diceEmpty")}</p>
+      <a href="/styledice" className="text-sm text-primary hover:underline">{t("diceEmptyLink")}</a>
     </div>
   );
 
@@ -604,13 +620,15 @@ function DiceHistoryTab() {
             return (
               <li key={entry.id} className="rounded-2xl border border-border bg-card p-5 space-y-3">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-xs text-muted-foreground">{formatDate(entry.createdAt)}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {format.dateTime(new Date(entry.createdAt), { year: "numeric", month: "short", day: "numeric" })}
+                  </span>
                   <button
                     onClick={() => handleDelete(entry.id)}
                     className="text-xs text-muted-foreground hover:text-destructive transition-colors focus-visible:outline-none focus-visible:underline"
-                    aria-label="Delete this roll"
+                    aria-label={t("delete")}
                   >
-                    Delete
+                    {t("delete")}
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -620,21 +638,21 @@ function DiceHistoryTab() {
                       className="inline-flex flex-col text-xs rounded-lg px-2.5 py-1.5 text-white leading-tight"
                       style={{ backgroundColor: DICE_COLORS[i] }}
                     >
-                      <span className="opacity-70 text-[10px] uppercase tracking-wide font-semibold">{DICE_CATEGORIES[i]}</span>
+                      <span className="opacity-70 text-[10px] uppercase tracking-wide font-semibold">{diceCategories[i]}</span>
                       <span className="font-medium mt-0.5">{val}</span>
                     </span>
                   ))}
                 </div>
                 {entry.generatedPrompt && (
                   <div className="rounded-xl bg-muted/60 p-3 space-y-2">
-                    <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Generated prompt</p>
+                    <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">{t("generatedPrompt")}</p>
                     <p className="text-sm text-foreground leading-relaxed">{entry.generatedPrompt}</p>
                     <div className="flex items-center gap-3">
                       <button
                         onClick={() => handleCopy(entry.generatedPrompt!, entry.id)}
                         className="text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:underline"
                       >
-                        {copied === entry.id ? "Copied!" : "Copy"}
+                        {copied === entry.id ? t("copied") : t("copy")}
                       </button>
                       <button
                         onClick={() =>
@@ -646,7 +664,7 @@ function DiceHistoryTab() {
                         }
                         className="text-xs font-medium text-[oklch(0.42_0.22_285)] hover:underline focus-visible:outline-none focus-visible:underline"
                       >
-                        Share to Rising ↗
+                        {t("shareToRising")}
                       </button>
                     </div>
                   </div>
@@ -675,6 +693,8 @@ function DiceHistoryTab() {
 // ── Museum tab ────────────────────────────────────────────────────────────────
 
 function MuseumHistoryTab() {
+  const t = useTranslations("history");
+  const format = useFormatter();
   const [entries, setEntries] = useState<MuseumEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState<string | null>(null);
@@ -698,11 +718,11 @@ function MuseumHistoryTab() {
     });
   }, []);
 
-  if (loading) return <p className="text-sm text-muted-foreground animate-pulse py-8 text-center">Loading…</p>;
+  if (loading) return <p className="text-sm text-muted-foreground animate-pulse py-8 text-center">{t("loading")}</p>;
   if (!entries.length) return (
     <div className="text-center py-12 space-y-2">
-      <p className="text-muted-foreground">No Museum prompts yet.</p>
-      <a href="/museum" className="text-sm text-primary hover:underline">Explore the Virtual Museum →</a>
+      <p className="text-muted-foreground">{t("museumEmpty")}</p>
+      <a href="/museum" className="text-sm text-primary hover:underline">{t("museumEmptyLink")}</a>
     </div>
   );
 
@@ -716,7 +736,9 @@ function MuseumHistoryTab() {
           {pageEntries.map((entry) => (
             <li key={entry.id} className="rounded-2xl border border-border bg-card p-5 space-y-3">
               <div className="flex items-center justify-between gap-3">
-                <span className="text-xs text-muted-foreground">{formatDate(entry.createdAt)}</span>
+                <span className="text-xs text-muted-foreground">
+                  {format.dateTime(new Date(entry.createdAt), { year: "numeric", month: "short", day: "numeric" })}
+                </span>
               </div>
               <div className="flex flex-wrap gap-2">
                 <span
@@ -724,7 +746,7 @@ function MuseumHistoryTab() {
                   style={{ backgroundColor: "oklch(0.50 0.14 60)" }}
                 >
                   <span className="opacity-70 text-[10px] uppercase tracking-wide font-semibold">
-                    {entry.entityType === "artist" ? "Artist" : "Movement"}
+                    {entry.entityType === "artist" ? t("tagArtist") : t("tagMovement")}
                   </span>
                   <span className="font-medium mt-0.5">{entry.entityName}</span>
                 </span>
@@ -733,20 +755,20 @@ function MuseumHistoryTab() {
                     className="inline-flex flex-col text-xs rounded-lg px-2.5 py-1.5 text-white leading-tight"
                     style={{ backgroundColor: "oklch(0.42 0.13 55)" }}
                   >
-                    <span className="opacity-70 text-[10px] uppercase tracking-wide font-semibold">Scene</span>
+                    <span className="opacity-70 text-[10px] uppercase tracking-wide font-semibold">{t("tagScene")}</span>
                     <span className="font-medium mt-0.5 line-clamp-1">{entry.sceneDetails}</span>
                   </span>
                 )}
               </div>
               <div className="rounded-xl bg-muted/60 p-3 space-y-2">
-                <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">Generated prompt</p>
+                <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">{t("generatedPrompt")}</p>
                 <p className="text-sm text-foreground leading-relaxed">{entry.prompt}</p>
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => handleCopy(entry.prompt, entry.id)}
                     className="text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:underline"
                   >
-                    {copied === entry.id ? "Copied!" : "Copy"}
+                    {copied === entry.id ? t("copied") : t("copy")}
                   </button>
                   <button
                     onClick={() =>
@@ -764,7 +786,7 @@ function MuseumHistoryTab() {
                     }
                     className="text-xs font-medium text-[oklch(0.42_0.22_285)] hover:underline focus-visible:outline-none focus-visible:underline"
                   >
-                    Share to Rising ↗
+                    {t("shareToRising")}
                   </button>
                 </div>
               </div>
@@ -792,21 +814,22 @@ function MuseumHistoryTab() {
 
 type Tab = "bear" | "tarot" | "dice" | "museum";
 
-const TAB_LABELS: Record<Tab, string> = {
-  bear: "🐻‍❄️ StyleBear",
-  tarot: "🃏 StyleTarot",
-  dice: "🎲 StyleDice",
-  museum: "🏛️ Museum",
-};
-
 export function HistoryClient() {
   const { data: session } = useSession();
+  const t = useTranslations("history");
   const [tab, setTab] = useState<Tab>("bear");
+
+  const tabLabels: Record<Tab, string> = {
+    bear: t("tabBear"),
+    tarot: t("tabTarot"),
+    dice: t("tabDice"),
+    museum: t("tabMuseum"),
+  };
 
   if (!session?.user) {
     return (
       <div className="text-center py-16 text-muted-foreground">
-        Sign in to view your history.
+        {t("signInRequired")}
       </div>
     );
   }
@@ -815,18 +838,18 @@ export function HistoryClient() {
     <div className="space-y-6">
       {/* Tabs */}
       <div className="flex gap-1 border border-border rounded-xl p-1 w-fit flex-wrap">
-        {(["bear", "tarot", "dice", "museum"] as Tab[]).map((t) => (
+        {(["bear", "tarot", "dice", "museum"] as Tab[]).map((tabKey) => (
           <button
-            key={t}
-            onClick={() => setTab(t)}
+            key={tabKey}
+            onClick={() => setTab(tabKey)}
             className={[
               "px-4 py-2 rounded-lg text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-              tab === t
+              tab === tabKey
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground",
             ].join(" ")}
           >
-            {TAB_LABELS[t]}
+            {tabLabels[tabKey]}
           </button>
         ))}
       </div>
