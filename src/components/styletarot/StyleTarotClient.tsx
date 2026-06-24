@@ -243,6 +243,8 @@ export function StyleTarotClient() {
 
   // Shared output state
   const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null);
+  const [modelLabel, setModelLabel] = useState<string | null>(null);
+  const [modelWarning, setModelWarning] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [savedEntryId, setSavedEntryId] = useState<string | null>(null);
@@ -404,6 +406,8 @@ ${cardList}
 Create a single, unified AI art prompt that weaves all five cards into one cohesive, visually stunning artwork. Draw from the card descriptions for specific visual elements, style cues, subject matter, setting, and mood. The result should feel like a natural, intentional artwork — not a random mashup. Be specific: name colors, lighting conditions, compositional choices, textures, and emotional tone.${aspectSuffix}`;
 
     let prompt: string | null = null;
+    setModelLabel(null);
+    setModelWarning(null);
 
     try {
       const res = await fetch("/api/llm", {
@@ -420,6 +424,8 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
       const data = await res.json();
       prompt = data.content ?? data.text ?? data.choices?.[0]?.message?.content ?? null;
       setGeneratedPrompt(prompt);
+      if (data.model) setModelLabel(data.model);
+      if (data.warning) setModelWarning(data.warning);
     } catch {
       setGeneratedPrompt(t("generatePrompt"));
     }
@@ -780,7 +786,17 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
               </button>
             </div>
           </div>
+          {modelWarning && (
+            <p className="text-xs text-amber-600 dark:text-amber-500 -mt-1 mb-1">
+              ⚠️ {modelWarning}
+            </p>
+          )}
           <p className="text-sm leading-relaxed text-foreground">{generatedPrompt}</p>
+          {modelLabel && (
+            <p className="text-xs text-muted-foreground/50 -mt-1">
+              via {modelLabel.split("/").pop()?.replace(/:free$/, "")}
+            </p>
+          )}
 
           {/* Cards used summary */}
           <div className="border-t border-black/5 pt-3 space-y-1">

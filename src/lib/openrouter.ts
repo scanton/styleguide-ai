@@ -11,12 +11,31 @@ export interface LLMContentPart {
 
 export interface LLMResponse {
   content: string;
+  model: string;
+}
+
+export const EXPERIMENT_MODELS = [
+  "openrouter/owl-alpha",
+  "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "nvidia/nemotron-3-super-120b-a12b:free",
+  "openai/gpt-oss-120b:free",
+  "openai/gpt-oss-20b:free",
+  "google/gemma-4-31b-it:free",
+  "google/gemma-4-26b-a4b-it:free",
+] as const;
+
+export function pickExperimentModel(exclude: string[] = []): string {
+  const pool = EXPERIMENT_MODELS.filter((m) => !exclude.includes(m));
+  if (pool.length === 0) throw new Error("No experiment models left to try");
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 export async function callLLM(
   messages: LLMMessage[],
   options?: { model?: string; maxTokens?: number }
 ): Promise<LLMResponse> {
+  const modelId = options?.model ?? process.env.DEFAULT_MODEL ?? "openrouter/free";
+
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -26,7 +45,7 @@ export async function callLLM(
       "X-Title": "StyleGuideAI",
     },
     body: JSON.stringify({
-      model: options?.model ?? process.env.DEFAULT_MODEL ?? "openrouter/free",
+      model: modelId,
       messages,
       max_tokens: options?.maxTokens ?? 1024,
     }),
@@ -41,5 +60,5 @@ export async function callLLM(
     choices: { message: { content: string } }[];
   };
 
-  return { content: data.choices[0].message.content };
+  return { content: data.choices[0].message.content, model: modelId };
 }

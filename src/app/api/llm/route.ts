@@ -1,7 +1,38 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from "next/server";
-import { callLLM, type LLMMessage } from "@/lib/openrouter";
+import { callLLM, pickExperimentModel, EXPERIMENT_MODELS, type LLMMessage } from "@/lib/openrouter";
 import { systemPrompts } from "@/data/stylebear/system-prompts";
+
+// Experiment mode: random model selection with fallback.
+// To revert to the DEFAULT_MODEL env var, set OPENROUTER_EXPERIMENT=false in Vercel.
+const EXPERIMENT_ACTIVE = process.env.OPENROUTER_EXPERIMENT !== "false";
+
+async function callWithExperiment(
+  messages: LLMMessage[],
+  maxTokens?: number
+): Promise<{ content: string; model: string; warning?: string }> {
+  const tried: string[] = [];
+
+  while (tried.length < EXPERIMENT_MODELS.length) {
+    const model = pickExperimentModel(tried);
+    tried.push(model);
+
+    try {
+      const result = await callLLM(messages, { model, maxTokens });
+      const warning =
+        tried.length > 1
+          ? `${tried.slice(0, -1).join(", ")} failed — fell back to ${model}`
+          : undefined;
+      return { content: result.content, model, warning };
+    } catch {
+      if (tried.length >= EXPERIMENT_MODELS.length) {
+        throw new Error("All experiment models failed");
+      }
+    }
+  }
+
+  throw new Error("All experiment models failed");
+}
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -41,7 +72,9 @@ export async function POST(request: Request) {
     ];
 
     try {
-      const result = await callLLM(llmMessages, { model, maxTokens: maxTokens ?? 2048 });
+      const result = EXPERIMENT_ACTIVE
+        ? await callWithExperiment(llmMessages, maxTokens ?? 2048)
+        : await callLLM(llmMessages, { model, maxTokens: maxTokens ?? 2048 });
       return NextResponse.json(result);
     } catch (err) {
       console.error("LLM error:", err);
@@ -55,7 +88,9 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await callLLM(messages, { model, maxTokens });
+    const result = EXPERIMENT_ACTIVE
+      ? await callWithExperiment(messages, maxTokens)
+      : await callLLM(messages, { model, maxTokens });
     return NextResponse.json(result);
   } catch (err) {
     console.error("LLM error:", err);

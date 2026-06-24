@@ -99,6 +99,8 @@ export default function StyleBearClient() {
   const [promptType, setPromptType] = useState<string>(promptTypes[0].value);
   const [aspectRatio, setAspectRatio] = useState<string>(DEFAULT_STYLEBEAR_ASPECT_RATIO);
   const [output, setOutput] = useState<string>("");
+  const [modelLabel, setModelLabel] = useState<string | null>(null);
+  const [modelWarning, setModelWarning] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
 
@@ -143,6 +145,8 @@ export default function StyleBearClient() {
     setHasGenerated(true);
     setLoading(true);
     setOutput("");
+    setModelLabel(null);
+    setModelWarning(null);
 
     try {
       const res = await fetch("/api/llm", {
@@ -155,9 +159,11 @@ export default function StyleBearClient() {
           maxTokens: 2048,
         }),
       });
-      const data = (await res.json()) as { content?: string; error?: string };
+      const data = (await res.json()) as { content?: string; error?: string; model?: string; warning?: string };
       const generated = data.content ?? data.error ?? "No response";
       setOutput(generated);
+      if (data.model) setModelLabel(data.model);
+      if (data.warning) setModelWarning(data.warning);
 
       if (session?.user && data.content) {
         const allOptionDefs = [...checkboxOptions, ...cultureKeys];
@@ -339,7 +345,17 @@ export default function StyleBearClient() {
               </div>
             ) : (
               <>
+                {modelWarning && (
+                  <p className="text-xs text-amber-600 dark:text-amber-500 mb-1">
+                    ⚠️ {modelWarning}
+                  </p>
+                )}
                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{output}</p>
+                {modelLabel && (
+                  <p className="text-xs text-muted-foreground/50 mt-1">
+                    via {modelLabel.split("/").pop()?.replace(/:free$/, "")}
+                  </p>
+                )}
                 <div className="flex gap-2 flex-wrap">
                   <button
                     type="button"
