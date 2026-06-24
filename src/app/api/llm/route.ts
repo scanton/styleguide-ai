@@ -7,6 +7,10 @@ import { systemPrompts } from "@/data/stylebear/system-prompts";
 // To revert to the DEFAULT_MODEL env var, set OPENROUTER_EXPERIMENT=false in Vercel.
 const EXPERIMENT_ACTIVE = process.env.OPENROUTER_EXPERIMENT !== "false";
 
+function shortModel(model: string): string {
+  return model.split("/").pop()?.replace(/:free$/, "") ?? model;
+}
+
 async function callWithExperiment(
   messages: LLMMessage[],
   maxTokens?: number
@@ -21,7 +25,7 @@ async function callWithExperiment(
       const result = await callLLM(messages, { model, maxTokens });
       const warning =
         tried.length > 1
-          ? `${tried.slice(0, -1).join(", ")} failed — fell back to ${model}`
+          ? `${tried.slice(0, -1).map(shortModel).join(", ")} failed — fell back to ${shortModel(model)}`
           : undefined;
       return { content: result.content, model, warning };
     } catch {
