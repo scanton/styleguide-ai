@@ -64,7 +64,7 @@ export async function POST(request: Request) {
       .insert(risingPosts)
       .values({
         source: "site",
-        sourceId: null,
+        sourceId: session.user.id,
         imageUrl: blob.url,
         thumbnailUrl: null,
         title: null,

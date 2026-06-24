@@ -2,8 +2,8 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { users } from "@/drizzle/schema";
-import { eq } from "drizzle-orm";
+import { users, risingPosts } from "@/drizzle/schema";
+import { eq, or, and } from "drizzle-orm";
 import { locales } from "@/i18n/routing";
 
 export async function GET() {
@@ -66,16 +66,20 @@ export async function PATCH(request: Request) {
       ? null
       : undefined;
 
+  // Read current display name before the update so we can match old posts by name
+  const [current] = await db
+    .select({ displayName: users.displayName, name: users.name })
+    .from(users)
+    .where(eq(users.id, session.user.id))
+    .limit(1);
+
+  const oldCreatorName = current?.displayName ?? current?.name ?? null;
+
   const updates: Partial<{
-    name: string | null;
     displayName: string | null;
     preferredAspectRatio: string | null;
     preferredLanguage: string | null;
-  }> = {
-    displayName: trimmed || null,
-    // Keep users.name in sync so Rising posts and session always reflect the display name
-    name: trimmed || null,
-  };
+  }> = { displayName: trimmed || null };
 
   if (aspectRatio !== undefined) updates.preferredAspectRatio = aspectRatio;
   if (lang !== undefined) updates.preferredLanguage = lang;
@@ -89,6 +93,20 @@ export async function PATCH(request: Request) {
       preferredAspectRatio: users.preferredAspectRatio,
       preferredLanguage: users.preferredLanguage,
     });
+
+  // Sync creatorName on all of this user's site posts:
+  // - Posts with sourceId = userId (new posts going forward)
+  // - Posts where creatorName matches the old name (legacy posts uploaded before sourceId was stored)
+  if (trimmed) {
+    const conditions = [eq(risingPosts.source, "site")];
+    const nameConditions = [eq(risingPosts.sourceId, session.user.id)];
+    if (oldCreatorName) nameConditions.push(eq(risingPosts.creatorName, oldCreatorName));
+
+    await db
+      .update(risingPosts)
+      .set({ creatorName: trimmed })
+      .where(and(...conditions, or(...nameConditions)));
+  }
 
   return NextResponse.json({
     displayName: updated?.displayName ?? null,
