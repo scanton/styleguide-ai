@@ -92,7 +92,7 @@ export const TAROT_CARDS: TarotCard[] = [
     creator: "casti",
     title: "Encaustic Painting",
     description: "rebirth, transformation, and resilience",
-    type: "movement",
+    type: "media",
     imageFilename: "Encaustic_Painting.png",
   },
   {
