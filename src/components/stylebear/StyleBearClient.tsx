@@ -360,8 +360,13 @@ export default function StyleBearClient() {
         <div ref={outputRef}>
           <section className="border border-border rounded-lg p-4 space-y-3 bg-card min-h-[100px]">
             {loading ? (
-              <div className="flex items-center justify-center h-16 text-muted-foreground text-sm animate-pulse">
-                {t("crafting")}
+              <div className="flex items-center justify-center py-6">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/loading_animation_satori_bear-small.gif"
+                  alt="Generating prompt…"
+                  className="w-32 h-32 object-contain"
+                />
               </div>
             ) : (
               <>
