@@ -195,6 +195,111 @@ export async function uploadRisingPost(
   }
 }
 
+// --- Articles ---
+
+export interface Article {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string | null;
+  mediumUrl: string;
+  publishedAt: string | null;
+  tags: string[];
+  thumbnailUrl: string | null;
+  movementMatches: string[];
+}
+
+export async function fetchArticles(opts: {
+  q?: string;
+  page?: number;
+  limit?: number;
+} = {}): Promise<{ articles: Article[]; total: number }> {
+  try {
+    const params = new URLSearchParams();
+    if (opts.q) params.set("q", opts.q);
+    if (opts.page) params.set("page", String(opts.page));
+    if (opts.limit) params.set("limit", String(opts.limit));
+    const res = await apiFetch(`/api/articles?${params}`);
+    const data = await res.json();
+    return { articles: data.articles ?? [], total: data.total ?? 0 };
+  } catch {
+    return { articles: [], total: 0 };
+  }
+}
+
+// --- Events / Themes ---
+
+export interface CommunityEvent {
+  id: string;
+  title: string;
+  description: string | null;
+  imageUrl: string | null;
+  discordTags: string[];
+  threadUrl: string | null;
+  postedAt: string | null;
+  discordThreadId: string | null;
+}
+
+export async function fetchEvents(opts: {
+  q?: string;
+  page?: number;
+  limit?: number;
+} = {}): Promise<{ events: CommunityEvent[]; total: number }> {
+  try {
+    const params = new URLSearchParams();
+    if (opts.q) params.set("q", opts.q);
+    if (opts.page) params.set("page", String(opts.page));
+    if (opts.limit) params.set("limit", String(opts.limit));
+    const res = await apiFetch(`/api/events?${params}`);
+    const data = await res.json();
+    return { events: data.events ?? [], total: data.total ?? 0 };
+  } catch {
+    return { events: [], total: 0 };
+  }
+}
+
+// --- Search ---
+
+export interface SearchResult {
+  id: string;
+  type: "artist" | "movement" | "article";
+  title: string;
+  subtitle?: string;
+  href: string;
+}
+
+export async function searchContent(q: string): Promise<SearchResult[]> {
+  if (q.trim().length < 2) return [];
+  try {
+    const res = await apiFetch(`/api/search?q=${encodeURIComponent(q.trim())}`);
+    const data = await res.json();
+    return data.results ?? [];
+  } catch {
+    return [];
+  }
+}
+
+// --- Contact ---
+
+export async function sendContactForm(body: {
+  name: string;
+  email: string;
+  subject?: string;
+  message: string;
+}): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const res = await apiFetch("/api/contact", {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (res.ok) return { ok: true };
+    return { ok: false, error: data.error ?? "Unknown error" };
+  } catch {
+    return { ok: false, error: "Network error" };
+  }
+}
+
 // --- Generic LLM (no promptStyle required) ---
 
 export async function callLLM(body: {

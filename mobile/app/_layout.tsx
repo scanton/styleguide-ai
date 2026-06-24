@@ -54,6 +54,11 @@ export default function RootLayout() {
         <Stack.Screen name="styledice" />
         <Stack.Screen name="styletarot" />
         <Stack.Screen name="rising" />
+        <Stack.Screen name="articles" />
+        <Stack.Screen name="themes" />
+        <Stack.Screen name="about" />
+        <Stack.Screen name="consulting" />
+        <Stack.Screen name="privacy" />
         <Stack.Screen name="+not-found" />
       </Stack>
     </SessionProvider>

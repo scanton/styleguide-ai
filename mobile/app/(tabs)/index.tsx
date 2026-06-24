@@ -2,7 +2,6 @@ import {
   ActivityIndicator,
   Alert,
   Dimensions,
-  FlatList,
   Image,
   Linking,
   Modal,
@@ -15,7 +14,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { useTranslation } from "react-i18next";
 
@@ -24,7 +23,9 @@ import { RisingPostCard } from "@/components/rising/RisingPostCard";
 import { useSession } from "@/lib/SessionContext";
 import {
   type RisingPost,
+  type CommunityEvent,
   fetchRisingPosts,
+  fetchEvents,
   voteRisingPost,
   reportRisingPost,
   uploadRisingPost,
@@ -80,6 +81,10 @@ export default function RisingScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
+  // Home widgets (shown on "all" tab)
+  const [latestTheme, setLatestTheme] = useState<CommunityEvent | null>(null);
+  const [spotlightPosts, setSpotlightPosts] = useState<RisingPost[]>([]);
+
   // Detail modal
   const [detailPost, setDetailPost] = useState<RisingPost | null>(null);
   const [detailLiked, setDetailLiked] = useState(false);
@@ -100,6 +105,18 @@ export default function RisingScreen() {
     setPosts(data);
     setLoading(false);
     setRefreshing(false);
+  }, [sessionToken]);
+
+  // Load home widgets once on mount
+  useEffect(() => {
+    (async () => {
+      const [themeData, daData] = await Promise.all([
+        fetchEvents({ limit: 1 }),
+        fetchRisingPosts("deviantart", sessionToken),
+      ]);
+      setLatestTheme(themeData.events[0] ?? null);
+      setSpotlightPosts(daData.slice(0, 4));
+    })();
   }, [sessionToken]);
 
   useEffect(() => {
@@ -263,6 +280,60 @@ export default function RisingScreen() {
             />
           }
         >
+          {/* Home widgets — only on "all" tab */}
+          {activeSource === "all" && (
+            <View className="mb-4">
+              {/* Latest theme card */}
+              {latestTheme && (
+                <Pressable
+                  onPress={() => latestTheme.threadUrl && Linking.openURL(latestTheme.threadUrl)}
+                  className="bg-white border border-border rounded-xl overflow-hidden mb-3 active:opacity-70"
+                >
+                  {latestTheme.imageUrl && (
+                    <Image
+                      source={{ uri: latestTheme.imageUrl }}
+                      style={{ width: "100%", height: 120 }}
+                      resizeMode="cover"
+                    />
+                  )}
+                  <View className="px-4 py-3 flex-row items-center justify-between">
+                    <View className="flex-1">
+                      <Text className="font-sans text-xs text-muted-foreground uppercase tracking-wide mb-0.5">
+                        Today's Theme
+                      </Text>
+                      <Text className="font-sans-semibold text-base text-cream-foreground" numberOfLines={1}>
+                        {latestTheme.title}
+                      </Text>
+                    </View>
+                    {latestTheme.threadUrl && (
+                      <Text className="font-sans text-xs text-purple ml-3">Join ›</Text>
+                    )}
+                  </View>
+                </Pressable>
+              )}
+
+              {/* Community spotlight strip */}
+              {spotlightPosts.length > 0 && (
+                <View className="mb-2">
+                  <Text className="font-sans-semibold text-xs text-muted-foreground uppercase tracking-widest mb-2 px-1">
+                    Community Spotlight
+                  </Text>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -8 }} contentContainerStyle={{ paddingHorizontal: 8, gap: 8 }}>
+                    {spotlightPosts.map((post) => (
+                      <Pressable key={post.id} onPress={() => openDetail(post)} className="active:opacity-80">
+                        <Image
+                          source={{ uri: post.thumbnailUrl ?? post.imageUrl }}
+                          style={{ width: 120, height: 120, borderRadius: 10 }}
+                          resizeMode="cover"
+                        />
+                      </Pressable>
+                    ))}
+                  </ScrollView>
+                </View>
+              )}
+            </View>
+          )}
+
           {/* Two-column layout with variable heights */}
           <View style={{ flexDirection: "row", gap: 8 }}>
             <View style={{ width: COLUMN_WIDTH }}>

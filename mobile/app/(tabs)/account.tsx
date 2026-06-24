@@ -68,6 +68,18 @@ export default function AccountScreen() {
             </Text>
           </Pressable>
         </View>
+
+        {/* Community links for guests too */}
+        <View className="mt-2">
+          <Text className="font-sans-semibold text-xs text-muted-foreground uppercase tracking-widest px-4 pb-2">
+            Community
+          </Text>
+          <AccountRow label="Articles" onPress={() => router.push("/articles" as never)} />
+          <AccountRow label="Themes & Events" onPress={() => router.push("/themes" as never)} />
+          <AccountRow label="About StyleGuideAI" onPress={() => router.push("/about" as never)} />
+          <AccountRow label="Consulting" onPress={() => router.push("/consulting" as never)} />
+          <AccountRow label="Privacy Policy" onPress={() => router.push("/privacy" as never)} />
+        </View>
       </SafeAreaView>
     );
   }
@@ -103,9 +115,20 @@ export default function AccountScreen() {
           <Text className="font-sans-semibold text-xs text-muted-foreground uppercase tracking-widest px-4 pb-2">
             {t("account.history", "History")}
           </Text>
-          <AccountRow label={t("account.stylebearHistory", "StyleBear History")} onPress={() => {}} />
+          <AccountRow label={t("account.stylebearHistory", "StyleBear History")} onPress={() => router.push("/stylebear/history" as never)} />
           <AccountRow label={t("account.stylediceHistory", "StyleDice History")} onPress={() => {}} />
           <AccountRow label={t("account.styletarotHistory", "StyleTarot History")} onPress={() => {}} />
+        </View>
+
+        {/* Community */}
+        <View className="mt-6">
+          <Text className="font-sans-semibold text-xs text-muted-foreground uppercase tracking-widest px-4 pb-2">
+            Community
+          </Text>
+          <AccountRow label="Articles" onPress={() => router.push("/articles" as never)} />
+          <AccountRow label="Themes & Events" onPress={() => router.push("/themes" as never)} />
+          <AccountRow label="About StyleGuideAI" onPress={() => router.push("/about" as never)} />
+          <AccountRow label="Consulting" onPress={() => router.push("/consulting" as never)} />
         </View>
 
         {/* Settings */}
@@ -114,6 +137,7 @@ export default function AccountScreen() {
             {t("account.settings", "Settings")}
           </Text>
           <AccountRow label={t("account.language", "Language")} onPress={() => {}} />
+          <AccountRow label="Privacy Policy" onPress={() => router.push("/privacy" as never)} />
         </View>
 
         {/* Sign out */}
