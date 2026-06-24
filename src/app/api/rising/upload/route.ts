@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { put } from "@vercel/blob";
 import { db } from "@/lib/db";
-import { risingPosts } from "@/drizzle/schema";
+import { risingPosts, users } from "@/drizzle/schema";
+import { eq } from "drizzle-orm";
 import { auth } from "@/auth";
 
 // Client compresses to ≤3.5 MB; 5 MB server cap keeps a safety margin
@@ -45,8 +46,17 @@ export async function POST(request: Request) {
     const now = new Date();
     const expiresAt = new Date(now.getTime() + SITE_EXPIRY_HOURS * 60 * 60 * 1000);
 
+    // Use displayName from DB so the user's chosen name (including emoji etc.) is always current
+    const [dbUser] = await db
+      .select({ name: users.name, displayName: users.displayName, email: users.email })
+      .from(users)
+      .where(eq(users.id, session.user.id))
+      .limit(1);
+
     const displayName =
-      session.user.name?.trim() ||
+      dbUser?.displayName?.trim() ||
+      dbUser?.name?.trim() ||
+      dbUser?.email?.split("@")[0] ||
       session.user.email?.split("@")[0] ||
       "Anonymous";
 

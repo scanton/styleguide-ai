@@ -122,7 +122,7 @@ export function ProfileClient() {
             aria-label={t("displayName")}
           />
           <Button onClick={handleSave} disabled={saving} size="sm">
-            {saved ? "Saved!" : saving ? "Saving…" : "Save"}
+            {saved ? t("saved") : saving ? t("saving") : t("save")}
           </Button>
         </div>
       </div>
@@ -144,7 +144,7 @@ export function ProfileClient() {
             ))}
           </select>
           <Button onClick={handleSave} disabled={saving} size="sm">
-            {saved ? "Saved!" : saving ? "Saving…" : "Save"}
+            {saved ? t("saved") : saving ? t("saving") : t("save")}
           </Button>
         </div>
       </div>
@@ -152,9 +152,7 @@ export function ProfileClient() {
       {/* Preferred Language */}
       <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
         <h2 className="font-semibold text-foreground">{t("preferredLanguage")}</h2>
-        <p className="text-sm text-muted-foreground">
-          When set, this language is used when no browser preference is detected. Your browser&apos;s language always takes priority.
-        </p>
+        <p className="text-sm text-muted-foreground">{t("preferredLanguageHint")}</p>
         <div className="flex gap-3 items-end">
           <select
             value={preferredLanguage}
@@ -168,7 +166,7 @@ export function ProfileClient() {
             ))}
           </select>
           <Button onClick={handleSave} disabled={saving} size="sm">
-            {saved ? "Saved!" : saving ? "Saving…" : "Save"}
+            {saved ? t("saved") : saving ? t("saving") : t("save")}
           </Button>
         </div>
       </div>

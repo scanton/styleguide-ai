@@ -67,10 +67,15 @@ export async function PATCH(request: Request) {
       : undefined;
 
   const updates: Partial<{
+    name: string | null;
     displayName: string | null;
     preferredAspectRatio: string | null;
     preferredLanguage: string | null;
-  }> = { displayName: trimmed || null };
+  }> = {
+    displayName: trimmed || null,
+    // Keep users.name in sync so Rising posts and session always reflect the display name
+    name: trimmed || null,
+  };
 
   if (aspectRatio !== undefined) updates.preferredAspectRatio = aspectRatio;
   if (lang !== undefined) updates.preferredLanguage = lang;
