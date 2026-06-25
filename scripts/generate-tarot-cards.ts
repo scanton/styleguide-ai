@@ -14,6 +14,8 @@ const OUT_PATH = path.join(OUT_DIR, "cards.ts");
 const FILENAME_FIXES: Record<string, string> = {
   "Stippling,jpg": "Stippling.jpg",
   "Installation Art.jpg": "Installation_Art.jpg",
+  // Accented filename — actual file on disk is unaccented
+  "Béton.png": "Beton.png",
 };
 
 // Add missing descriptions

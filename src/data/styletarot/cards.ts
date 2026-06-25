@@ -1077,7 +1077,7 @@ export const TAROT_CARDS: TarotCard[] = [
     title: "Béton (cement)",
     description: "Coating Art Beton allows achieving various structures: concrete, concrete stucco, travertine stone",
     type: "media",
-    imageFilename: "Béton.png",
+    imageFilename: "Beton.png",
   },
   {
     index: 133,
