@@ -2733,7 +2733,15 @@ export const TAROT_CARDS: TarotCard[] = [
     title: "Fisheye Lens",
     description: "the world bent into a perfect sphere — every straight line curved, every horizon bowed, capturing an impossible panorama in a single impossible frame",
     type: "technique",
-    imageFilename: "Fisheye_Lens.png340",
+    imageFilename: "Fisheye_Lens.png",
+  },
+  {
+    index: 340,
+    creator: "Satori Canton",
+    title: "Raymond Leech",
+    description: "loose luminous watercolor portraiture, pigment blooming through wet washes, form emerging from radiant unfixed color",
+    type: "artist",
+    imageFilename: "Raymond_Leech.png",
   },
   {
     index: 341,
