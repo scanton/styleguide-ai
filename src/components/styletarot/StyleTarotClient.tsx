@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { gsap } from "gsap";
@@ -73,25 +74,24 @@ function CardFace({ card, held, onClick, interactive, heldLabel }: {
         ? `${card.title}, ${typeLabel(card.type)} card. ${held ? "Held — click to release" : "Click to hold"}`
         : card.title}
       className={[
-        "relative flex flex-col overflow-hidden rounded-2xl text-left transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 w-full",
+        "relative overflow-hidden rounded-2xl text-left transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 w-full",
         interactive ? "cursor-pointer" : "cursor-default",
         held ? "shadow-xl" : "shadow-md",
       ].join(" ")}
       style={{
-        aspectRatio: "2/3",
         boxShadow: held ? `0 0 0 3px ${typeColor}, 0 8px 24px rgba(0,0,0,0.15)` : undefined,
       }}
     >
-      {/* Card image */}
-      <div className="flex-1 relative bg-gray-100 overflow-hidden min-h-0">
+      {/* Card image — 9:16 container matches the actual image aspect ratio */}
+      <div className="relative w-full" style={{ aspectRatio: "9/16" }}>
         {!imgError ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={`/images/styletarot/${card.imageFilename}`}
             alt={card.title}
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 w-full h-full object-cover"
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 20vw"
+            quality={85}
+            className="object-cover"
             onError={() => setImgError(true)}
           />
         ) : (
@@ -115,7 +115,7 @@ function CardFace({ card, held, onClick, interactive, heldLabel }: {
       </div>
 
       {/* Card info */}
-      <div className="flex-none p-2.5 bg-white space-y-0.5">
+      <div className="p-2.5 bg-white space-y-0.5">
         <div className="flex items-center gap-1.5">
           <span
             className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full text-white flex-none"
@@ -188,7 +188,7 @@ function ExploreMode({
 
       {/* Scrollable card grid */}
       <div className="relative">
-        <div className="overflow-y-auto max-h-72 md:max-h-96 rounded-xl pr-1 -mr-1">
+        <div className="overflow-y-auto max-h-[60vh] md:max-h-[75vh] rounded-xl pr-1 -mr-1">
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 pb-4">
             {filtered.map((card) => {
               const isSelected = selected.has(card.index);
