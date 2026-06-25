@@ -14,9 +14,15 @@ const OUT_PATH = path.join(OUT_DIR, "cards.ts");
 const FILENAME_FIXES: Record<string, string> = {
   "Stippling,jpg": "Stippling.jpg",
   "Installation Art.jpg": "Installation_Art.jpg",
-  // Accented filename — actual file on disk is unaccented
-  "Béton.png": "Beton.png",
 };
+
+// Strip accents from a filename so TSV entries like "Paul_Cézanne.jpg"
+// resolve to the unaccented file actually stored on disk ("Paul_Cezanne.jpg").
+// NFD decomposition splits combined chars into base + combining mark;
+// the regex then removes the combining marks.
+function normalizeFilename(filename: string): string {
+  return filename.normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
 
 // Add missing descriptions
 const DESCRIPTION_OVERRIDES: Record<string, string> = {
@@ -78,8 +84,9 @@ function main() {
       description = DESCRIPTION_OVERRIDES[title];
     }
 
-    // Apply filename fixes
-    const fixedFilename = FILENAME_FIXES[imageFilename] ?? imageFilename;
+    // Normalize accents first, then apply any remaining manual fixes
+    const normalizedFilename = normalizeFilename(imageFilename);
+    const fixedFilename = FILENAME_FIXES[normalizedFilename] ?? normalizedFilename;
 
     cards.push({
       index,
