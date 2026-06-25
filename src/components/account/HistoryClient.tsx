@@ -329,7 +329,7 @@ function BearHistoryTab() {
   if (!entries.length) return (
     <div className="text-center py-12 space-y-2">
       <p className="text-muted-foreground">{t("bearEmpty")}</p>
-      <a href="/stylebear" className="text-sm text-primary hover:underline">{t("bearEmptyLink")}</a>
+      <Link href="/stylebear" className="text-sm text-primary hover:underline">{t("bearEmptyLink")}</Link>
     </div>
   );
 
@@ -443,7 +443,7 @@ function TarotHistoryTab() {
   if (!entries.length) return (
     <div className="text-center py-12 space-y-2">
       <p className="text-muted-foreground">{t("tarotEmpty")}</p>
-      <a href="/styletarot" className="text-sm text-primary hover:underline">{t("tarotEmptyLink")}</a>
+      <Link href="/styletarot" className="text-sm text-primary hover:underline">{t("tarotEmptyLink")}</Link>
     </div>
   );
 
@@ -606,7 +606,7 @@ function DiceHistoryTab() {
   if (!entries.length) return (
     <div className="text-center py-12 space-y-2">
       <p className="text-muted-foreground">{t("diceEmpty")}</p>
-      <a href="/styledice" className="text-sm text-primary hover:underline">{t("diceEmptyLink")}</a>
+      <Link href="/styledice" className="text-sm text-primary hover:underline">{t("diceEmptyLink")}</Link>
     </div>
   );
 
@@ -725,7 +725,7 @@ function MuseumHistoryTab() {
   if (!entries.length) return (
     <div className="text-center py-12 space-y-2">
       <p className="text-muted-foreground">{t("museumEmpty")}</p>
-      <a href="/museum" className="text-sm text-primary hover:underline">{t("museumEmptyLink")}</a>
+      <Link href="/museum" className="text-sm text-primary hover:underline">{t("museumEmptyLink")}</Link>
     </div>
   );
 

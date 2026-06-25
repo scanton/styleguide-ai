@@ -153,6 +153,7 @@ export default function Gallery3D({ title, accentColor, works, onExit }: Gallery
   const [isTouch, setIsTouch] = useState(false);
 
   const phaseRef = useRef<Phase>("loading");
+  // eslint-disable-next-line react-hooks/refs
   phaseRef.current = phase;
 
   // Fade in from black on mount.

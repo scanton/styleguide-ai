@@ -133,10 +133,9 @@ function EqualAreaCard({
   const [liked, setLiked] = useState(post.hasVoted);
   const [count, setCount] = useState(post.siteLikes);
   const totalLikes = count + post.rawEngagement;
-  const hoursLeft = Math.max(
-    0,
-    Math.round((new Date(post.expiresAt).getTime() - Date.now()) / 3_600_000)
-  );
+  // eslint-disable-next-line react-hooks/purity
+  const nowMs = Date.now();
+  const hoursLeft = Math.max(0, Math.round((new Date(post.expiresAt).getTime() - nowMs) / 3_600_000));
 
   function handleVote(e: React.MouseEvent) {
     e.stopPropagation();

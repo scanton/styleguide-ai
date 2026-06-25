@@ -23,6 +23,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpen(false);
   }, [pathname]);
 

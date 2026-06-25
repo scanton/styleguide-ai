@@ -67,6 +67,7 @@ export function ThemesClient({ initialQ }: { initialQ: string }) {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchEvents(query, page);
   }, [query, page, fetchEvents]);
 

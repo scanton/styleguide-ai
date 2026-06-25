@@ -28,10 +28,9 @@ export function RisingCard({ post, onVote, onClick }: Props) {
 
   const totalLikes = optimisticCount + post.rawEngagement;
 
-  const hoursLeft = Math.max(
-    0,
-    Math.round((new Date(post.expiresAt).getTime() - Date.now()) / 3_600_000)
-  );
+  // eslint-disable-next-line react-hooks/purity
+  const nowMs = Date.now();
+  const hoursLeft = Math.max(0, Math.round((new Date(post.expiresAt).getTime() - nowMs) / 3_600_000));
 
   function handleVote(e: React.MouseEvent) {
     e.stopPropagation();

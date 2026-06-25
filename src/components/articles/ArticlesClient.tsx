@@ -82,6 +82,7 @@ export function ArticlesClient({ initialQ, initialPage, initialTotal }: Props) {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchArticles(query, page);
   }, [query, page, fetchArticles]);
 

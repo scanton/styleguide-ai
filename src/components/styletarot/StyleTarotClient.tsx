@@ -45,16 +45,6 @@ function pickRandom<T>(arr: T[], count: number): T[] {
 
 // ── Sub-components ───────────────────────────────────────────────────────────
 
-function CardBack() {
-  return (
-    <div className="absolute inset-0 rounded-2xl flex flex-col items-center justify-center gap-2 select-none"
-      style={{ background: "linear-gradient(135deg, oklch(0.30 0.20 285) 0%, oklch(0.22 0.15 285) 100%)" }}>
-      <div className="text-white/30 text-5xl font-bold tracking-widest rotate-45">✦</div>
-      <div className="text-white/50 text-xs font-bold uppercase tracking-widest">StyleTarot</div>
-    </div>
-  );
-}
-
 function CardFace({ card, held, onClick, interactive, heldLabel }: {
   card: TarotCard;
   held: boolean;
@@ -511,7 +501,6 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
         { y: 0, opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.4)", delay: i * 0.07 }
       );
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dealCount, hand]);
 
   // Fire redraw-in animation after new cards are in the DOM
@@ -531,7 +520,6 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
         { y: 0, opacity: 1, scale: 1, duration: 0.25, ease: "back.out(1.4)", delay: i * 0.06 }
       );
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hand]);
 
   // Animate prompt appearance
@@ -548,10 +536,6 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
   // ── Derived state ──────────────────────────────────────────────────────────
 
   const activeCards = getActiveCards();
-  const canGenerate =
-    mode === "draw"
-      ? (drawPhase === "drawn" || drawPhase === "locked") && hand.length === HAND_SIZE
-      : exploreSelected.size === HAND_SIZE;
 
   const showDrawActions = mode === "draw" && drawPhase !== "start";
 

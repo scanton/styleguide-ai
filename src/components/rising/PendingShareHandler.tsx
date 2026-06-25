@@ -46,6 +46,7 @@ export function PendingShareHandler() {
     if (saved.historyPayload) {
       saveRestoredHistory(saved.tool, saved.prompt, saved.historyPayload);
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPending({ prompt: saved.prompt, toolOrigin: saved.toolOrigin, toolContext: saved.toolContext });
   }, [session?.user]);
 

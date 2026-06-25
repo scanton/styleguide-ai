@@ -67,9 +67,9 @@ export default async function RisingPostPage({
 
   const totalLikes = (post.siteLikes ?? 0) + (post.rawEngagement ?? 0);
   const isExpired = new Date(post.expiresAt) < new Date();
-  const hoursLeft = isExpired
-    ? 0
-    : Math.round((new Date(post.expiresAt).getTime() - Date.now()) / 3_600_000);
+  // eslint-disable-next-line react-hooks/purity
+  const nowMs = Date.now();
+  const hoursLeft = isExpired ? 0 : Math.round((new Date(post.expiresAt).getTime() - nowMs) / 3_600_000);
 
   return (
     <main className="min-h-screen bg-stone-950 py-8 px-4">

@@ -68,6 +68,7 @@ export function SearchPalette({ open, onClose }: Props) {
   }, [query, search]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!open) setQuery("");
   }, [open]);
 

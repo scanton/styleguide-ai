@@ -221,6 +221,7 @@ export default function TimelineInfoCard({
     }
 
     if (!url) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRelatedArticles([]);
       return;
     }
