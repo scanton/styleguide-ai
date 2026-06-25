@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import type { RisingPost } from "@/app/api/rising/posts/route";
 import { X, ExternalLink, Heart, Flag } from "lucide-react";
 
@@ -40,13 +41,16 @@ function TarotCardMiniDisplay({ card }: { card: TarotCardMini }) {
   const [imgError, setImgError] = useState(false);
   const color = CARD_TYPE_COLORS[card.type] ?? "oklch(0.42 0.22 285)";
   return (
-    <div className="flex flex-col rounded-xl overflow-hidden shadow-md" style={{ aspectRatio: "2/3" }}>
-      <div className="flex-1 relative bg-stone-700 min-h-0">
+    <div className="rounded-xl overflow-hidden shadow-md">
+      <div className="relative aspect-[9/16] bg-stone-700">
         {!imgError ? (
-          <img
+          <Image
+            fill
             src={`/images/styletarot/${card.imageFilename}`}
             alt={card.title}
-            className="absolute inset-0 w-full h-full object-cover"
+            sizes="20vw"
+            quality={85}
+            className="object-cover"
             onError={() => setImgError(true)}
           />
         ) : (
@@ -55,7 +59,7 @@ function TarotCardMiniDisplay({ card }: { card: TarotCardMini }) {
           </div>
         )}
       </div>
-      <div className="flex-none p-1.5 bg-white space-y-0.5">
+      <div className="p-1.5 bg-white space-y-0.5">
         <span
           className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full text-white"
           style={{ backgroundColor: color }}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useTranslations, useFormatter } from "next-intl";
 import { TAROT_CARDS, CARD_TYPE_COLORS } from "@/data/styletarot/cards";
@@ -490,12 +491,14 @@ function TarotHistoryTab() {
                       className="rounded-xl overflow-hidden text-white text-xs leading-tight min-w-0"
                       style={{ backgroundColor: CARD_TYPE_COLORS[card!.type] ?? "oklch(0.42 0.22 285)" }}
                     >
-                      <div className="aspect-[2/3] overflow-hidden">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                      <div className="relative aspect-[9/16] overflow-hidden">
+                        <Image
+                          fill
                           src={`/images/styletarot/${card!.imageFilename}`}
                           alt={card!.title}
-                          className="w-full h-full object-cover"
+                          sizes="20vw"
+                          quality={85}
+                          className="object-cover"
                         />
                       </div>
                       <div className="p-1.5">
