@@ -2681,7 +2681,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 333,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Tilt-Shift",
     description: "compressed scale, diorama illusion, and the uncanny beauty of the world rendered as a perfect miniature",
     type: "technique",
@@ -2689,7 +2689,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 334,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Depth of Field",
     description: "the tension between razor-sharp focus and luminous blur, directing the eye through a world that dissolves at its edges",
     type: "technique",
@@ -2697,7 +2697,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 335,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Pinup",
     description: "glamour, playfulness, and joyful confidence — the art of idealized figures that wink at life and celebrate the body with warmth and wit",
     type: "inspiration",
@@ -2705,7 +2705,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 336,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Brian Viveros",
     description: "dark glamour, smoky vulnerability, and the hypnotic beauty of damage — portraits of women who carry their wounds like war paint",
     type: "artist",
@@ -2713,7 +2713,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 337,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Pascal Campion",
     description: "warmth, quiet love, and the luminous poetry of ordinary moments — everyday life made golden by the light we give each other",
     type: "artist",
@@ -2721,7 +2721,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 338,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Worm's Eye View",
     description: "the heroic perspective from below — making the ordinary monumental and the sky infinite, transforming everyday subjects into towering presences",
     type: "technique",
@@ -2729,7 +2729,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 339,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Fisheye Lens",
     description: "the world bent into a perfect sphere — every straight line curved, every horizon bowed, capturing an impossible panorama in a single impossible frame",
     type: "technique",
@@ -2737,7 +2737,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 340,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Raymond Leech",
     description: "loose luminous watercolor portraiture, pigment blooming through wet washes, form emerging from radiant unfixed color",
     type: "artist",
@@ -2745,7 +2745,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 341,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "WLOP",
     description: "hyperrealistic digital painting with ethereal luminosity, skin achieving impossible porcelain perfection, atmospheric fantasy wrapped in cool spectral light",
     type: "artist",
@@ -2753,7 +2753,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 342,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Willem Haenraets",
     description: "loose atmospheric impressionism, warm gestural brushwork dissolving figures and environments together into pure emotional atmosphere",
     type: "artist",
@@ -2761,7 +2761,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 343,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Vladimir Volegov",
     description: "vibrant plein-air impressionism, bold confident brushwork, warm saturated color and joyful gestural freedom applied to intimate figural moments",
     type: "artist",
@@ -2769,7 +2769,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 344,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Tim Hildebrandt",
     description: "golden age fantasy oil illustration at epic scale, dramatic chiaroscuro and warm glowing light, highly detailed traditional craft in service of grand imagination",
     type: "artist",
@@ -2777,7 +2777,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 345,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Thomas Kinkade",
     description: "luminous impasto oil painting with supernatural warmth, every light source rendered as a radiant all-consuming glow, the world made safe and golden",
     type: "artist",
@@ -2785,7 +2785,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 346,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Tex Avery",
     description: "wild rubber-hose cartoon animation, exaggeration beyond physics, thick bold outlines and flat primary color in service of pure anarchic comedy",
     type: "artist",
@@ -2793,7 +2793,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 347,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Steve Hanks",
     description: "translucent watercolor realism, light as the true subject, intimate quiet moments rendered with photographic precision and profound stillness",
     type: "artist",
@@ -2801,7 +2801,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 348,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Skottie Young",
     description: "chibi-proportioned character design with bold expressive ink lines, flat vivid color, adorable grotesque energy and enormous personality in tiny forms",
     type: "artist",
@@ -2809,7 +2809,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 349,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Sandro Botticelli",
     description: "delicate tempera painting with gilded linear grace, flowing sinuous line and pale ethereal color, beauty suspended between the earthly and divine",
     type: "artist",
@@ -2817,7 +2817,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 350,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Sakimichan",
     description: "hyperdetailed digital illustration with glossy airbrushed finish, flawless luminous skin and elaborate fantasy costume design, vivid jewel-toned atmospheric lighting",
     type: "artist",
@@ -2825,7 +2825,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 351,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Roy Lichtenstein",
     description: "Ben-Day dot halftone patterns and bold black comic-book outlines, flat primary color fills, Pop Art graphic language at monumental scale",
     type: "artist",
@@ -2833,7 +2833,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 352,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Ross Tran",
     description: "anime-influenced digital oil painting, warm rich contrast between deep shadow and glowing ochre light, loose confident brushwork with emotional directness",
     type: "artist",
@@ -2841,7 +2841,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 353,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Rolf Armstrong",
     description: "velvety soft pastel portraiture, luminous smooth skin tones and luxuriant detail, Golden Age glamour illustration at its most transcendent",
     type: "artist",
@@ -2849,7 +2849,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 354,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Rebecca Sugar",
     description: "rounded soft character design with clean simple linework, saturated pastel palette, emotional warmth expressed through expressive simplified form",
     type: "artist",
@@ -2857,7 +2857,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 355,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Pino Daeni",
     description: "warm romantic oil illustration with a lush impressionist touch, skin glowing with amber light, atmospheric backgrounds dissolving into pure tenderness",
     type: "artist",
@@ -2865,7 +2865,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 356,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Peter Paul Rubens",
     description: "Flemish Baroque painting at its most magnificent, warm glowing flesh tones in thick impasto, extraordinary compositional dynamism and sensual vitality",
     type: "artist",
@@ -2873,7 +2873,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 357,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Mary Blair",
     description: "bold mid-century graphic design sensibility, impossibly vivid color in simplified geometric planes, joyful invention where every shape and hue carries pure expressive weight",
     type: "artist",
@@ -2881,7 +2881,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 358,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Mark Ryden",
     description: "hyperdetailed pop surrealism in meticulous oil, a lurid sweet palette layering the adorable and the disturbing in equal measure with Victorian precision",
     type: "artist",
@@ -2889,7 +2889,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 359,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Margaret Keane",
     description: "flat rich oil painting with intense emotional focus on enlarged expressive eyes, tender melancholy and heightened innocence in simplified figurative form",
     type: "artist",
@@ -2897,7 +2897,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 360,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Loish",
     description: "flowing digital brushwork with luminous warm skin tones, figures dissolving at their edges into dreamy atmospheric color, emotional grace and painterly softness",
     type: "artist",
@@ -2905,7 +2905,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 361,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Leonid Afremov",
     description: "bold impasto palette knife technique with jewel-toned brilliance, the visual world rendered as a mosaic of pure saturated color in constant motion",
     type: "artist",
@@ -2913,7 +2913,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 362,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Lady Pink",
     description: "aerosol mural art with feminine sensibility, wildstyle letterforms woven with organic decorative beauty, the graffiti tradition reclaimed and lyrically transformed",
     type: "artist",
@@ -2921,7 +2921,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 363,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Kaethe Butcher",
     description: "minimal ink line drawing of extraordinary economy, the female form traced with spare forensic tenderness, meaning carried entirely by what is left out",
     type: "artist",
@@ -2929,7 +2929,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 364,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Julie Bell",
     description: "photorealistic oil painting applied to epic fantasy subjects, extreme anatomical precision and physical idealism, every surface rendered with hyperreal clarity",
     type: "artist",
@@ -2937,7 +2937,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 365,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Josephine Wall",
     description: "mystical fantasy oil painting where figures dissolve seamlessly into cosmic and natural environments, luminous symbolism and dense ornamental beauty",
     type: "artist",
@@ -2945,7 +2945,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 366,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Jeremy Mann",
     description: "turbulent gestural oil painting in near-monochromatic shadow, sudden streaks of neon or gold piercing through deep atmospheric darkness",
     type: "artist",
@@ -2953,7 +2953,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 367,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Jasmine Becket-Griffith",
     description: "gothic whimsy in meticulous acrylic detail, flat graphic stylization with oversized expressive eyes, darkness and enchantment held in perfect decorative balance",
     type: "artist",
@@ -2961,7 +2961,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 368,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "James R. Eads",
     description: "psychedelic cosmic portraiture with kaleidoscopic jewel-toned radiance, tarot-influenced symbolism, figures surrounded by dense mandala-like compositions",
     type: "artist",
@@ -2969,7 +2969,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 369,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Ilya Kuvshinov",
     description: "anime-influenced digital portraiture of quiet emotional precision, soft warm skin tones and understated atmospheric backgrounds, melancholy expressed through subtle grace",
     type: "artist",
@@ -2977,7 +2977,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 370,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Hieronymus Bosch",
     description: "medieval panel painting technique with meticulous jewel-toned detail, teeming with bizarre hybrid invention in service of the darkly allegorical and surreal",
     type: "artist",
@@ -2985,7 +2985,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 371,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Gustav Klimt",
     description: "Vienna Secession oil and gold leaf, human figures embedded in vast ornamental tapestries of Byzantine complexity, the decorative and the sensual as one",
     type: "artist",
@@ -2993,7 +2993,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 372,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Glen Keane",
     description: "master animation draftsmanship, flowing expressive contour lines that simultaneously define structure and convey emotion, the pencil as an instrument of profound empathy",
     type: "artist",
@@ -3001,7 +3001,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 373,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Gil Elvgren",
     description: "smooth warm Golden Age oil illustration with luminous creamy skin tones, the commercial art tradition elevated to charm and radiant visual perfection",
     type: "artist",
@@ -3009,7 +3009,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 374,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Frank Miller",
     description: "extreme high-contrast ink work with near-total black shadow and minimal midtones, graphic storytelling at its most visually uncompromising and dramatically bold",
     type: "artist",
@@ -3017,7 +3017,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 375,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Eric Fortune",
     description: "delicate translucent watercolor of extraordinary subtlety, figures emerging from atmospheric washes with a quality of sacred illustration, hovering between dream and icon",
     type: "artist",
@@ -3025,7 +3025,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 376,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Dorian Vallejo",
     description: "photorealistic surrealist oil painting, figures merging seamlessly with natural environments, the boundary between flesh and world dissolved in luminous paint",
     type: "artist",
@@ -3033,7 +3033,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 377,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Don Bluth",
     description: "expressive 2D animation with rich warm color and detailed atmospheric backgrounds, character design balancing emotional honesty with timeless visual appeal",
     type: "artist",
@@ -3041,7 +3041,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 378,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Greg 'Craola' Simkins",
     description: "intricately detailed whimsical oil painting in soft golden light, narrative-dense surfaces where the fantastical and the charming are woven into every inch",
     type: "artist",
@@ -3049,7 +3049,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 379,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Carne Griffiths",
     description: "organic ink and tea calligraphy of extraordinary intricacy, flowing botanical line work built from thousands of curves in sepia and warm gold wash",
     type: "artist",
@@ -3057,7 +3057,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 380,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Caravaggio",
     description: "extreme tenebrism with theatrical single-source lighting against absolute black, painted with raw physical realism where every surface carries palpable weight and presence",
     type: "artist",
@@ -3065,7 +3065,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 381,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Brooke Shaden",
     description: "fine art composite photography in a muted ethereal palette of dove grey, cream, and sage, the physically impossible rendered with photographic conviction and quiet sorrow",
     type: "artist",
@@ -3073,7 +3073,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 382,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Brian Froude",
     description: "intricate naturalist watercolor illustration combining a botanist's precision with otherworldly imagination, the organic and the fantastical rendered with equal care",
     type: "artist",
@@ -3081,7 +3081,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 383,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Boris Vallejo",
     description: "photorealistic oil painting technique applied to epic fantasy subjects, extreme physical idealism and musculature rendered with extraordinary anatomical precision and drama",
     type: "artist",
@@ -3089,7 +3089,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 384,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Bob Ross",
     description: "wet-on-wet oil landscape painting with soft blended edges and peaceful tonal harmony, gentle meditative technique that transforms any scene into reassuring beauty",
     type: "artist",
@@ -3097,7 +3097,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 385,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Bella Kotak",
     description: "fine art composite photography in warm golden-amber light, soft painterly depth of field, the visual language of Pre-Raphaelite painting expressed through photography",
     type: "artist",
@@ -3105,7 +3105,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 386,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Beeple",
     description: "hyper-detailed CGI rendering at monumental cinematic scale, dark atmospheric lighting and grand compositional ambition, digital art as cultural and visual provocation",
     type: "artist",
@@ -3113,7 +3113,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 387,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Arthur Rackham",
     description: "intricate Edwardian pen-and-ink washed with delicate watercolor tints, every surface richly detailed, atmosphere simultaneously magical and unsettling",
     type: "artist",
@@ -3121,7 +3121,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 388,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Ansel Adams",
     description: "large-format black and white photography with the Zone System's extraordinary tonal range, crystalline sharpness and geological grandeur in every frame",
     type: "artist",
@@ -3129,7 +3129,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 389,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Annie Leibovitz",
     description: "theatrical fine art photography with deliberate grand staging and dramatic portrait lighting, images functioning simultaneously as documentation and personal mythology",
     type: "artist",
@@ -3137,7 +3137,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 390,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Andy Kehoe",
     description: "dark atmospheric oil painting with luminous floating light sources and rich impasto texture, nocturnal mystery rendered in warm-against-dark color contrast",
     type: "artist",
@@ -3145,7 +3145,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 391,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Anato Finnstark",
     description: "hyper-detailed epic fantasy digital painting with extraordinary material texture, dramatic three-point cinematic lighting, every surface individually articulated with precision",
     type: "artist",
@@ -3153,7 +3153,7 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 392,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Alex Grey",
     description: "visionary art combining photorealistic anatomy with sacred geometry and psychedelic color, the body rendered as a transparent cosmic diagram of glowing energy",
     type: "artist",
@@ -3161,11 +3161,27 @@ export const TAROT_CARDS: TarotCard[] = [
   },
   {
     index: 393,
-    creator: "Satori Canton",
+    creator: "Satori Canton🧸",
     title: "Alberto Seveso",
     description: "high-speed liquid photography with explosive chromatic intensity, organic tendrils of vivid pigment captured at the threshold between chaos and beauty",
     type: "artist",
     imageFilename: "Alberto_Seveso.png",
+  },
+  {
+    index: 394,
+    creator: "Satori Canton🧸",
+    title: "Patrick Nagel",
+    description: "Graphic, minimalist illustration defined by stark white skin, bold flat color blocks, heavy black outlines, and deep negative space — the feminine form distilled to its essentials with near-zero texture or detail, radiating 1980s glamour and cool confidence.",
+    type: "artist",
+    imageFilename: "Patrick_Nagel.png",
+  },
+  {
+    index: 395,
+    creator: "Satori Canton🧸",
+    title: "Kinetic Light-Painting Overlay",
+    description: "A mixed-media photography style where moody, cinematic base photography is overlaid with glowing, deliberate neon light-painting — luminous continuous lines that wrap three-dimensionally around a subject, trace movement, and add energetic graphic accents, making light itself the drawing medium.",
+    type: "technique",
+    imageFilename: "Kinetic_Light_Painting.png",
   },
 ];
 
