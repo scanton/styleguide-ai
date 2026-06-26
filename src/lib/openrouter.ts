@@ -16,7 +16,6 @@ export interface LLMResponse {
 
 export const EXPERIMENT_MODELS = [
   "openrouter/owl-alpha",
-  "nvidia/nemotron-3-ultra-550b-a55b:free",
   "openai/gpt-oss-120b:free",
   "openai/gpt-oss-20b:free",
   "google/gemma-4-31b-it:free",
