@@ -356,7 +356,7 @@ export const TAROT_CARDS: TarotCard[] = [
     creator: "Ninifar Cazar 🦉",
     title: "Sketch",
     description: "Sketch, A lone, enigmatic figure shrouded in darkness, their features obscured by heavy shadows, with bold, gestural lines and soft, whispery shading, blending charcoal's gritty texture with graphite's smooth, metallic sheen, evoking the emotive intensity of abstract expressionism.",
-    type: "situation",
+    type: "technique",
     imageFilename: "Sketch.png",
   },
   {
@@ -508,7 +508,7 @@ export const TAROT_CARDS: TarotCard[] = [
     creator: "Just Me",
     title: "Berkely Breathed Bloom County",
     description: "\"Bloom County,\" which ran from the 1980s to the 1990s, is characterized by its quirky and memorable characters, such as Opus the Penguin, Bill the Cat, and Milo Bloom. Berkeley Breathed's Bloom County style combines humor with a critical eye, often addressing serious issues through a lens of absurdity and exaggeration. He uses a mix of slapstick, puns, and visual gags to deliver his messages. His artwork is distinctive, with expressive characters and detailed backgrounds that add depth to the storytelling.",
-    type: "pop culture",
+    type: "inspiration",
     imageFilename: "Llama_Farm.jpg",
   },
   {
@@ -692,7 +692,7 @@ export const TAROT_CARDS: TarotCard[] = [
     creator: "Ninifar Cazar 🦉",
     title: "Castle",
     description: "Majestic castle with turrets and grandiose architecture, set amidst a misty, mystical landscape, rendered in a vintage, classic design aesthetic, reminiscent of 19th-century Romanticist paintings, characterized by strong, expressive brush strokes, thick, textured strokes, and deep, rich colors, evoking the styles of Ivan Shishkin, Gustav Klimt, and Ash Thorp, with intricate details and ornate patterns, inviting the viewer to step into a bygone era of wonder and enchantment.",
-    type: "location",
+    type: "setting",
     imageFilename: "castle-2.png",
   },
   {
