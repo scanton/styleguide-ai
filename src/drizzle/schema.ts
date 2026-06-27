@@ -348,3 +348,26 @@ export const stylebearHistory = pgTable(
   },
   (t) => [index("stylebear_history_user_idx").on(t.userId)]
 );
+
+// ─── Community StyleTarot cards ───────────────────────────────────────────────
+
+export const communityTarotCards = pgTable(
+  "community_tarot_cards",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => `stc_${crypto.randomUUID().replace(/-/g, "").slice(0, 8)}`),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    type: text("type").notNull(),
+    creator: text("creator").notNull(),
+    creatorUserId: text("creator_user_id"),
+    imageUrl: text("image_url"), // null until image uploaded (Discord two-step)
+    source: text("source", { enum: ["web", "discord"] }).notNull().default("web"),
+    createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`).notNull(),
+  },
+  (t) => [
+    index("community_tarot_cards_creator_idx").on(t.creatorUserId),
+    index("community_tarot_cards_created_idx").on(t.createdAt),
+  ]
+);

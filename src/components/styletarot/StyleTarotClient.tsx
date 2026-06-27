@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
+import { Plus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { gsap } from "gsap";
@@ -9,7 +10,28 @@ import { prefersReducedMotion as shouldReduceMotion } from "@/lib/motion";
 import { TAROT_CARDS, CARD_TYPE_COLORS, type TarotCard } from "@/data/styletarot/cards";
 import { ShareToRisingModal } from "@/components/rising/ShareToRisingModal";
 import { SignInPromptModal } from "@/components/rising/SignInPromptModal";
+import { AddCardModal } from "@/components/styletarot/AddCardModal";
 import { readLLMStream } from "@/lib/llm-stream";
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+interface CommunityCard {
+  id: string;
+  index: number;        // 50000+ virtual index, never conflicts with static cards
+  title: string;
+  description: string;
+  type: string;
+  creator: string;
+  imageUrl: string;
+  isCommunity: true;
+}
+
+type AnyCard = TarotCard | CommunityCard;
+
+function getCardSrc(card: AnyCard): string {
+  if ("isCommunity" in card) return card.imageUrl;
+  return `/images/styletarot/${(card as TarotCard).imageFilename}`;
+}
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -42,14 +64,14 @@ function pickRandom<T>(arr: T[], count: number): T[] {
 // ── Sub-components ───────────────────────────────────────────────────────────
 
 function CardFace({ card, held, onClick, interactive, heldLabel }: {
-  card: TarotCard;
+  card: AnyCard;
   held: boolean;
   onClick?: () => void;
   interactive?: boolean;
   heldLabel: string;
 }) {
   const [imgError, setImgError] = useState(false);
-  const typeColor = CARD_TYPE_COLORS[card.type] ?? "oklch(0.42 0.22 285)";
+  const typeColor = (CARD_TYPE_COLORS as Record<string, string>)[card.type] ?? "oklch(0.42 0.22 285)";
 
   return (
     <button
@@ -72,7 +94,7 @@ function CardFace({ card, held, onClick, interactive, heldLabel }: {
       <div className="relative w-full" style={{ aspectRatio: "9/16" }}>
         {!imgError ? (
           <Image
-            src={`/images/styletarot/${card.imageFilename}`}
+            src={getCardSrc(card)}
             alt={card.title}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 20vw"
@@ -219,9 +241,14 @@ export function StyleTarotClient() {
   // Mode
   const [mode, setMode] = useState<GameMode>("draw");
 
+  // Community cards (fetched from DB, merged into draw pool)
+  const [communityCards, setCommunityCards] = useState<CommunityCard[]>([]);
+  const [showAddCardModal, setShowAddCardModal] = useState(false);
+  const [communityRefetch, setCommunityRefetch] = useState(0);
+
   // Draw mode state
   const [drawPhase, setDrawPhase] = useState<DrawPhase>("start");
-  const [hand, setHand] = useState<TarotCard[]>([]);
+  const [hand, setHand] = useState<AnyCard[]>([]);
   const [held, setHeld] = useState<boolean[]>(Array(HAND_SIZE).fill(false));
   const [redrawsLeft, setRedrawsLeft] = useState(MAX_REDRAWS);
 
@@ -264,12 +291,35 @@ export function StyleTarotClient() {
       .catch(() => {});
   }, [session?.user]);
 
+  // ── Fetch community cards ──────────────────────────────────────────────────
+  useEffect(() => {
+    fetch("/api/styletarot/community-cards")
+      .then((r) => r.json())
+      .then((data: { cards?: { id: string; title: string; description: string; type: string; creator: string; imageUrl: string }[] }) => {
+        if (!Array.isArray(data.cards)) return;
+        setCommunityCards(
+          data.cards.map((c, i) => ({
+            id: c.id,
+            index: 50000 + i,
+            title: c.title,
+            description: c.description,
+            type: c.type,
+            creator: c.creator,
+            imageUrl: c.imageUrl,
+            isCommunity: true as const,
+          }))
+        );
+      })
+      .catch(() => {});
+  }, [communityRefetch]);
+
   // ── GSAP hold animation ────────────────────────────────────────────────────
 
   // ── Draw mode actions ──────────────────────────────────────────────────────
 
   const handleDeal = useCallback(() => {
-    const newHand = pickRandom(TAROT_CARDS, HAND_SIZE);
+    const allCards: AnyCard[] = [...TAROT_CARDS, ...communityCards];
+    const newHand = pickRandom(allCards, HAND_SIZE);
     setDealCount((c) => c + 1);
     setHand(newHand);
     setHeld(Array(HAND_SIZE).fill(false));
@@ -278,7 +328,7 @@ export function StyleTarotClient() {
     setSavedEntryId(null);
     setCopied(false);
     setDrawPhase("dealt");
-  }, []);
+  }, [communityCards]);
 
   const handleToggleHold = useCallback((i: number) => {
     if (drawPhase !== "dealt") return;
@@ -304,8 +354,9 @@ export function StyleTarotClient() {
     if (shouldReduceMotion()) {
       // No animation — just swap cards
       const newHand = [...hand];
+      const allCards: AnyCard[] = [...TAROT_CARDS, ...communityCards];
       const replacements = pickRandom(
-        TAROT_CARDS.filter((c) => !hand.some((hc) => hc.index === c.index)),
+        allCards.filter((c) => !hand.some((hc) => hc.index === c.index)),
         replaceIndices.length
       );
       replaceIndices.forEach((i, idx) => { newHand[i] = replacements[idx] ?? newHand[i]; });
@@ -314,11 +365,12 @@ export function StyleTarotClient() {
     }
 
     // Animate out, then swap, then animate in via useEffect
+    const allCards: AnyCard[] = [...TAROT_CARDS, ...communityCards];
     const tl = gsap.timeline({
       onComplete: () => {
         const newHand = [...hand];
         const replacements = pickRandom(
-          TAROT_CARDS.filter((c) => !hand.some((hc) => hc.index === c.index)),
+          allCards.filter((c) => !hand.some((hc) => hc.index === c.index)),
           replaceIndices.length
         );
         replaceIndices.forEach((i, idx) => { newHand[i] = replacements[idx] ?? newHand[i]; });
@@ -331,7 +383,7 @@ export function StyleTarotClient() {
       if (!el) return;
       tl.to(el, { y: 16, opacity: 0, scale: 0.9, duration: 0.18, ease: "power2.in" }, idx * 0.04);
     });
-  }, [redrawsLeft, drawPhase, held, hand]);
+  }, [redrawsLeft, drawPhase, held, hand, communityCards]);
 
   const handleLockHand = useCallback(() => {
     setDrawPhase("locked");
@@ -357,7 +409,7 @@ export function StyleTarotClient() {
 
   // ── Shared: generate prompt ────────────────────────────────────────────────
 
-  const getActiveCards = useCallback((): TarotCard[] => {
+  const getActiveCards = useCallback((): AnyCard[] => {
     if (mode === "draw") return hand;
     return Array.from(exploreSelected).map(
       (idx) => TAROT_CARDS.find((c) => c.index === idx)!
@@ -541,7 +593,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
     <>
     <div className="space-y-8">
       {/* Mode tabs */}
-      <div className="flex justify-center">
+      <div className="flex flex-col items-center gap-3">
         <div className="inline-flex rounded-full border border-black/10 bg-white p-1 gap-1">
           {(["draw", "explore"] as const).map((m) => (
             <button
@@ -563,6 +615,16 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
             </button>
           ))}
         </div>
+        {session?.user && (
+          <button
+            onClick={() => setShowAddCardModal(true)}
+            className="flex items-center gap-1.5 text-xs font-semibold text-[oklch(0.42_0.22_285)] hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.42_0.22_285)] rounded"
+            aria-label={t("addCard")}
+          >
+            <Plus size={13} aria-hidden="true" />
+            {t("addCard")}
+          </button>
+        )}
       </div>
 
       {/* ── Draw mode ── */}
@@ -813,7 +875,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
             <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{t("cardsUsed")}</p>
             <div className="flex flex-wrap gap-1.5">
               {activeCards.map((card) => {
-                const color = CARD_TYPE_COLORS[card.type] ?? "oklch(0.42 0.22 285)";
+                const color = (CARD_TYPE_COLORS as Record<string, string>)[card.type] ?? "oklch(0.42 0.22 285)";
                 return (
                   <span
                     key={card.index}
@@ -843,11 +905,23 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
               index: c.index,
               title: c.title,
               type: c.type,
-              imageFilename: c.imageFilename,
+              ...("isCommunity" in c
+                ? { imageUrl: (c as CommunityCard).imageUrl, isCommunity: true }
+                : { imageFilename: (c as TarotCard).imageFilename }),
             })),
             ...(savedEntryId ? { historyEntryId: savedEntryId } : {}),
           })}
           onClose={() => setShowShareModal(false)}
+        />
+      )}
+
+      {showAddCardModal && (
+        <AddCardModal
+          onClose={() => setShowAddCardModal(false)}
+          onSubmitted={() => {
+            setShowAddCardModal(false);
+            setCommunityRefetch((n) => n + 1);
+          }}
         />
       )}
 
@@ -862,7 +936,9 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
                 index: c.index,
                 title: c.title,
                 type: c.type,
-                imageFilename: c.imageFilename,
+                ...("isCommunity" in c
+                  ? { imageUrl: (c as CommunityCard).imageUrl, isCommunity: true }
+                  : { imageFilename: (c as TarotCard).imageFilename }),
               }))
             ),
             historyPayload: {

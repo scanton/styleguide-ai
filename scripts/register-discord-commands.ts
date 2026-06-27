@@ -33,9 +33,29 @@ if (!isGlobal && !GUILD_ID) {
 const commands = [
   {
     name: "stylebear",
-    // No parameters — the bot opens a modal form instead.
-    // Fields (scene, movement, media, style) are collected via the form.
     description: "Generate an AI art prompt — a form will appear to fill in your ideas",
+  },
+  {
+    name: "add-card",
+    description: "Add a new card to the StyleTarot deck — a form will appear for the card details",
+  },
+  {
+    name: "add-card-image",
+    description: "Upload the image for a card you created with /add-card",
+    options: [
+      {
+        type: 3, // STRING
+        name: "card_id",
+        description: "The card ID returned by /add-card (e.g. stc_abc12345)",
+        required: true,
+      },
+      {
+        type: 11, // ATTACHMENT
+        name: "image",
+        description: "The card image (9:16 portrait ratio recommended)",
+        required: true,
+      },
+    ],
   },
 ];
 
