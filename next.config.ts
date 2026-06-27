@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
     root: __dirname,
   },
   images: {
+    qualities: [70, 75, 85],
     remotePatterns: [
       // DeviantArt CDN (WixMP)
       { protocol: "https", hostname: "**.wixmp.com" },
@@ -15,6 +16,8 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "upload.wikimedia.org" },
       // Google profile images (OAuth avatars)
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
+      // Vercel Blob (community StyleTarot card images)
+      { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
     ],
   },
 };

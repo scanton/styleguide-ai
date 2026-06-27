@@ -150,6 +150,7 @@ function ExploreMode({
   allTypesLabel,
   noResultsLabel,
   heldLabel,
+  communityCards,
 }: {
   selected: Set<number>;
   onToggle: (index: number) => void;
@@ -157,11 +158,14 @@ function ExploreMode({
   allTypesLabel: string;
   noResultsLabel: string;
   heldLabel: string;
+  communityCards: CommunityCard[];
 }) {
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<string>("all");
 
-  const filtered = TAROT_CARDS.filter((card) => {
+  const allCards: AnyCard[] = [...TAROT_CARDS, ...communityCards];
+
+  const filtered = allCards.filter((card) => {
     const matchType = filterType === "all" || card.type === filterType;
     const matchSearch =
       !search ||
@@ -411,10 +415,11 @@ export function StyleTarotClient() {
 
   const getActiveCards = useCallback((): AnyCard[] => {
     if (mode === "draw") return hand;
+    const allCards: AnyCard[] = [...TAROT_CARDS, ...communityCards];
     return Array.from(exploreSelected).map(
-      (idx) => TAROT_CARDS.find((c) => c.index === idx)!
+      (idx) => allCards.find((c) => c.index === idx)!
     ).filter(Boolean);
-  }, [mode, hand, exploreSelected]);
+  }, [mode, hand, exploreSelected, communityCards]);
 
   const handleGenerate = useCallback(async () => {
     const cards = getActiveCards();
@@ -766,6 +771,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
             allTypesLabel={t("allTypes")}
             noResultsLabel={t("noResults")}
             heldLabel={t("lockHand")}
+            communityCards={communityCards}
           />
 
           {exploreSelected.size === HAND_SIZE && (
@@ -797,7 +803,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
           </h2>
           <div className="grid grid-cols-5 gap-2">
             {Array.from(exploreSelected).map((idx) => {
-              const card = TAROT_CARDS.find((c) => c.index === idx);
+              const card = ([...TAROT_CARDS, ...communityCards] as AnyCard[]).find((c) => c.index === idx);
               if (!card) return null;
               return (
                 <div key={idx}>
