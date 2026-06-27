@@ -434,9 +434,16 @@ export function StyleTarotClient() {
       )
       .join("\n\n");
 
-    const systemMessage = `You are an expert AI art prompt engineer. You synthesize StyleTarot card concepts — movements, artists, media, subjects, settings, and inspirations — into detailed, evocative image generation prompts.
+    const systemMessage = `You are an expert AI art prompt engineer. You synthesize StyleTarot card concepts into detailed, evocative image generation prompts.
 
-Modern AI image models (DALL-E 3, Midjourney, Stable Diffusion XL, Flux) handle long, specific prompts exceptionally well. Your prompts are rich in visual specificity: main subject, scene composition, artistic style, lighting, color palette, texture, mood, and atmosphere. You MUST explicitly name the art movements, artists, and other concepts drawn from the card titles within the prompt text itself — never describe a style anonymously.
+Modern AI image models (DALL-E 3, Midjourney, Stable Diffusion XL, Flux) handle long, specific prompts exceptionally well. Your prompts are rich in visual specificity: main subject, scene composition, artistic style, lighting, color palette, texture, mood, and atmosphere.
+
+Each card type contributes differently to the prompt:
+- Movement, Artist, Media, Technique: define the visual style — name these explicitly in the prompt, never describe them anonymously
+- Subject: establishes who or what is depicted
+- Setting: provides the environment and location
+- Situation: describes the narrative context — what is happening in the scene
+- Inspiration: contributes emotional tone, psychological atmosphere, and conceptual depth ONLY — do NOT incorporate the description as literal visual content; instead let it infuse the mood that permeates the scene built from the other cards
 
 Return ONLY the art prompt itself — 150 to 250 words of pure visual description. No preamble, no explanation, no labels, no quotation marks.`;
 
@@ -447,7 +454,7 @@ Return ONLY the art prompt itself — 150 to 250 words of pure visual descriptio
 
 ${cardList}
 
-Create a single, unified AI art prompt that weaves all five cards into one cohesive, visually stunning artwork. Draw from the card descriptions for specific visual elements, style cues, subject matter, setting, and mood. The result should feel like a natural, intentional artwork — not a random mashup. Be specific: name colors, lighting conditions, compositional choices, textures, and emotional tone.${aspectSuffix}`;
+Create a single, unified AI art prompt that weaves all five cards into one cohesive, visually stunning artwork — following the card type guidelines above. The result should feel like a natural, intentional artwork — not a random mashup. Be specific: name colors, lighting conditions, compositional choices, textures, and emotional tone.${aspectSuffix}`;
 
     let prompt: string | null = null;
     setModelLabel(null);
