@@ -2707,7 +2707,7 @@ export const TAROT_CARDS: TarotCard[] = [
     index: 336,
     creator: "Satori Canton🧸",
     title: "Brian Viveros",
-    description: "dark glamour, smoky vulnerability, and the hypnotic beauty of damage — portraits of women who carry their wounds like war paint",
+    description: "sensual power and dark glamour — commanding women in ornate military or toreador costumes with elaborate headwear of bullets, horns, roses, peacock feathers, or pop-culture emblems, often smoking a cigar with a defiant poise, rendered in obsessive decorative detail",
     type: "artist",
     imageFilename: "Brian_Viveros.png",
   },
