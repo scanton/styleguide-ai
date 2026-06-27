@@ -286,7 +286,7 @@
     "noResults": "Nenhuma carta corresponde à sua busca.",
     "drawMode": "Modo de Desenho",
     "exploreMode": "Modo de Exploração",
-    "drawDescription": "Sorteie cinco cartas aleatoriamente. Mantenha as que inspiram você, depois re-sorteie o restante — uma única vez. Bloqueie sua mão e gere seu prompt de arte.",
+    "drawDescription": "Sorteie cinco cartas aleatoriamente. Mantenha as que inspiram você, depois re-sorteie o restante — até duas vezes. Bloqueie sua mão e gere seu prompt de arte.",
     "dealCards": "Sortear Cartas",
     "redraws": "{n} redesenhos restantes",
     "holdInstruction": "Clique em uma carta para mantê-la, então re-sorteie o restante.",

@@ -286,7 +286,7 @@
     "noResults": "Ninguna carta coincide con tu búsqueda.",
     "drawMode": "Modo de reparto",
     "exploreMode": "Modo de exploración",
-    "drawDescription": "Reparte cinco cartas al azar. Mantén las que te inspiren y vuelve a repartir el resto, una vez. Bloquea tu mano y genera tu prompt de arte.",
+    "drawDescription": "Reparte cinco cartas al azar. Mantén las que te inspiren y vuelve a repartir el resto hasta dos veces. Bloquea tu mano y genera tu prompt de arte.",
     "dealCards": "Repartir cartas",
     "redraws": "{n} redibujos restantes",
     "holdInstruction": "Haz clic en una carta para mantenerla, luego vuelve a repartir el resto.",

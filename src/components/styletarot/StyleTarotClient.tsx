@@ -36,7 +36,7 @@ function getCardSrc(card: AnyCard): string {
 // ── Constants ────────────────────────────────────────────────────────────────
 
 const HAND_SIZE = 5;
-const MAX_REDRAWS = 1;
+const MAX_REDRAWS = 2;
 
 
 // Map a card type to a short display label

@@ -286,7 +286,7 @@
     "noResults": "没有卡牌匹配你的搜索。",
     "drawMode": "抽卡模式",
     "exploreMode": "探索模式",
-    "drawDescription": "随机发五张卡牌。保留启发你的，重抽其余——仅一次。锁定手牌并生成你的艺术提示词。",
+    "drawDescription": "随机发五张卡牌。保留启发你的，重抽其余——最多两次。锁定手牌并生成你的艺术提示词。",
     "dealCards": "发牌",
     "redraws": "剩余 {n} 次重抽",
     "holdInstruction": "点击卡牌以保留，然后重抽其余。",
