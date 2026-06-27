@@ -11,10 +11,13 @@ import { eq } from "drizzle-orm";
 
 const DISCORD_API = "https://discord.com/api/v10";
 
+// Interaction types
 const PING = 1;
 const APPLICATION_COMMAND = 2;
+const MESSAGE_COMPONENT = 3;
 const MODAL_SUBMIT = 5;
 
+// Response types
 const PONG = 1;
 const CHANNEL_MESSAGE = 4;
 const DEFERRED_CHANNEL_MESSAGE = 5;
@@ -22,13 +25,18 @@ const MODAL = 9;
 
 const EMBED_COLOR = 0x6b21a8;
 
+// Modal and component custom IDs
 const MODAL_ID_STYLEBEAR = "stylebear_modal";
 const MODAL_ID_ADD_CARD = "add_card_modal";
+const MODAL_ID_FIX_TYPE = "fix_type_modal";
+const BUTTON_ID_FIX_TYPE = "fix_card_type";
 
 const VALID_TYPES = new Set([
   "movement", "artist", "media", "technique",
   "subject", "setting", "inspiration",
 ]);
+
+const VALID_TYPES_DISPLAY = Array.from(VALID_TYPES).map(t => `\`${t}\``).join(" · ");
 
 interface DiscordTextInput {
   type: number;
@@ -98,6 +106,18 @@ function getDisplayName(body: DiscordInteraction): string {
   );
 }
 
+function fixTypeButton(cardId: string) {
+  return {
+    type: 1, // ACTION_ROW
+    components: [{
+      type: 2,   // BUTTON
+      style: 1,  // PRIMARY
+      label: "Fix Card Type",
+      custom_id: `${BUTTON_ID_FIX_TYPE}:${cardId}`,
+    }],
+  };
+}
+
 async function sendFollowUp(appId: string, token: string, content: object): Promise<void> {
   await fetch(`${DISCORD_API}/webhooks/${appId}/${token}/messages/@original`, {
     method: "PATCH",
@@ -106,7 +126,7 @@ async function sendFollowUp(appId: string, token: string, content: object): Prom
   });
 }
 
-// ── StyleBear ──────────────────────────────────────────────────────────────────
+// ── StyleBear ─────────────────────────────────────────────────────────────────
 
 async function processStyleBear(appId: string, token: string, opts: Record<string, string>): Promise<void> {
   const userMessage = buildBotUserMessage({
@@ -141,24 +161,23 @@ async function processStyleBear(appId: string, token: string, opts: Record<strin
   if (opts.style) fields.push({ name: "Style", value: opts.style, inline: true });
 
   await sendFollowUp(appId, token, {
-    embeds: [
-      {
-        title: "✨ Your StyleBear Prompt",
-        description: generatedPrompt,
-        color: EMBED_COLOR,
-        fields,
-        footer: {
-          text: "Render this for free at arena.ai/image · share in #⬆️-rising to showcase your creation on styleguideai.com/rising",
-        },
-        url: "https://www.styleguideai.com/stylebear",
+    embeds: [{
+      title: "✨ Your StyleBear Prompt",
+      description: generatedPrompt,
+      color: EMBED_COLOR,
+      fields,
+      footer: {
+        text: "Render this for free at arena.ai/image · share in #⬆️-rising to showcase your creation on styleguideai.com/rising",
       },
-    ],
+      url: "https://www.styleguideai.com/stylebear",
+    }],
   });
 }
 
-// ── Add Card: modal submit processing ────────────────────────────────────────
-// Called after the user fills in the text modal. The stub record already has
-// the Discord CDN image URL stored from the slash command step.
+// ── Add Card: modal submit ────────────────────────────────────────────────────
+// The stub record already exists with the Discord CDN image URL. We upload the
+// image to Blob regardless of whether the type is valid — this preserves the
+// image so the user can fix the type without re-uploading.
 
 async function processAddCard(
   appId: string,
@@ -176,17 +195,7 @@ async function processAddCard(
     return;
   }
 
-  const normalizedType = type.toLowerCase().trim();
-  if (!VALID_TYPES.has(normalizedType)) {
-    const validList = Array.from(VALID_TYPES).join(", ");
-    await sendFollowUp(appId, token, {
-      content: `❌ **${type}** isn't a valid card type. Valid types: ${validList}\n\nPlease try \`/add-card\` again.`,
-    });
-    await db.delete(communityTarotCards).where(eq(communityTarotCards.id, cardId));
-    return;
-  }
-
-  // Look up the stub record to get the temporary Discord CDN image URL
+  // Look up stub to get the temporary Discord CDN image URL
   const [stub] = await db
     .select()
     .from(communityTarotCards)
@@ -199,7 +208,9 @@ async function processAddCard(
     return;
   }
 
-  // Download from Discord CDN and upload to Vercel Blob
+  // Download from Discord CDN and upload to Vercel Blob.
+  // We do this before type validation so the image is preserved even if the
+  // user entered a bad type — they can fix it without re-uploading.
   let blobUrl: string;
   try {
     const dlRes = await fetch(stub.imageUrl);
@@ -221,7 +232,24 @@ async function processAddCard(
     return;
   }
 
-  // Finalize the record
+  const normalizedType = type.toLowerCase().trim();
+
+  // Invalid type: save everything else, set type="" as a "pending fix" sentinel,
+  // and offer a Fix Card Type button so they don't have to re-upload.
+  if (!VALID_TYPES.has(normalizedType)) {
+    await db
+      .update(communityTarotCards)
+      .set({ title, description, type: "", creator, imageUrl: blobUrl })
+      .where(eq(communityTarotCards.id, cardId));
+
+    await sendFollowUp(appId, token, {
+      content: `❌ **${type}** isn't a valid card type.\n\nValid types: ${VALID_TYPES_DISPLAY}\n\nYour image and card details are saved — click the button below to fix the type and publish your card.`,
+      components: [fixTypeButton(cardId)],
+    });
+    return;
+  }
+
+  // Valid type: finalize and publish
   const [card] = await db
     .update(communityTarotCards)
     .set({ title, description, type: normalizedType, creator, imageUrl: blobUrl })
@@ -236,22 +264,97 @@ async function processAddCard(
   }
 
   await sendFollowUp(appId, token, {
-    embeds: [
-      {
-        title: `🎴 New Card: ${card.title}`,
-        description: card.description,
-        color: EMBED_COLOR,
-        image: { url: blobUrl },
-        fields: [
-          { name: "Type", value: normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1), inline: true },
-          { name: "Creator", value: card.creator, inline: true },
-        ],
-        footer: {
-          text: "This card is now live in the StyleTarot draw pool at styleguideai.com/styletarot",
-        },
-        url: "https://www.styleguideai.com/styletarot",
+    embeds: [{
+      title: `🎴 New Card: ${card.title}`,
+      description: card.description,
+      color: EMBED_COLOR,
+      image: { url: blobUrl },
+      fields: [
+        { name: "Type", value: normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1), inline: true },
+        { name: "Creator", value: card.creator, inline: true },
+      ],
+      footer: {
+        text: "This card is now live in the StyleTarot draw pool at styleguideai.com/styletarot",
       },
-    ],
+      url: "https://www.styleguideai.com/styletarot",
+    }],
+  });
+}
+
+// ── Fix Type: button click opens a single-field modal ─────────────────────────
+// Handled synchronously (not async) — button clicks must respond within 3s
+// and we just need to open a modal, no DB work required.
+
+function fixTypeModal(cardId: string) {
+  return Response.json({
+    type: MODAL,
+    data: {
+      custom_id: `${MODAL_ID_FIX_TYPE}:${cardId}`,
+      title: "Fix Card Type",
+      components: [{
+        type: 1,
+        components: [{
+          type: 4,
+          custom_id: "type",
+          label: "Card Type",
+          style: 1,
+          required: true,
+          max_length: 20,
+          placeholder: "artist · movement · media · technique · subject · setting · inspiration",
+        }],
+      }],
+    },
+  });
+}
+
+// ── Fix Type: modal submit processing ────────────────────────────────────────
+
+async function processFixType(
+  appId: string,
+  token: string,
+  cardId: string,
+  type: string
+): Promise<void> {
+  const normalizedType = type.toLowerCase().trim();
+
+  // Still invalid — send error with another Try Again button
+  if (!VALID_TYPES.has(normalizedType)) {
+    await sendFollowUp(appId, token, {
+      content: `❌ **${type}** still isn't a valid card type.\n\nValid types: ${VALID_TYPES_DISPLAY}`,
+      components: [fixTypeButton(cardId)],
+    });
+    return;
+  }
+
+  // Look up the pending card to build the success embed
+  const [card] = await db
+    .update(communityTarotCards)
+    .set({ type: normalizedType })
+    .where(eq(communityTarotCards.id, cardId))
+    .returning();
+
+  if (!card || !card.imageUrl) {
+    await sendFollowUp(appId, token, {
+      content: "❌ Couldn't find your card. Please try `/add-card` again.",
+    });
+    return;
+  }
+
+  await sendFollowUp(appId, token, {
+    embeds: [{
+      title: `🎴 New Card: ${card.title}`,
+      description: card.description,
+      color: EMBED_COLOR,
+      image: { url: card.imageUrl },
+      fields: [
+        { name: "Type", value: normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1), inline: true },
+        { name: "Creator", value: card.creator, inline: true },
+      ],
+      footer: {
+        text: "This card is now live in the StyleTarot draw pool at styleguideai.com/styletarot",
+      },
+      url: "https://www.styleguideai.com/styletarot",
+    }],
   });
 }
 
@@ -276,31 +379,28 @@ export async function POST(request: Request) {
 
   if (body.type === PING) return Response.json({ type: PONG });
 
+  // ── Slash commands ──────────────────────────────────────────────────────────
   if (body.type === APPLICATION_COMMAND) {
     const commandName = body.data?.name;
 
-    // /stylebear — open StyleBear modal
     if (commandName === "stylebear") {
       return Response.json({
         type: MODAL,
         data: {
           custom_id: MODAL_ID_STYLEBEAR,
           title: "StyleBear Prompt Generator",
-          components: [
-            {
-              type: 1,
-              components: [{
-                type: 4, custom_id: "scene", label: "What do you want to create?",
-                style: 2, required: true, max_length: 500,
-                placeholder: "Describe your idea — StyleBear will build the full AI art prompt around it.",
-              }],
-            },
-          ],
+          components: [{
+            type: 1,
+            components: [{
+              type: 4, custom_id: "scene", label: "What do you want to create?",
+              style: 2, required: true, max_length: 500,
+              placeholder: "Describe your idea — StyleBear will build the full AI art prompt around it.",
+            }],
+          }],
         },
       });
     }
 
-    // /add-card image:[attachment] — store stub, open text modal
     if (commandName === "add-card") {
       const opts = parseOptions(body.data?.options ?? []);
       const attachmentId = opts.image;
@@ -322,9 +422,6 @@ export async function POST(request: Request) {
 
       const displayName = getDisplayName(body);
 
-      // Create a stub record with the temporary Discord CDN URL.
-      // The title/description/type will be filled in on modal submit.
-      // The GET endpoint excludes stubs where title = "".
       const [stub] = await db
         .insert(communityTarotCards)
         .values({
@@ -383,19 +480,33 @@ export async function POST(request: Request) {
     return Response.json({ type: PONG });
   }
 
+  // ── Button clicks ───────────────────────────────────────────────────────────
+  if (body.type === MESSAGE_COMPONENT) {
+    if (body.data?.custom_id?.startsWith(BUTTON_ID_FIX_TYPE + ":")) {
+      const cardId = body.data.custom_id.split(":")[1];
+      return fixTypeModal(cardId);
+    }
+  }
+
+  // ── Modal submits ───────────────────────────────────────────────────────────
   if (body.type === MODAL_SUBMIT) {
-    // StyleBear
     if (body.data?.custom_id === MODAL_ID_STYLEBEAR) {
       const opts = parseModalValues(body.data.components ?? []);
       after(() => processStyleBear(APP_ID, body.token, opts));
       return Response.json({ type: DEFERRED_CHANNEL_MESSAGE });
     }
 
-    // Add Card — custom_id is "add_card_modal:stc_xxxxxxxx"
     if (body.data?.custom_id?.startsWith(MODAL_ID_ADD_CARD + ":")) {
       const cardId = body.data.custom_id.split(":")[1];
       const opts = parseModalValues(body.data.components ?? []);
       after(() => processAddCard(APP_ID, body.token, cardId, opts));
+      return Response.json({ type: DEFERRED_CHANNEL_MESSAGE });
+    }
+
+    if (body.data?.custom_id?.startsWith(MODAL_ID_FIX_TYPE + ":")) {
+      const cardId = body.data.custom_id.split(":")[1];
+      const opts = parseModalValues(body.data.components ?? []);
+      after(() => processFixType(APP_ID, body.token, cardId, opts.type ?? ""));
       return Response.json({ type: DEFERRED_CHANNEL_MESSAGE });
     }
   }

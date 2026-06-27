@@ -12,12 +12,17 @@ const VALID_TYPES = new Set([
 
 const MAX_UPLOAD_BYTES = 3.5 * 1024 * 1024;
 
-// GET /api/styletarot/community-cards — all complete community cards (excludes stubs)
+// GET /api/styletarot/community-cards — complete cards only
+// Excludes: title="" (pre-submit stubs) and type="" (pending type fix)
 export async function GET() {
   const cards = await db
     .select()
     .from(communityTarotCards)
-    .where(and(isNotNull(communityTarotCards.imageUrl), ne(communityTarotCards.title, "")))
+    .where(and(
+      isNotNull(communityTarotCards.imageUrl),
+      ne(communityTarotCards.title, ""),
+      ne(communityTarotCards.type, ""),
+    ))
     .orderBy(desc(communityTarotCards.createdAt));
 
   return NextResponse.json({ cards });
