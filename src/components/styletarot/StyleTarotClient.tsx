@@ -16,10 +16,6 @@ import { readLLMStream } from "@/lib/llm-stream";
 const HAND_SIZE = 5;
 const MAX_REDRAWS = 1;
 
-// Clean up creator display names (strip emoji)
-function cleanCreator(name: string): string {
-  return name.replace(/[\u{1F300}-\u{1FAFF}]/gu, "").trim();
-}
 
 // Map a card type to a short display label
 function typeLabel(type: string): string {
@@ -115,7 +111,7 @@ function CardFace({ card, held, onClick, interactive, heldLabel }: {
           </span>
         </div>
         <p className="text-xs font-semibold text-foreground leading-tight line-clamp-2">{card.title}</p>
-        <p className="text-[10px] text-muted-foreground">by {cleanCreator(card.creator)}</p>
+        <p className="text-[10px] text-muted-foreground">by {card.creator}</p>
       </div>
     </button>
   );

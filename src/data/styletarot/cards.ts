@@ -3615,6 +3615,14 @@ export const TAROT_CARDS: TarotCard[] = [
     type: "setting",
     imageFilename: "Circus.png",
   },
+  {
+    index: 450,
+    creator: "Satori Canton🧸",
+    title: "Enchanted Forest",
+    description: "the magical wood of story and dream — ancient trees alive with consciousness, bioluminescent mystery, and the ever-present sense that the forest itself watches",
+    type: "setting",
+    imageFilename: "Enchanted_Forest.png",
+  },
 ];
 
 export const CARD_TYPE_COLORS: Record<CardType, string> = {
