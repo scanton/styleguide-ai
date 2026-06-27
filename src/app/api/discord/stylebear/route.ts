@@ -11,17 +11,15 @@ import { eq } from "drizzle-orm";
 
 const DISCORD_API = "https://discord.com/api/v10";
 
-// Discord interaction types
 const PING = 1;
 const APPLICATION_COMMAND = 2;
 const MODAL_SUBMIT = 5;
 
-// Discord response types
 const PONG = 1;
+const CHANNEL_MESSAGE = 4;
 const DEFERRED_CHANNEL_MESSAGE = 5;
 const MODAL = 9;
 
-// Deep purple — matches StyleGuideAI brand
 const EMBED_COLOR = 0x6b21a8;
 
 const MODAL_ID_STYLEBEAR = "stylebear_modal";
@@ -51,15 +49,21 @@ interface DiscordAttachment {
   size: number;
 }
 
+interface DiscordUser {
+  id: string;
+  username: string;
+  global_name?: string;
+}
+
 interface DiscordInteraction {
   type: number;
   token: string;
+  member?: { user?: DiscordUser; nick?: string };
+  user?: DiscordUser;
   data?: {
     name?: string;
     options?: { name: string; value: string | boolean; type?: number }[];
-    resolved?: {
-      attachments?: Record<string, DiscordAttachment>;
-    };
+    resolved?: { attachments?: Record<string, DiscordAttachment> };
     custom_id?: string;
     components?: DiscordActionRow[];
   };
@@ -69,22 +73,29 @@ function parseModalValues(rows: DiscordActionRow[]): Record<string, string> {
   const out: Record<string, string> = {};
   for (const row of rows) {
     for (const comp of row.components) {
-      if (comp.custom_id && comp.value) {
-        out[comp.custom_id] = comp.value.trim();
-      }
+      if (comp.custom_id && comp.value) out[comp.custom_id] = comp.value.trim();
     }
   }
   return out;
 }
 
 function parseOptions(
-  options: { name: string; value: string | boolean; type?: number }[]
+  options: { name: string; value: string | boolean }[]
 ): Record<string, string> {
   const out: Record<string, string> = {};
-  for (const opt of options) {
-    out[opt.name] = String(opt.value);
-  }
+  for (const opt of options) out[opt.name] = String(opt.value);
   return out;
+}
+
+function getDisplayName(body: DiscordInteraction): string {
+  return (
+    body.member?.nick ??
+    body.member?.user?.global_name ??
+    body.member?.user?.username ??
+    body.user?.global_name ??
+    body.user?.username ??
+    "Community Member"
+  );
 }
 
 async function sendFollowUp(appId: string, token: string, content: object): Promise<void> {
@@ -97,7 +108,7 @@ async function sendFollowUp(appId: string, token: string, content: object): Prom
 
 // ── StyleBear ──────────────────────────────────────────────────────────────────
 
-async function processAndReply(appId: string, token: string, opts: Record<string, string>): Promise<void> {
+async function processStyleBear(appId: string, token: string, opts: Record<string, string>): Promise<void> {
   const userMessage = buildBotUserMessage({
     movement: opts.movement,
     media: opts.media,
@@ -145,19 +156,23 @@ async function processAndReply(appId: string, token: string, opts: Record<string
   });
 }
 
-// ── Add Card: step 1 modal submit ─────────────────────────────────────────────
+// ── Add Card: modal submit processing ────────────────────────────────────────
+// Called after the user fills in the text modal. The stub record already has
+// the Discord CDN image URL stored from the slash command step.
 
 async function processAddCard(
   appId: string,
   token: string,
+  cardId: string,
   opts: Record<string, string>
 ): Promise<void> {
   const { title, description, type, creator } = opts;
 
   if (!title || !description || !type || !creator) {
     await sendFollowUp(appId, token, {
-      content: "❌ Missing required fields. Please fill in title, description, type, and creator.",
+      content: "❌ Missing required fields. Please try `/add-card` again.",
     });
+    await db.delete(communityTarotCards).where(eq(communityTarotCards.id, cardId));
     return;
   }
 
@@ -165,95 +180,57 @@ async function processAddCard(
   if (!VALID_TYPES.has(normalizedType)) {
     const validList = Array.from(VALID_TYPES).join(", ");
     await sendFollowUp(appId, token, {
-      content: `❌ Invalid card type **${type}**. Valid types: ${validList}`,
+      content: `❌ **${type}** isn't a valid card type. Valid types: ${validList}\n\nPlease try \`/add-card\` again.`,
     });
+    await db.delete(communityTarotCards).where(eq(communityTarotCards.id, cardId));
     return;
   }
 
-  let card: typeof communityTarotCards.$inferSelect;
-  try {
-    [card] = await db
-      .insert(communityTarotCards)
-      .values({
-        title,
-        description,
-        type: normalizedType,
-        creator,
-        source: "discord",
-      })
-      .returning();
-  } catch {
+  // Look up the stub record to get the temporary Discord CDN image URL
+  const [stub] = await db
+    .select()
+    .from(communityTarotCards)
+    .where(eq(communityTarotCards.id, cardId));
+
+  if (!stub?.imageUrl) {
     await sendFollowUp(appId, token, {
-      content: "❌ Failed to save card. Please try again.",
+      content: "❌ Couldn't find your image. Please try `/add-card` again.",
     });
     return;
   }
 
-  await sendFollowUp(appId, token, {
-    embeds: [
-      {
-        title: "🎴 Card Created — Image Needed!",
-        description: `**${title}** by ${creator} has been added.\n\n> ${description}`,
-        color: EMBED_COLOR,
-        fields: [
-          { name: "Type", value: normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1), inline: true },
-          { name: "Card ID", value: `\`${card.id}\``, inline: true },
-        ],
-        footer: {
-          text: `Now upload your card image using: /add-card-image card_id:${card.id} image:[your image]`,
-        },
-      },
-    ],
-  });
-}
-
-// ── Add Card: step 2 image upload ─────────────────────────────────────────────
-
-async function processAddCardImage(
-  appId: string,
-  token: string,
-  cardId: string,
-  attachment: DiscordAttachment
-): Promise<void> {
-  // Download from Discord CDN
-  let imageBlob: Blob;
-  try {
-    const dlRes = await fetch(attachment.url);
-    if (!dlRes.ok) throw new Error(`HTTP ${dlRes.status}`);
-    imageBlob = await dlRes.blob();
-  } catch {
-    await sendFollowUp(appId, token, {
-      content: `❌ Could not download the image. Please try again.`,
-    });
-    return;
-  }
-
-  const contentType = attachment.content_type ?? imageBlob.type ?? "image/png";
-  const ext = contentType.split("/")[1]?.split("+")[0] ?? "png";
-  const pathname = `styletarot-community/discord_${cardId}.${ext}`;
-
-  // Upload to Vercel Blob
+  // Download from Discord CDN and upload to Vercel Blob
   let blobUrl: string;
   try {
-    const stored = await put(pathname, imageBlob, { access: "public", contentType, addRandomSuffix: false });
+    const dlRes = await fetch(stub.imageUrl);
+    if (!dlRes.ok) throw new Error(`HTTP ${dlRes.status}`);
+    const imageBlob = await dlRes.blob();
+    const contentType = imageBlob.type || "image/png";
+    const ext = contentType.split("/")[1]?.split("+")[0] ?? "png";
+    const stored = await put(
+      `styletarot-community/${cardId}.${ext}`,
+      imageBlob,
+      { access: "public", contentType, addRandomSuffix: false }
+    );
     blobUrl = stored.url;
   } catch {
     await sendFollowUp(appId, token, {
-      content: `❌ Failed to store image. Please try again.`,
+      content: "❌ Failed to store your image. Please try `/add-card` again.",
     });
+    await db.delete(communityTarotCards).where(eq(communityTarotCards.id, cardId));
     return;
   }
 
-  // Update card in DB
+  // Finalize the record
   const [card] = await db
     .update(communityTarotCards)
-    .set({ imageUrl: blobUrl })
+    .set({ title, description, type: normalizedType, creator, imageUrl: blobUrl })
     .where(eq(communityTarotCards.id, cardId))
     .returning();
 
   if (!card) {
     await sendFollowUp(appId, token, {
-      content: `❌ Card \`${cardId}\` not found. Check the card ID and try again.`,
+      content: "❌ Something went wrong saving your card. Please try again.",
     });
     return;
   }
@@ -266,7 +243,7 @@ async function processAddCardImage(
         color: EMBED_COLOR,
         image: { url: blobUrl },
         fields: [
-          { name: "Type", value: card.type.charAt(0).toUpperCase() + card.type.slice(1), inline: true },
+          { name: "Type", value: normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1), inline: true },
           { name: "Creator", value: card.creator, inline: true },
         ],
         footer: {
@@ -293,18 +270,12 @@ export async function POST(request: Request) {
   const timestamp = request.headers.get("x-signature-timestamp") ?? "";
 
   const isValid = await verifyKey(rawBody, signature, timestamp, PUBLIC_KEY);
-  if (!isValid) {
-    return new Response("Invalid request signature", { status: 401 });
-  }
+  if (!isValid) return new Response("Invalid request signature", { status: 401 });
 
   const body = JSON.parse(rawBody) as DiscordInteraction;
 
-  // Discord PING
-  if (body.type === PING) {
-    return Response.json({ type: PONG });
-  }
+  if (body.type === PING) return Response.json({ type: PONG });
 
-  // Slash commands
   if (body.type === APPLICATION_COMMAND) {
     const commandName = body.data?.name;
 
@@ -318,127 +289,113 @@ export async function POST(request: Request) {
           components: [
             {
               type: 1,
-              components: [
-                {
-                  type: 4,
-                  custom_id: "scene",
-                  label: "What do you want to create?",
-                  style: 2,
-                  required: true,
-                  placeholder: "Describe your idea — StyleBear will build the full AI art prompt around it.",
-                  max_length: 500,
-                },
-              ],
+              components: [{
+                type: 4, custom_id: "scene", label: "What do you want to create?",
+                style: 2, required: true, max_length: 500,
+                placeholder: "Describe your idea — StyleBear will build the full AI art prompt around it.",
+              }],
             },
           ],
         },
       });
     }
 
-    // /add-card — open Add Card modal
+    // /add-card image:[attachment] — store stub, open text modal
     if (commandName === "add-card") {
+      const opts = parseOptions(body.data?.options ?? []);
+      const attachmentId = opts.image;
+      const attachment = body.data?.resolved?.attachments?.[attachmentId];
+
+      if (!attachment) {
+        return Response.json({
+          type: CHANNEL_MESSAGE,
+          data: { content: "❌ Please attach an image when using `/add-card`.", flags: 64 },
+        });
+      }
+
+      if (!attachment.content_type?.startsWith("image/")) {
+        return Response.json({
+          type: CHANNEL_MESSAGE,
+          data: { content: "❌ Please attach an image file (PNG, JPG, or WebP).", flags: 64 },
+        });
+      }
+
+      const displayName = getDisplayName(body);
+
+      // Create a stub record with the temporary Discord CDN URL.
+      // The title/description/type will be filled in on modal submit.
+      // The GET endpoint excludes stubs where title = "".
+      const [stub] = await db
+        .insert(communityTarotCards)
+        .values({
+          title: "",
+          description: "",
+          type: "",
+          creator: displayName,
+          imageUrl: attachment.url,
+          source: "discord",
+        })
+        .returning();
+
       return Response.json({
         type: MODAL,
         data: {
-          custom_id: MODAL_ID_ADD_CARD,
+          custom_id: `${MODAL_ID_ADD_CARD}:${stub.id}`,
           title: "Add a StyleTarot Card",
           components: [
             {
               type: 1,
-              components: [
-                {
-                  type: 4,
-                  custom_id: "title",
-                  label: "Card Title",
-                  style: 1,
-                  required: true,
-                  placeholder: "e.g. Watercolor Textures",
-                  max_length: 100,
-                },
-              ],
+              components: [{
+                type: 4, custom_id: "title", label: "Card Title",
+                style: 1, required: true, max_length: 100,
+                placeholder: "e.g. Watercolor Textures",
+              }],
             },
             {
               type: 1,
-              components: [
-                {
-                  type: 4,
-                  custom_id: "description",
-                  label: "Card Description",
-                  style: 2,
-                  required: true,
-                  placeholder: "Describe the style or technique in evocative terms…",
-                  max_length: 500,
-                },
-              ],
+              components: [{
+                type: 4, custom_id: "description", label: "Card Description",
+                style: 2, required: true, max_length: 500,
+                placeholder: "Describe the mood, feeling, technique, or concept…",
+              }],
             },
             {
               type: 1,
-              components: [
-                {
-                  type: 4,
-                  custom_id: "type",
-                  label: "Card Type",
-                  style: 1,
-                  required: true,
-                  placeholder: "artist, movement, media, technique, subject, setting, or inspiration",
-                  max_length: 20,
-                },
-              ],
+              components: [{
+                type: 4, custom_id: "type", label: "Card Type",
+                style: 1, required: true, max_length: 20,
+                placeholder: "artist · movement · media · technique · subject · setting · inspiration",
+              }],
             },
             {
               type: 1,
-              components: [
-                {
-                  type: 4,
-                  custom_id: "creator",
-                  label: "Your Name",
-                  style: 1,
-                  required: true,
-                  placeholder: "Your display name",
-                  max_length: 100,
-                },
-              ],
+              components: [{
+                type: 4, custom_id: "creator", label: "Your Name",
+                style: 1, required: true, max_length: 100,
+                value: displayName,
+              }],
             },
           ],
         },
       });
     }
 
-    // /add-card-image — upload image for a pending card
-    if (commandName === "add-card-image") {
-      const opts = parseOptions(body.data?.options ?? []);
-      const cardId = opts.card_id;
-      const attachmentId = opts.image;
-      const attachment = body.data?.resolved?.attachments?.[attachmentId];
-
-      if (!cardId || !attachment) {
-        return Response.json({
-          type: 4, // CHANNEL_MESSAGE_WITH_SOURCE
-          data: { content: "❌ Missing card_id or image.", flags: 64 }, // ephemeral
-        });
-      }
-
-      after(() => processAddCardImage(APP_ID, body.token, cardId, attachment));
-      return Response.json({ type: DEFERRED_CHANNEL_MESSAGE });
-    }
-
-    // Unknown command — fall through to PONG
     return Response.json({ type: PONG });
   }
 
-  // Modal submissions
   if (body.type === MODAL_SUBMIT) {
-    // StyleBear modal
+    // StyleBear
     if (body.data?.custom_id === MODAL_ID_STYLEBEAR) {
       const opts = parseModalValues(body.data.components ?? []);
-      after(() => processAndReply(APP_ID, body.token, opts));
+      after(() => processStyleBear(APP_ID, body.token, opts));
       return Response.json({ type: DEFERRED_CHANNEL_MESSAGE });
     }
 
-    // Add Card modal
-    if (body.data?.custom_id === MODAL_ID_ADD_CARD) {
+    // Add Card — custom_id is "add_card_modal:stc_xxxxxxxx"
+    if (body.data?.custom_id?.startsWith(MODAL_ID_ADD_CARD + ":")) {
+      const cardId = body.data.custom_id.split(":")[1];
       const opts = parseModalValues(body.data.components ?? []);
-      after(() => processAddCard(APP_ID, body.token, opts));
+      after(() => processAddCard(APP_ID, body.token, cardId, opts));
       return Response.json({ type: DEFERRED_CHANNEL_MESSAGE });
     }
   }

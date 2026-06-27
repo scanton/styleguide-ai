@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { communityTarotCards } from "@/drizzle/schema";
-import { isNotNull, desc } from "drizzle-orm";
+import { isNotNull, desc, and, ne } from "drizzle-orm";
 import { put } from "@vercel/blob";
 
 const VALID_TYPES = new Set([
@@ -12,12 +12,12 @@ const VALID_TYPES = new Set([
 
 const MAX_UPLOAD_BYTES = 3.5 * 1024 * 1024;
 
-// GET /api/styletarot/community-cards — all complete community cards
+// GET /api/styletarot/community-cards — all complete community cards (excludes stubs)
 export async function GET() {
   const cards = await db
     .select()
     .from(communityTarotCards)
-    .where(isNotNull(communityTarotCards.imageUrl))
+    .where(and(isNotNull(communityTarotCards.imageUrl), ne(communityTarotCards.title, "")))
     .orderBy(desc(communityTarotCards.createdAt));
 
   return NextResponse.json({ cards });

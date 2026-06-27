@@ -37,22 +37,12 @@ const commands = [
   },
   {
     name: "add-card",
-    description: "Add a new card to the StyleTarot deck — a form will appear for the card details",
-  },
-  {
-    name: "add-card-image",
-    description: "Upload the image for a card you created with /add-card",
+    description: "Add a new card to the StyleTarot deck — attach your image and a form will appear",
     options: [
-      {
-        type: 3, // STRING
-        name: "card_id",
-        description: "The card ID returned by /add-card (e.g. stc_abc12345)",
-        required: true,
-      },
       {
         type: 11, // ATTACHMENT
         name: "image",
-        description: "The card image (9:16 portrait ratio recommended)",
+        description: "Your card image (9:16 portrait ratio recommended)",
         required: true,
       },
     ],
