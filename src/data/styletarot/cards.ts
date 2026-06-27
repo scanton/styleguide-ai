@@ -2707,7 +2707,7 @@ export const TAROT_CARDS: TarotCard[] = [
     index: 336,
     creator: "Satori Canton🧸",
     title: "Brian Viveros",
-    description: "sensual power and dark glamour — commanding women in ornate military or toreador costumes with elaborate headwear of bullets, horns, roses, peacock feathers, or pop-culture emblems, often smoking a cigar with a defiant poise, rendered in obsessive decorative detail",
+    description: "sensual power and dark glamour — a commanding woman whose look is defined by one signature element (not all): ornate military costume, toreador regalia, a crown of bullets, a rose hairpiece, peacock feather plumage, or a pop-culture-emblazoned helmet — smoking a cigar with defiant poise, rendered in obsessive decorative detail",
     type: "artist",
     imageFilename: "Brian_Viveros.png",
   },

@@ -445,6 +445,8 @@ Each card type contributes differently to the prompt:
 - Situation: describes the narrative context — what is happening in the scene
 - Inspiration: contributes emotional tone, psychological atmosphere, and conceptual depth ONLY — do NOT incorporate the description as literal visual content; instead let it infuse the mood that permeates the scene built from the other cards
 
+When a card description lists options separated by commas or "or", choose ONE that best fits the overall scene and mood — do not blend or combine multiple options from the same list.
+
 Return ONLY the art prompt itself — 150 to 250 words of pure visual description. No preamble, no explanation, no labels, no quotation marks.`;
 
     const aspectSuffix = preferredAspectRatio
