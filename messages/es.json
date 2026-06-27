@@ -280,7 +280,7 @@
     "metaDescription": "Reparte cinco cartas de StyleTarot: movimientos, artistas, medios, temas e inspiraciones, y genera un detallado prompt de arte con IA desde tu mano.",
     "badge": "Juego de inspiración artística",
     "title": "StyleTarot",
-    "subtitle": "Reparte cinco cartas de 450 indicaciones creativas — movimientos, artistas, medios, temas y más. Mantén las que te gusten y vuelve a repartir el resto para generar un único prompt de arte con IA.",
+    "subtitle": "Reparte cinco cartas de {count} indicaciones creativas — movimientos, artistas, medios, temas y más. Mantén las que te gusten y vuelve a repartir el resto para generar un único prompt de arte con IA.",
     "searchPlaceholder": "Buscar cartas…",
     "allTypes": "Todos los tipos",
     "noResults": "Ninguna carta coincide con tu búsqueda.",

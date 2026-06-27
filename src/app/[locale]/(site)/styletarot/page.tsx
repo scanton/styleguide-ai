@@ -27,9 +27,6 @@ export default async function StyleTarotPage() {
             <span>{t("badge")}</span>
           </div>
           <h1 className="font-heading text-4xl font-bold sm:text-5xl">{t("title")}</h1>
-          <p className="mx-auto max-w-xl text-muted-foreground text-lg leading-relaxed">
-            {t("subtitle")}
-          </p>
         </div>
 
         <Suspense>

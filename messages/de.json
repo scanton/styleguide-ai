@@ -280,7 +280,7 @@
     "metaDescription": "Ziehe fünf StyleTarot‑Karten — Bewegungen, Künstler, Medien, Motive und Inspirationen — und generiere daraus einen detaillierten KI‑Kunst‑Prompt aus deiner Hand.",
     "badge": "Kunst‑Inspirations‑Spiel",
     "title": "StyleTarot",
-    "subtitle": "Verteile fünf Karten aus 450 kreativen Prompts — Bewegungen, Künstler, Medien, Motive und mehr. Halte die Karten, die dir gefallen, ziehe die übrigen neu und generiere einen einzigartigen KI‑Kunst‑Prompt.",
+    "subtitle": "Verteile fünf Karten aus {count} kreativen Prompts — Bewegungen, Künstler, Medien, Motive und mehr. Halte die Karten, die dir gefallen, ziehe die übrigen neu und generiere einen einzigartigen KI‑Kunst‑Prompt.",
     "searchPlaceholder": "Karten suchen…",
     "allTypes": "Alle Arten",
     "noResults": "Keine Karten passen zu deiner Suche.",

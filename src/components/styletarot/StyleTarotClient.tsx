@@ -594,8 +594,13 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
+  const totalCardCount = TAROT_CARDS.length + communityCards.length;
+
   return (
     <>
+    <p className="mx-auto max-w-xl text-center text-muted-foreground text-lg leading-relaxed -mt-6">
+      {t("subtitle", { count: totalCardCount })}
+    </p>
     <div className="space-y-8">
       {/* Mode tabs */}
       <div className="flex flex-col items-center gap-3">

@@ -280,7 +280,7 @@
     "metaDescription": "抽取五张 StyleTarot 卡牌——流派、艺术家、媒介、主题和灵感——并根据你的手牌生成详细的 AI 艺术提示词。",
     "badge": "艺术灵感游戏",
     "title": "StyleTarot",
-    "subtitle": "从 450 个创意提示中发五张卡牌——流派、艺术家、媒介、主题等。保留你喜欢的，重抽其余，生成独一无二的 AI 艺术提示词。",
+    "subtitle": "从 {count} 个创意提示中发五张卡牌——流派、艺术家、媒介、主题等。保留你喜欢的，重抽其余，生成独一无二的 AI 艺术提示词。",
     "searchPlaceholder": "搜索卡牌…",
     "allTypes": "所有类型",
     "noResults": "没有卡牌匹配你的搜索。",
