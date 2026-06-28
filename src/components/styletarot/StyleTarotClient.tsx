@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
-import { Plus } from "lucide-react";
+import { Plus, Shuffle, Lock, LockOpen } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { gsap } from "gsap";
@@ -145,6 +145,7 @@ const ALL_TYPES = Array.from(new Set(TAROT_CARDS.map((c) => c.type))).sort();
 
 function ExploreMode({
   selected,
+  locked,
   onToggle,
   searchPlaceholder,
   allTypesLabel,
@@ -153,6 +154,7 @@ function ExploreMode({
   communityCards,
 }: {
   selected: Set<number>;
+  locked: Set<number>;
   onToggle: (index: number) => void;
   searchPlaceholder: string;
   allTypesLabel: string;
@@ -204,19 +206,29 @@ function ExploreMode({
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 pb-4">
             {filtered.map((card) => {
               const isSelected = selected.has(card.index);
-              const isDisabled = !isSelected && selected.size >= HAND_SIZE;
+              const isLocked = locked.has(card.index);
+              // Full slots disable unselected cards; locked cards can't be clicked off
+              const isDisabled = (!isSelected && selected.size >= HAND_SIZE) || isLocked;
               return (
                 <div
                   key={card.index}
-                  className={["relative transition-opacity", isDisabled ? "opacity-30" : ""].join(" ")}
+                  className={["relative transition-opacity", (!isSelected && selected.size >= HAND_SIZE) ? "opacity-30" : ""].join(" ")}
                 >
                   <CardFace
                     card={card}
                     held={isSelected}
                     onClick={() => !isDisabled && onToggle(card.index)}
-                    interactive={!isDisabled || isSelected}
+                    interactive={!isDisabled}
                     heldLabel={heldLabel}
                   />
+                  {/* Lock badge on grid cards that are locked */}
+                  {isLocked && (
+                    <div className="pointer-events-none absolute top-2 right-2">
+                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/90 shadow">
+                        <Lock size={11} className="text-foreground/60" />
+                      </span>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -258,6 +270,7 @@ export function StyleTarotClient() {
 
   // Explore mode state
   const [exploreSelected, setExploreSelected] = useState<Set<number>>(new Set());
+  const [exploreLocked, setExploreLocked] = useState<Set<number>>(new Set());
 
   // Shared output state
   const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null);
@@ -400,16 +413,47 @@ export function StyleTarotClient() {
 
   // ── Explore mode actions ───────────────────────────────────────────────────
 
+  // Grid click: toggle selection; manual picks auto-lock
   const handleExploreToggle = useCallback((index: number) => {
+    const isCurrentlySelected = exploreSelected.has(index);
     setExploreSelected((prev) => {
       const next = new Set(prev);
       if (next.has(index)) next.delete(index);
       else if (next.size < HAND_SIZE) next.add(index);
       return next;
     });
+    setExploreLocked((prev) => {
+      const next = new Set(prev);
+      if (isCurrentlySelected) next.delete(index);
+      else next.add(index); // auto-lock manual picks
+      return next;
+    });
     setGeneratedPrompt(null);
     setSavedEntryId(null);
+  }, [exploreSelected]);
+
+  // "Your Selection" click: toggle lock (doesn't remove card)
+  const handleExploreLockToggle = useCallback((index: number) => {
+    setExploreLocked((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
   }, []);
+
+  // Randomize: fill all unlocked + empty slots with random cards
+  const handleExploreRandomize = useCallback(() => {
+    const allCards: AnyCard[] = [...TAROT_CARDS, ...communityCards];
+    const lockedArr = Array.from(exploreLocked);
+    const newSelected = new Set(lockedArr);
+    const needed = HAND_SIZE - lockedArr.length;
+    const available = allCards.filter((c) => !newSelected.has(c.index));
+    pickRandom(available, needed).forEach((c) => newSelected.add(c.index));
+    setExploreSelected(newSelected);
+    setGeneratedPrompt(null);
+    setSavedEntryId(null);
+  }, [communityCards, exploreLocked]);
 
   // ── Shared: generate prompt ────────────────────────────────────────────────
 
@@ -621,6 +665,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
                 setMode(m);
                 setGeneratedPrompt(null);
                 setSavedEntryId(null);
+                if (m === "draw") { setExploreSelected(new Set()); setExploreLocked(new Set()); }
               }}
               className={[
                 "px-5 py-2 rounded-full text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1",
@@ -780,6 +825,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
 
           <ExploreMode
             selected={exploreSelected}
+            locked={exploreLocked}
             onToggle={handleExploreToggle}
             searchPlaceholder={t("searchPlaceholder")}
             allTypesLabel={t("allTypes")}
@@ -787,9 +833,25 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
             heldLabel={t("lockHand")}
             communityCards={communityCards}
           />
+        </div>
+      )}
 
-          {exploreSelected.size === HAND_SIZE && (
-            <div className="flex flex-wrap justify-center gap-3 pt-2">
+      {/* ── Explore mode actions + Your Selection ── */}
+      {mode === "explore" && (
+        <div className="space-y-4">
+          {/* Action buttons — Randomize always visible while unlocked slots remain */}
+          <div className="flex flex-wrap justify-center gap-3">
+            {exploreLocked.size < HAND_SIZE && (
+              <button
+                onClick={handleExploreRandomize}
+                className="flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-white transition-transform hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2"
+                style={{ backgroundColor: "oklch(0.42 0.22 285)" }}
+              >
+                <Shuffle size={15} aria-hidden="true" />
+                Randomize
+              </button>
+            )}
+            {exploreSelected.size === HAND_SIZE && (
               <button
                 onClick={handleGenerate}
                 disabled={generating}
@@ -798,40 +860,55 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
               >
                 {generating ? t("generating") : generatedPrompt ? t("regenerate") : t("generatePrompt")}
               </button>
+            )}
+            {exploreSelected.size > 0 && (
               <button
-                onClick={() => { setExploreSelected(new Set()); setGeneratedPrompt(null); }}
+                onClick={() => { setExploreSelected(new Set()); setExploreLocked(new Set()); setGeneratedPrompt(null); }}
                 className="px-6 py-3 rounded-full font-semibold border border-black/20 text-foreground/60 hover:text-foreground hover:border-black/40 transition-colors focus-visible:outline-none focus-visible:ring-2"
               >
                 {t("clearSelection")}
               </button>
+            )}
+          </div>
+
+          {/* Your Selection — click a card to toggle its lock */}
+          {exploreSelected.size > 0 && (
+            <div className="space-y-2">
+              <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground text-center">
+                {t("yourSelection")}
+              </h2>
+              <p className="text-center text-[11px] text-muted-foreground/70">
+                Click a card to lock or unlock it — locked cards are kept when you Randomize
+              </p>
+              <div className="grid grid-cols-5 gap-2">
+                {Array.from(exploreSelected).map((idx) => {
+                  const card = ([...TAROT_CARDS, ...communityCards] as AnyCard[]).find((c) => c.index === idx);
+                  if (!card) return null;
+                  const isLocked = exploreLocked.has(idx);
+                  return (
+                    <div key={idx} className="relative">
+                      <CardFace
+                        card={card}
+                        held={isLocked}
+                        onClick={() => handleExploreLockToggle(idx)}
+                        interactive={true}
+                        heldLabel="Locked"
+                      />
+                      {/* Lock state indicator */}
+                      <div className="pointer-events-none absolute top-2 right-2">
+                        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white/90 shadow">
+                          {isLocked
+                            ? <Lock size={11} className="text-foreground/70" />
+                            : <LockOpen size={11} className="text-foreground/40" />
+                          }
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
-        </div>
-      )}
-
-      {/* ── Selected cards preview (explore mode) ── */}
-      {mode === "explore" && exploreSelected.size > 0 && (
-        <div className="space-y-2">
-          <h2 className="text-xs font-bold uppercase tracking-wide text-muted-foreground text-center">
-            {t("yourSelection")}
-          </h2>
-          <div className="grid grid-cols-5 gap-2">
-            {Array.from(exploreSelected).map((idx) => {
-              const card = ([...TAROT_CARDS, ...communityCards] as AnyCard[]).find((c) => c.index === idx);
-              if (!card) return null;
-              return (
-                <div key={idx}>
-                  <CardFace
-                    card={card}
-                    held={true}
-                    onClick={() => handleExploreToggle(idx)}
-                    interactive={true}
-                    heldLabel={t("lockHand")}
-                  />
-                </div>
-              );
-            })}
-          </div>
         </div>
       )}
 
