@@ -207,12 +207,12 @@ function ExploreMode({
             {filtered.map((card) => {
               const isSelected = selected.has(card.index);
               const isLocked = locked.has(card.index);
-              // Full slots disable unselected cards; locked cards can't be clicked off
-              const isDisabled = (!isSelected && selected.size >= HAND_SIZE) || isLocked;
+              // Only fully disable unselected cards when ALL 5 slots are locked
+              const isDisabled = isLocked || (!isSelected && locked.size >= HAND_SIZE);
               return (
                 <div
                   key={card.index}
-                  className={["relative transition-opacity", (!isSelected && selected.size >= HAND_SIZE) ? "opacity-30" : ""].join(" ")}
+                  className={["relative transition-opacity", (!isSelected && locked.size >= HAND_SIZE) ? "opacity-30" : ""].join(" ")}
                 >
                   <CardFace
                     card={card}
@@ -413,24 +413,36 @@ export function StyleTarotClient() {
 
   // ── Explore mode actions ───────────────────────────────────────────────────
 
-  // Grid click: toggle selection; manual picks auto-lock
+  // Grid click: toggle selection; manual picks auto-lock.
+  // If hand is full but has unlocked slots, replace the first unlocked card.
   const handleExploreToggle = useCallback((index: number) => {
     const isCurrentlySelected = exploreSelected.has(index);
-    setExploreSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(index)) next.delete(index);
-      else if (next.size < HAND_SIZE) next.add(index);
-      return next;
-    });
-    setExploreLocked((prev) => {
-      const next = new Set(prev);
-      if (isCurrentlySelected) next.delete(index);
-      else next.add(index); // auto-lock manual picks
-      return next;
-    });
+
+    if (isCurrentlySelected) {
+      // Deselect (locked cards can't reach here — they're disabled in the grid)
+      setExploreSelected((prev) => { const n = new Set(prev); n.delete(index); return n; });
+      setExploreLocked((prev) => { const n = new Set(prev); n.delete(index); return n; });
+    } else if (exploreSelected.size < HAND_SIZE) {
+      // Normal add — auto-lock
+      setExploreSelected((prev) => new Set([...prev, index]));
+      setExploreLocked((prev) => new Set([...prev, index]));
+    } else if (exploreLocked.size < HAND_SIZE) {
+      // Hand full but has unlocked slots — replace first unlocked card with this pick
+      const firstUnlocked = Array.from(exploreSelected).find((idx) => !exploreLocked.has(idx));
+      if (firstUnlocked !== undefined) {
+        setExploreSelected((prev) => {
+          const n = new Set(prev);
+          n.delete(firstUnlocked);
+          n.add(index);
+          return n;
+        });
+        setExploreLocked((prev) => new Set([...prev, index]));
+      }
+    }
+
     setGeneratedPrompt(null);
     setSavedEntryId(null);
-  }, [exploreSelected]);
+  }, [exploreSelected, exploreLocked]);
 
   // "Your Selection" click: toggle lock (doesn't remove card)
   const handleExploreLockToggle = useCallback((index: number) => {
