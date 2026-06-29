@@ -65,10 +65,11 @@ export default async function AboutPage() {
           </div>
         </div>
         <div className="rounded-2xl overflow-hidden border border-border">
-          <Placeholder
+          <Image
+            src="/images/about-community.png"
+            alt="StyleGuideAI community members — illustrated as a white bear, owl, wolf, squirrel, ghost, and other characters — painting and sketching together in a warm art studio"
             width={480}
             height={360}
-            alt="[PROMPT: a lively 1950s-style diner reimagined for the digital age — diverse creative people gathered at booths and a counter, each with a glowing tablet or laptop showing colorful AI-generated artwork, warm amber and cream palette with accents of deep purple and teal, vintage illustrated poster style, communal energy and artistic excitement, 4:3 aspect ratio]"
             className="w-full"
           />
         </div>
