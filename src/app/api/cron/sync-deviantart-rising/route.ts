@@ -2,16 +2,12 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { risingPosts } from "@/drizzle/schema";
-import { and, eq, gt } from "drizzle-orm";
+import { and, eq, gt, sql } from "drizzle-orm";
 
 const DA_BASE = "https://www.deviantart.com/api/v1/oauth2";
 const DA_TOKEN_URL = "https://www.deviantart.com/oauth2/token";
 const GROUP_NAME = "styleguideai";
 const RISING_WINDOW_HOURS = 24;
-
-function endOfMonthUTC(d: Date): Date {
-  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1));
-}
 
 interface DATokenResponse {
   access_token: string;
@@ -116,8 +112,6 @@ export async function GET(request: Request) {
   const errors: string[] = [];
 
   for (const folder of targetFolders) {
-    const isFeatured = folder.name.toLowerCase() === "featured";
-
     const galleryRes = await fetch(
       `${DA_BASE}/gallery/${folder.folderid}?${new URLSearchParams({ username: GROUP_NAME, limit: "24", mode: "newest" })}`,
       { headers: authHeaders }
@@ -131,12 +125,7 @@ export async function GET(request: Request) {
 
     for (const dev of deviations) {
       const publishedAt = dev.published_time ? new Date(Number(dev.published_time) * 1000) : null;
-
-      // Featured folder: only include deviations published within the 24h window.
-      // Theme gallery folders: published_time is when the artist originally posted on DA,
-      // not when they added it to the group gallery — so skip the time filter and
-      // let any deviation in the gallery appear for the full current month.
-      if (isFeatured && (!publishedAt || publishedAt < cutoff)) continue;
+      if (!publishedAt || publishedAt < cutoff) continue;
 
       const preview = dev.preview ?? dev.thumbs?.[dev.thumbs.length - 1] ?? null;
       if (!preview?.src) continue;
@@ -148,15 +137,7 @@ export async function GET(request: Request) {
         ? classifyAspectRatio(imageWidth, imageHeight)
         : "square";
 
-      const now = new Date();
-      // Featured: expire after 24h from original publish time.
-      // Theme galleries: expire at end of current month so art stays visible all month.
-      const expiresAt = isFeatured
-        ? new Date(publishedAt!.getTime() + RISING_WINDOW_HOURS * 60 * 60 * 1000)
-        : endOfMonthUTC(now);
-      // Use sync time as createdAt for theme gallery posts so the Rising score
-      // decay starts from when the work was added to the feed, not years ago.
-      const createdAt = isFeatured ? (publishedAt ?? now) : now;
+      const expiresAt = new Date(publishedAt.getTime() + RISING_WINDOW_HOURS * 60 * 60 * 1000);
       const rawEngagement = dev.stats?.favourites ?? 0;
 
       try {
@@ -197,7 +178,7 @@ export async function GET(request: Request) {
             aspectRatioClass,
             imageWidth,
             imageHeight,
-            createdAt,
+            createdAt: publishedAt,
             expiresAt,
             sourceUrl: dev.url,
           });
