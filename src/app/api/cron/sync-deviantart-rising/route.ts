@@ -176,15 +176,7 @@ export async function GET(request: Request) {
         if (existing) {
           await db
             .update(risingPosts)
-            .set({
-              rawEngagement,
-              imageWidth,
-              imageHeight,
-              // Extend theme gallery posts to end-of-month on every sync pass.
-              // Without this, a post inserted yesterday with 24h expiry would
-              // stay stuck on that short window even after the new logic runs.
-              ...(isFeatured ? {} : { expiresAt }),
-            })
+            .set({ rawEngagement, imageWidth, imageHeight })
             .where(eq(risingPosts.id, existing.id));
           updated++;
         } else {
