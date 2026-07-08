@@ -528,6 +528,7 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
             { role: "user", content: userMessage },
           ],
           maxTokens: 2048,
+          context: "styletarot",
         }),
       });
 

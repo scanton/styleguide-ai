@@ -371,3 +371,25 @@ export const communityTarotCards = pgTable(
     index("community_tarot_cards_created_idx").on(t.createdAt),
   ]
 );
+
+// ─── LLM model attempt log (experiment fallback chain) ───────────────────────
+
+export const llmModelAttempts = pgTable(
+  "llm_model_attempts",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    model: text("model").notNull(),
+    success: boolean("success").notNull(),
+    errorMessage: text("error_message"),
+    latencyMs: integer("latency_ms"),
+    // Which feature triggered the call: stylebear, styletarot, styledice, museum, generic
+    context: text("context"),
+    createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`).notNull(),
+  },
+  (t) => [
+    index("llm_model_attempts_model_idx").on(t.model),
+    index("llm_model_attempts_created_idx").on(t.createdAt),
+  ]
+);

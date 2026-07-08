@@ -204,6 +204,7 @@ Create a detailed, imaginative prompt that weaves all six elements into a vivid,
             { role: "user", content: userMessage },
           ],
           maxTokens: 2048,
+          context: "styledice",
         }),
       });
 
