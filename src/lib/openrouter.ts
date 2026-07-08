@@ -23,10 +23,14 @@ export const EXPERIMENT_MODELS = [
   "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
 ] as const;
 
+// Tries models in priority order (gpt-oss-120b first, then gpt-oss-20b, then
+// the rest of EXPERIMENT_MODELS in list order) rather than picking randomly —
+// the free-tier models are unreliable enough that we want to exhaust the
+// known-good ones before touching the flaky long tail.
 export function pickExperimentModel(exclude: string[] = []): string {
   const pool = EXPERIMENT_MODELS.filter((m) => !exclude.includes(m));
   if (pool.length === 0) throw new Error("No experiment models left to try");
-  return pool[Math.floor(Math.random() * pool.length)];
+  return pool[0];
 }
 
 export async function callLLM(
