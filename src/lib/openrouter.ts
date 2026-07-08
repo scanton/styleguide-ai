@@ -15,10 +15,12 @@ export interface LLMResponse {
 }
 
 export const EXPERIMENT_MODELS = [
-  "openrouter/owl-alpha",
   "openai/gpt-oss-120b:free",
   "openai/gpt-oss-20b:free",
+  "nousresearch/hermes-3-llama-3.1-405b:free",
+  "google/gemma-4-26b-a4b-it:free",
   "google/gemma-4-31b-it:free",
+  "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
 ] as const;
 
 export function pickExperimentModel(exclude: string[] = []): string {
