@@ -340,7 +340,7 @@ export const TAROT_CARDS: TarotCard[] = [
     creator: "Ninifar Cazar 🦉",
     title: "Frostpunk",
     description: "Frostpunk cityscape in the midst of a desolate, icy wasteland, with bleak, industrial structures and haunting, dystopian landscapes, reminiscent of sci-fi illustrations. Intricate, Victorian-era inspired architecture, with snow-covered, Gothic spires and crumbling, steampunk machinery, pierces the grey, overcast sky, as a faint, golden light emanates from the windows of a distant, fortified settlement, casting long, ominous shadows across the icy, barren terrain, with a predominantly monochromatic color palette, and subtle, warm lighting accents, evoking a sense of foreboding and isolation.",
-    type: "movement",
+    type: "setting",
     imageFilename: "Frostpunk.png",
   },
   {
@@ -2556,7 +2556,7 @@ export const TAROT_CARDS: TarotCard[] = [
     creator: "Wammie",
     title: "Tattoo",
     description: "Tattoo Art is a bold and expressive subject that captures the essence of body art and personal symbolism. This art form showcases the creativity and individuality involved in tattooing, often featuring detailed portrayals of tattoo designs, intricate patterns, and meaningful motifs. Tattoo Art highlights the artistry and cultural significance of tattoos, evoking a sense of identity and expression.",
-    type: "movement",
+    type: "media",
     imageFilename: "Tattoo.jpg",
   },
   {
