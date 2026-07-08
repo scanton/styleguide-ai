@@ -15,8 +15,8 @@ export interface LLMResponse {
 }
 
 export const EXPERIMENT_MODELS = [
-  "openai/gpt-oss-120b:free",
   "openai/gpt-oss-20b:free",
+  "openai/gpt-oss-120b:free",
   "nousresearch/hermes-3-llama-3.1-405b:free",
   "google/gemma-4-26b-a4b-it:free",
   "google/gemma-4-31b-it:free",
