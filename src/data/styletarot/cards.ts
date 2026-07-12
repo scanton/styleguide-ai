@@ -2699,7 +2699,7 @@ export const TAROT_CARDS: TarotCard[] = [
     index: 335,
     creator: "Satori Canton🧸",
     title: "Pinup",
-    description: "glamour, playfulness, and joyful confidence — the art of idealized figures that wink at life and celebrate the body with warmth and wit",
+    description: "glamour, playfulness, and joyful confidence — the art of idealized figures that celebrate the body with warmth, charm, and spirited self-assurance",
     type: "inspiration",
     imageFilename: "Pinup.png",
   },
