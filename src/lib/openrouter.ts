@@ -16,21 +16,19 @@ export interface LLMResponse {
 
 export const EXPERIMENT_MODELS = [
   "openai/gpt-oss-20b:free",
-  "openai/gpt-oss-120b:free",
-  "nousresearch/hermes-3-llama-3.1-405b:free",
-  "google/gemma-4-26b-a4b-it:free",
-  "google/gemma-4-31b-it:free",
-  "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
+  "cohere/north-mini-code:free",
+  "poolside/laguna-xs-2.1:free",
 ] as const;
 
-// Tries models in priority order (gpt-oss-120b first, then gpt-oss-20b, then
-// the rest of EXPERIMENT_MODELS in list order) rather than picking randomly —
-// the free-tier models are unreliable enough that we want to exhaust the
-// known-good ones before touching the flaky long tail.
+// Random selection — the previous long tail (gpt-oss-120b, hermes-3-405b,
+// gemma-4-26b/31b, dolphin-mistral-venice) had stopped responding reliably
+// during the OpenRouter free-model outage, and gpt-oss-20b itself is
+// currently down too. Swapped in two untested free models and reverted to
+// random picking until /admin/models gives us enough data to rank them.
 export function pickExperimentModel(exclude: string[] = []): string {
   const pool = EXPERIMENT_MODELS.filter((m) => !exclude.includes(m));
   if (pool.length === 0) throw new Error("No experiment models left to try");
-  return pool[0];
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 export async function callLLM(
