@@ -15,7 +15,7 @@ export interface LLMResponse {
 }
 
 export const EXPERIMENT_MODELS = [
-  "openai/gpt-oss-20b:free",
+  // "openai/gpt-oss-20b:free", // commented out — down for hours, re-add once it recovers
   "cohere/north-mini-code:free",
   "poolside/laguna-xs-2.1:free",
 ] as const;
