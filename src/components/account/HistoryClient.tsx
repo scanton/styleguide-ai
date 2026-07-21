@@ -23,9 +23,26 @@ interface MuseumEntry {
 
 interface TarotEntry {
   id: string;
-  cardIndices: string; // JSON array of 5 numbers
+  cardIndices: string; // JSON array of 5 — numbers for static cards, string ids for community cards
   generatedPrompt: string | null;
   createdAt: string;
+}
+
+interface CommunityCardLite {
+  id: string;
+  title: string;
+  description: string;
+  type: string;
+  creator: string;
+  imageUrl: string;
+}
+
+interface ResolvedTarotCard {
+  index: number | string;
+  title: string;
+  type: string;
+  imageSrc: string;
+  isCommunity: boolean;
 }
 
 interface DiceEntry {
@@ -407,6 +424,7 @@ function TarotHistoryTab() {
   const t = useTranslations("history");
   const format = useFormatter();
   const [entries, setEntries] = useState<TarotEntry[]>([]);
+  const [communityById, setCommunityById] = useState<Map<string, CommunityCardLite>>(new Map());
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -417,6 +435,16 @@ function TarotHistoryTab() {
       .then((r) => r.json())
       .then((d) => setEntries(d.history ?? []))
       .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/styletarot/community-cards")
+      .then((r) => r.json())
+      .then((d: { cards?: CommunityCardLite[] }) => {
+        if (!Array.isArray(d.cards)) return;
+        setCommunityById(new Map(d.cards.map((c) => [c.id, c])));
+      })
+      .catch(() => {});
   }, []);
 
   const allIds = entries.map((e) => e.id);
@@ -455,18 +483,27 @@ function TarotHistoryTab() {
       <div className="space-y-4">
         <ul className="space-y-4">
           {pageEntries.map((entry) => {
-            let indices: number[] = [];
+            let indices: (number | string)[] = [];
             try { indices = JSON.parse(entry.cardIndices); } catch { /* noop */ }
-            const cards = indices.map((i) => TAROT_BY_INDEX.get(i)).filter(Boolean);
+            const cards: ResolvedTarotCard[] = indices
+              .map((i): ResolvedTarotCard | null => {
+                if (typeof i === "number") {
+                  const c = TAROT_BY_INDEX.get(i);
+                  return c ? { index: c.index, title: c.title, type: c.type, imageSrc: `/images/styletarot/${c.imageFilename}`, isCommunity: false } : null;
+                }
+                const c = communityById.get(i);
+                return c ? { index: c.id, title: c.title, type: c.type, imageSrc: c.imageUrl, isCommunity: true } : null;
+              })
+              .filter((c): c is ResolvedTarotCard => c !== null);
 
             const tarotToolContext = JSON.stringify({
               historyEntryId: entry.id,
               historyTable: "styletarot",
               cards: cards.map((c) => ({
-                index: c!.index,
-                title: c!.title,
-                type: c!.type,
-                imageFilename: c!.imageFilename,
+                index: c.index,
+                title: c.title,
+                type: c.type,
+                ...(c.isCommunity ? { imageUrl: c.imageSrc, isCommunity: true } : { imageFilename: c.imageSrc.replace("/images/styletarot/", "") }),
               })),
             });
 
@@ -489,21 +526,21 @@ function TarotHistoryTab() {
                     <div
                       key={i}
                       className="rounded-xl overflow-hidden text-white text-xs leading-tight min-w-0"
-                      style={{ backgroundColor: CARD_TYPE_COLORS[card!.type] ?? "oklch(0.42 0.22 285)" }}
+                      style={{ backgroundColor: CARD_TYPE_COLORS[card.type as keyof typeof CARD_TYPE_COLORS] ?? "oklch(0.42 0.22 285)" }}
                     >
                       <div className="relative aspect-[9/16] overflow-hidden">
                         <Image
                           fill
-                          src={`/images/styletarot/${card!.imageFilename}`}
-                          alt={card!.title}
+                          src={card.imageSrc}
+                          alt={card.title}
                           sizes="20vw"
                           quality={85}
                           className="object-cover"
                         />
                       </div>
                       <div className="p-1.5">
-                        <div className="opacity-70 text-[9px] uppercase tracking-wide font-semibold">{card!.type}</div>
-                        <div className="font-medium text-[11px] leading-tight mt-0.5 line-clamp-2">{card!.title}</div>
+                        <div className="opacity-70 text-[9px] uppercase tracking-wide font-semibold">{card.type}</div>
+                        <div className="font-medium text-[11px] leading-tight mt-0.5 line-clamp-2">{card.title}</div>
                       </div>
                     </div>
                   ))}

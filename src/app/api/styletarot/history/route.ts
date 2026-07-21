@@ -35,13 +35,20 @@ export async function POST(request: Request) {
   }
 
   const { cardIndices, generatedPrompt } = body as {
-    cardIndices?: number[];
+    // Static cards store their numeric index; community cards store their
+    // stable string id (a synthetic position-based index would drift as
+    // new community cards are added).
+    cardIndices?: (number | string)[];
     generatedPrompt?: string;
   };
 
-  if (!Array.isArray(cardIndices) || cardIndices.length !== 5) {
+  if (
+    !Array.isArray(cardIndices) ||
+    cardIndices.length !== 5 ||
+    !cardIndices.every((i) => typeof i === "number" || typeof i === "string")
+  ) {
     return NextResponse.json(
-      { error: "cardIndices must be an array of 5 numbers" },
+      { error: "cardIndices must be an array of 5 numbers or strings" },
       { status: 422 }
     );
   }

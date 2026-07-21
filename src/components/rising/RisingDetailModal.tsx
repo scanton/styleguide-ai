@@ -31,22 +31,25 @@ const CARD_TYPE_COLORS: Record<string, string> = {
 };
 
 interface TarotCardMini {
-  index: number;
+  index: number | string;
   title: string;
   type: string;
-  imageFilename: string;
+  imageFilename?: string;
+  imageUrl?: string;
+  isCommunity?: boolean;
 }
 
 function TarotCardMiniDisplay({ card }: { card: TarotCardMini }) {
   const [imgError, setImgError] = useState(false);
   const color = CARD_TYPE_COLORS[card.type] ?? "oklch(0.42 0.22 285)";
+  const src = card.isCommunity ? card.imageUrl : `/images/styletarot/${card.imageFilename}`;
   return (
     <div className="rounded-xl overflow-hidden shadow-md">
       <div className="relative aspect-[9/16] bg-stone-700">
-        {!imgError ? (
+        {!imgError && src ? (
           <Image
             fill
-            src={`/images/styletarot/${card.imageFilename}`}
+            src={src}
             alt={card.title}
             sizes="20vw"
             quality={85}

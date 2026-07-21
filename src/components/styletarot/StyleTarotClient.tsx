@@ -559,7 +559,10 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
 
     // Save history
     if (session?.user && prompt) {
-      const indices = cards.map((c) => c.index);
+      // Community cards need their stable string id, not the synthetic
+      // 50000+position index — that position shifts every time a new
+      // community card is added, silently corrupting old history entries.
+      const indices = cards.map((c) => ("isCommunity" in c ? (c as CommunityCard).id : (c as TarotCard).index));
       try {
         if (!savedEntryId) {
           const saveRes = await fetch("/api/styletarot/history", {
@@ -1052,7 +1055,9 @@ Create a single, unified AI art prompt that weaves all five cards into one cohes
               }))
             ),
             historyPayload: {
-              cardIndices: JSON.stringify(activeCards.map((c) => c.index)),
+              cardIndices: JSON.stringify(
+                activeCards.map((c) => ("isCommunity" in c ? (c as CommunityCard).id : (c as TarotCard).index))
+              ),
             },
           }}
           onClose={() => setShowSignInModal(false)}
