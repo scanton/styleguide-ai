@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from "next/server";
-import { callLLM, pickExperimentModel, EXPERIMENT_MODELS, type LLMMessage } from "@/lib/openrouter";
+import { callLLM, pickExperimentModel, MAX_MODEL_ATTEMPTS, type LLMMessage } from "@/lib/openrouter";
 import { systemPrompts } from "@/data/stylebear/system-prompts";
 import { db } from "@/lib/db";
 import { llmModelAttempts } from "@/drizzle/schema";
@@ -44,7 +44,7 @@ function experimentStream(messages: LLMMessage[], maxTokens?: number, context?: 
     async start(controller) {
       const tried: string[] = [];
 
-      while (tried.length < EXPERIMENT_MODELS.length) {
+      while (tried.length < MAX_MODEL_ATTEMPTS) {
         const model = pickExperimentModel(tried);
         tried.push(model);
 

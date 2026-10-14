@@ -19,15 +19,22 @@ export const EXPERIMENT_MODELS = [
   "cohere/north-mini-code:free",
 ] as const;
 
-// Random selection across EXPERIMENT_MODELS (currently just north-mini-code).
-// Removed: gpt-oss-120b, hermes-3-405b, gemma-4-26b/31b, dolphin-mistral-venice
-// (unreliable during the OpenRouter free-model outage) and
-// poolside/laguna-xs-2.1 (being retired by OpenRouter, failing often).
-// Add models back here and check /admin/models for their success rate.
+// Last-resort fallback: OpenRouter's automatic free-model router. Only tried
+// after every model in EXPERIMENT_MODELS has failed for a request.
+export const FALLBACK_MODEL = "openrouter/free";
+
+// Total attempts a single request can make (primary pool + fallback).
+export const MAX_MODEL_ATTEMPTS = EXPERIMENT_MODELS.length + 1;
+
+// Picks randomly among untried EXPERIMENT_MODELS; once those are exhausted,
+// returns FALLBACK_MODEL (once). Removed models: gpt-oss-120b, hermes-3-405b,
+// gemma-4-26b/31b, dolphin-mistral-venice (unreliable), poolside/laguna-xs-2.1
+// (being retired). Check /admin/models before adding models back.
 export function pickExperimentModel(exclude: string[] = []): string {
   const pool = EXPERIMENT_MODELS.filter((m) => !exclude.includes(m));
-  if (pool.length === 0) throw new Error("No experiment models left to try");
-  return pool[Math.floor(Math.random() * pool.length)];
+  if (pool.length > 0) return pool[Math.floor(Math.random() * pool.length)];
+  if (!exclude.includes(FALLBACK_MODEL)) return FALLBACK_MODEL;
+  throw new Error("No experiment models left to try");
 }
 
 export async function callLLM(
